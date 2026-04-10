@@ -1,6 +1,6 @@
-# tielo Website
+# Smart HR Dashboard
 
-A modern, responsive Next.js website for tielo - a startup service provider offering AI-powered, flexible team scaling solutions.
+A modern, responsive Next.js website for   startup service provider offering AI-powered, flexible team scaling solutions.
 
 ## 🚀 Features
 
@@ -201,6 +201,3 @@ The website is designed to be easily maintainable:
 - Centralized content management
 - Easy styling updates
 
----
-
-Built with ❤️ by the tielo team
