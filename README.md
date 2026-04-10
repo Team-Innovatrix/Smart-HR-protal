@@ -1,6 +1,6 @@
-﻿# HR Dashboard Website
+# Smart HR Dashboard
 
-A modern, responsive Next.js website for HR Dashboard - a startup service provider offering AI-powered, flexible team scaling solutions.
+A modern, responsive Next.js website for   startup service provider offering AI-powered, flexible team scaling solutions.
 
 ## 🚀 Features
 
@@ -193,25 +193,6 @@ The website is ready for analytics integration:
 - Facebook Pixel
 - Custom event tracking
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
-## 🆘 Support
-
-For support or questions:
-- Email: hello@portal.inovatrix.io
-- Phone: +1 (555) 123-4567
-- Website: [HR Dashboard.com](https://HR Dashboard.com)
-
 ## 🔄 Updates
 
 The website is designed to be easily maintainable:
@@ -220,6 +201,3 @@ The website is designed to be easily maintainable:
 - Centralized content management
 - Easy styling updates
 
----
-
-Built with ❤️ by the HR Dashboard Team
