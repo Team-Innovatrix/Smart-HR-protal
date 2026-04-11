@@ -81,7 +81,7 @@ export default function CaseStudies() {
     {
       aspect: 'Time to Market',
       traditional: '3-6 months',
-      HR Dashboard: '2-4 weeks',
+      //HR Dashboard: '2-4 weeks',
       advantage: '5x faster'
     },
     {
