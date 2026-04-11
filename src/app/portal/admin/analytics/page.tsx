@@ -66,6 +66,64 @@ interface JobsData {
   totalJobs: number;
 }
 
+const mockTurnoverPredictionData = {
+  chartData: [
+    { month: 'May 26', predicted: 2, baseline: 3 },
+    { month: 'Jun 26', predicted: 3, baseline: 3 },
+    { month: 'Jul 26', predicted: 5, baseline: 3 },
+    { month: 'Aug 26', predicted: 2, baseline: 4 },
+    { month: 'Sep 26', predicted: 1, baseline: 3 },
+    { month: 'Oct 26', predicted: 3, baseline: 4 },
+  ],
+  legend: [
+    { key: 'predicted', label: 'Predicted Exits', color: '#E11D48' },
+    { key: 'baseline', label: 'Historical Baseline', color: '#94A3B8' }
+  ]
+};
+
+const mockPerformanceForecastData = {
+  chartData: [
+    { month: 'Q2 2026', score: 85, target: 80 },
+    { month: 'Q3 2026', score: 88, target: 82 },
+    { month: 'Q4 2026', score: 92, target: 85 },
+    { month: 'Q1 2027', score: 95, target: 88 }
+  ],
+  legend: [
+    { key: 'score', label: 'Forecasted Score', color: '#4F46E5' },
+    { key: 'target', label: 'Target Score', color: '#CBD5E1' }
+  ]
+};
+
+const mockLeavePredictionData = {
+  chartData: [
+    { month: 'May', sick: 12, vacation: 25, personal: 5 },
+    { month: 'Jun', sick: 10, vacation: 45, personal: 8 },
+    { month: 'Jul', sick: 8, vacation: 85, personal: 10 },
+    { month: 'Aug', sick: 15, vacation: 65, personal: 12 },
+    { month: 'Sep', sick: 25, vacation: 20, personal: 5 },
+    { month: 'Oct', sick: 35, vacation: 15, personal: 8 }
+  ],
+  legend: [
+    { key: 'vacation', label: 'Vacation Surge', color: '#D97706' },
+    { key: 'sick', label: 'Sick Leave Trend', color: '#059669' },
+    { key: 'personal', label: 'Personal Time', color: '#3B82F6' }
+  ]
+};
+
+const mockWorkforceCapacityData = {
+  chartData: [
+    { month: 'Eng', utilized: 85, available: 15 },
+    { month: 'Sales', utilized: 95, available: 5 },
+    { month: 'Mktg', utilized: 70, available: 30 },
+    { month: 'Support', utilized: 90, available: 10 },
+    { month: 'HR', utilized: 60, available: 40 }
+  ],
+  legend: [
+    { key: 'utilized', label: 'Predicted Utilization (%)', color: '#059669' },
+    { key: 'available', label: 'Predicted Buffer (%)', color: '#A7F3D0' }
+  ]
+};
+
 export default function AnalyticsPage() {
   const [activeTab, setActiveTab] = useState('projects');
   const [exitsData, setExitsData] = useState<ExitsData | null>(null);
@@ -632,6 +690,94 @@ export default function AnalyticsPage() {
                 </div>
               );
             }
+            // Predictive AI Charts
+            if (activeTab === 'predictive-ai' && subItem.id === 'turnover-prediction') {
+              return (
+                <div key={subItem.id}>
+                  <BarChart
+                    title="Turnover Prediction"
+                    subtitle="Historical baseline vs Model forecast (Next 6 Mo)"
+                    data={mockTurnoverPredictionData.chartData}
+                    legend={mockTurnoverPredictionData.legend}
+                    dataKey="month"
+                    valueKeys={mockTurnoverPredictionData.legend.map(l => l.key)}
+                    height={160}
+                    showTotals={true}
+                    showLegend={true}
+                    showEmptyBars={true}
+                    maxBars={6}
+                    rotateLabels={false}
+                    barSpacing={16}
+                  />
+                </div>
+              );
+            }
+
+            if (activeTab === 'predictive-ai' && subItem.id === 'performance-forecast') {
+              return (
+                <div key={subItem.id}>
+                  <BarChart
+                    title="Performance Forecast"
+                    subtitle="Predicted performance scores"
+                    data={mockPerformanceForecastData.chartData}
+                    legend={mockPerformanceForecastData.legend}
+                    dataKey="month"
+                    valueKeys={mockPerformanceForecastData.legend.map(l => l.key)}
+                    height={160}
+                    showTotals={true}
+                    showLegend={true}
+                    showEmptyBars={true}
+                    maxBars={4}
+                    rotateLabels={false}
+                    barSpacing={16}
+                  />
+                </div>
+              );
+            }
+
+            if (activeTab === 'predictive-ai' && subItem.id === 'leave-prediction') {
+              return (
+                <div key={subItem.id}>
+                  <BarChart
+                    title="Leave Pattern Prediction"
+                    subtitle="Anticipated volume of employee absences"
+                    data={mockLeavePredictionData.chartData}
+                    legend={mockLeavePredictionData.legend}
+                    dataKey="month"
+                    valueKeys={mockLeavePredictionData.legend.map(l => l.key)}
+                    height={160}
+                    showTotals={true}
+                    showLegend={true}
+                    showEmptyBars={true}
+                    maxBars={6}
+                    rotateLabels={false}
+                    barSpacing={12}
+                  />
+                </div>
+              );
+            }
+
+            if (activeTab === 'predictive-ai' && subItem.id === 'workforce-capacity') {
+              return (
+                <div key={subItem.id}>
+                  <BarChart
+                    title="Workforce Capacity"
+                    subtitle="Predicted utilization against target thresholds"
+                    data={mockWorkforceCapacityData.chartData}
+                    legend={mockWorkforceCapacityData.legend}
+                    dataKey="month"
+                    valueKeys={mockWorkforceCapacityData.legend.map(l => l.key)}
+                    height={160}
+                    showTotals={true}
+                    showLegend={true}
+                    showEmptyBars={true}
+                    maxBars={5}
+                    rotateLabels={false}
+                    barSpacing={12}
+                  />
+                </div>
+              );
+            }
 
             // Define icons and colors for each section
             const getIconAndColor = (sectionId: string) => {
@@ -702,6 +848,23 @@ export default function AnalyticsPage() {
                 return {
                   icon: complianceIcons[index] || <DocumentCheckIcon className="w-8 h-8 text-green-600" />,
                   color: complianceColors[index] || 'bg-green-100'
+                };
+              } else if (sectionId === 'predictive-ai') {
+                const predictiveIcons = [
+                  <ExclamationTriangleIcon key="turnover-prediction" className="w-8 h-8 text-rose-600" />,
+                  <ArrowTrendingUpIcon key="performance-forecast" className="w-8 h-8 text-indigo-600" />,
+                  <CalendarIcon key="leave-prediction" className="w-8 h-8 text-amber-600" />,
+                  <ChartPieIcon key="workforce-capacity" className="w-8 h-8 text-emerald-600" />
+                ];
+                const predictiveColors = [
+                  'bg-rose-100',
+                  'bg-indigo-100',
+                  'bg-amber-100',
+                  'bg-emerald-100'
+                ];
+                return {
+                  icon: predictiveIcons[index] || <ExclamationTriangleIcon className="w-8 h-8 text-rose-600" />,
+                  color: predictiveColors[index] || 'bg-rose-100'
                 };
               }
               return {

@@ -4,11 +4,13 @@ import { SignIn, SignUp } from '@clerk/nextjs'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
+import { DEV_USER } from '../../../lib/devAuth'
 
 export default function HRPortalAuthPage() {
   const [showSignUp, setShowSignUp] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [devAuthError, setDevAuthError] = useState<string | null>(null)
 
   useEffect(() => {
     // Check if Clerk is properly configured
@@ -30,22 +32,180 @@ export default function HRPortalAuthPage() {
     )
   }
 
+  const handleDevSignIn = (e: React.FormEvent) => {
+    e.preventDefault();
+    setDevAuthError(null);
+    const email = (document.getElementById('dev-email') as HTMLInputElement).value;
+    const password = (document.getElementById('dev-password') as HTMLInputElement).value;
+
+    // Admin (Mohit)
+    if (email === 'mohit@inovatrix.io' && password === 'mohit 123') {
+      const devAdminUser = {
+        id: DEV_USER.userId,
+        firstName: DEV_USER.firstName,
+        lastName: DEV_USER.lastName,
+        fullName: `${DEV_USER.firstName} ${DEV_USER.lastName}`,
+        emailAddresses: [{ emailAddress: DEV_USER.email, id: 'dev_email' }],
+        primaryEmailAddressId: 'dev_email',
+        imageUrl: '',
+        username: 'dev-admin',
+        publicMetadata: { role: DEV_USER.role },
+      };
+      localStorage.setItem('dev_auth_user', JSON.stringify(devAdminUser));
+      window.location.href = '/portal/admin';
+
+    // Legacy employee
+    } else if (email === 'employee@inovatrix.io' && password === 'employee 123') {
+      const devEmployeeUser = {
+        id: 'dev_user_emp_002',
+        firstName: 'Jane',
+        lastName: 'Doe',
+        fullName: 'Jane Doe',
+        emailAddresses: [{ emailAddress: 'employee@inovatrix.io', id: 'dev_email_emp' }],
+        primaryEmailAddressId: 'dev_email_emp',
+        imageUrl: '',
+        username: 'dev-emp',
+        publicMetadata: { role: 'Employee' },
+      };
+      localStorage.setItem('dev_auth_user', JSON.stringify(devEmployeeUser));
+      window.location.href = '/portal/dashboard';
+
+    // Rudra Bambal — Employee ID: EMP006
+    } else if ((email === 'rudra@inovatrix.io' || email === 'EMP006') && password === 'test123') {
+      const rudraUser = {
+        id: 'dev_user_rudra_006',
+        firstName: 'Rudra',
+        lastName: 'Bambal',
+        fullName: 'Rudra Bambal',
+        emailAddresses: [{ emailAddress: 'rudra@inovatrix.io', id: 'dev_email_rudra' }],
+        primaryEmailAddressId: 'dev_email_rudra',
+        imageUrl: '',
+        username: 'rudra-bambal',
+        publicMetadata: { role: 'Employee', employeeId: 'EMP006', department: 'Engineering', position: 'Software Engineer' },
+      };
+      localStorage.setItem('dev_auth_user', JSON.stringify(rudraUser));
+      window.location.href = '/portal/dashboard';
+
+    // Viplav Bhure — Employee ID: EMP007
+    } else if ((email === 'viplav@inovatrix.io' || email === 'EMP007') && password === 'test123') {
+      const viklavUser = {
+        id: 'dev_user_viplav_007',
+        firstName: 'Viplav',
+        lastName: 'Bhure',
+        fullName: 'Viplav Bhure',
+        emailAddresses: [{ emailAddress: 'viplav@inovatrix.io', id: 'dev_email_viplav' }],
+        primaryEmailAddressId: 'dev_email_viplav',
+        imageUrl: '',
+        username: 'viplav-bhure',
+        publicMetadata: { role: 'Employee', employeeId: 'EMP007', department: 'Engineering', position: 'Backend Engineer' },
+      };
+      localStorage.setItem('dev_auth_user', JSON.stringify(viklavUser));
+      window.location.href = '/portal/dashboard';
+
+    } else {
+      setDevAuthError('Invalid credentials. Please check your email/Employee ID and password.');
+    }
+  };
+
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
-        <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg border border-gray-100">
-          <div className="text-center mb-6">
-            <h1 className="text-2xl font-bold text-red-600 mb-2">Configuration Error</h1>
-            <p className="text-gray-600">Unable to load authentication</p>
+      <div className="min-h-screen flex items-center justify-center p-4"
+           style={{ background: 'linear-gradient(135deg,#fff7ed 0%,#ffffff 50%,#fffbf7 100%)' }}>
+
+        {/* Card */}
+        <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-orange-100 overflow-hidden">
+
+          {/* Orange header */}
+          <div className="p-8 text-white relative overflow-hidden"
+               style={{ background: 'linear-gradient(135deg,#ea580c,#f97316,#fb923c)' }}>
+            <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-20 translate-x-20" />
+            <div className="relative z-10">
+              <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-4 text-2xl font-black">
+                T
+              </div>
+              <h1 className="text-2xl font-black tracking-tight">Employee Portal</h1>
+              <p className="text-orange-100 text-sm mt-1">Local Development Mode</p>
+            </div>
           </div>
-          <p className="text-gray-700 text-center mb-6">{error}</p>
-          <Link 
-            href="/hr" 
-            className="inline-flex items-center justify-center w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            <ArrowLeftIcon className="h-4 w-4 mr-2" />
-            Back to HR Module
-          </Link>
+
+          <div className="p-8">
+            {devAuthError && (
+              <div className="mb-5 p-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl text-center font-medium">
+                {devAuthError}
+              </div>
+            )}
+
+            <form onSubmit={handleDevSignIn} className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-neutral-700 mb-1.5">
+                  Email / Employee ID
+                </label>
+                <input
+                  id="dev-email"
+                  type="text"
+                  required
+                  className="w-full h-11 border-2 border-orange-100 focus:border-orange-400 focus:ring-2 focus:ring-orange-200
+                             rounded-xl px-4 text-sm outline-none transition-all"
+                  placeholder="email@inovatrix.io or EMP006"
+                  defaultValue="rudra@inovatrix.io"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-neutral-700 mb-1.5">Password</label>
+                <input
+                  id="dev-password"
+                  type="password"
+                  required
+                  className="w-full h-11 border-2 border-orange-100 focus:border-orange-400 focus:ring-2 focus:ring-orange-200
+                             rounded-xl px-4 text-sm outline-none transition-all"
+                  placeholder="Enter password"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full h-12 text-white font-bold rounded-xl transition-all duration-200 hover:shadow-lg hover:scale-[1.01] mt-2"
+                style={{ background: 'linear-gradient(135deg,#ea580c,#f97316)' }}
+              >
+                Sign In →
+              </button>
+            </form>
+
+            {/* Credentials reference */}
+            <div className="mt-8 pt-6 border-t border-orange-100">
+              <p className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">Available Accounts</p>
+              <div className="space-y-2">
+                {[
+                  { role: 'Admin', name: 'Mohit Mohatkar', id: 'mohit@inovatrix.io', pw: 'mohit 123', color: 'bg-violet-100 text-violet-700', badge: 'HR Manager' },
+                  { role: 'Employee', name: 'Rudra Bambal', id: 'rudra@inovatrix.io or EMP006', pw: 'test123', color: 'bg-orange-100 text-orange-700', badge: 'EMP006' },
+                  { role: 'Employee', name: 'Viplav Bhure', id: 'viplav@inovatrix.io or EMP007', pw: 'test123', color: 'bg-amber-100 text-amber-700', badge: 'EMP007' },
+                ].map(u => (
+                  <div
+                    key={u.name}
+                    className="flex items-center gap-3 p-3 bg-orange-50 rounded-2xl border border-orange-100 cursor-pointer
+                               hover:bg-orange-100 transition-colors"
+                    onClick={() => {
+                      (document.getElementById('dev-email') as HTMLInputElement).value = u.id.split(' or ')[0];
+                      (document.getElementById('dev-password') as HTMLInputElement).value = u.pw;
+                    }}
+                  >
+                    <div className={`text-xs font-bold px-2 py-1 rounded-lg ${u.color}`}>{u.badge}</div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold text-neutral-800 truncate">{u.name}</p>
+                      <p className="text-[10px] text-neutral-400 truncate">{u.id} · pw: {u.pw}</p>
+                    </div>
+                    <span className="text-[10px] text-orange-400 font-medium">click to fill</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <Link href="/hr" className="inline-flex items-center justify-center w-full mt-5 py-2.5 text-sm
+                                         text-neutral-600 hover:text-orange-600 transition-colors font-medium gap-1">
+              <ArrowLeftIcon className="h-4 w-4" />
+              Back to Corporate Site
+            </Link>
+          </div>
         </div>
       </div>
     )

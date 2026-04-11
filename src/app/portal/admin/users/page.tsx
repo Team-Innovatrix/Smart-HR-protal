@@ -598,6 +598,32 @@ export default function UsersManagementPage() {
     );
   };
 
+  const handleDeactivateUser = async (userId: string, currentStatus: boolean) => {
+    setConfirmTitle(currentStatus ? 'Deactivate Employee' : 'Activate Employee');
+    setConfirmMessage(`Are you sure you want to ${currentStatus ? 'deactivate' : 'activate'} this user?`);
+    setConfirmAction(() => async () => {
+      try {
+        const res = await fetch(`/api/admin/users/${userId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ isActive: !currentStatus })
+        });
+        const data = await res.json();
+        if (data.success) {
+          fetchUsers();
+        } else {
+          setError(data.error || 'Failed to update user status');
+        }
+      } catch (err) {
+        console.error('Action failed:', err);
+        setError('An error occurred during update');
+      } finally {
+        setShowConfirmModal(false);
+      }
+    });
+    setShowConfirmModal(true);
+  };
+
   const handleSelectAllUsers = () => {
     if (usersData && selectedUsers.length === usersData.users.length) {
       setSelectedUsers([]);
@@ -973,8 +999,11 @@ export default function UsersManagementPage() {
                       >
                         Edit
                       </button>
-                      <button className="text-red-600 hover:text-red-900 transition-colors">
-                        Deactivate
+                      <button 
+                        onClick={() => handleDeactivateUser(user._id, user.isActive)}
+                        className={`${user.isActive ? 'text-red-600 hover:text-red-900' : 'text-emerald-600 hover:text-emerald-900'} transition-colors`}
+                      >
+                        {user.isActive ? 'Deactivate' : 'Activate'}
                       </button>
                     </td>
                   </tr>

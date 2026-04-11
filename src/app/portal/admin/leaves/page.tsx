@@ -189,6 +189,34 @@ export default function LeaveManagementPage() {
     );
   };
 
+  const handleAction = async (leaveId: string, action: 'approve' | 'reject') => {
+    let reason;
+    if (action === 'reject') {
+      reason = window.prompt("Enter a reason for rejection (optional):");
+      if (reason === null) return; // cancelled
+    }
+    
+    try {
+      const response = await fetch('/api/admin/leaves/bulk', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          leaveIds: [leaveId],
+          action,
+          reason
+        }),
+      });
+
+      if (response.ok) {
+        fetchLeaves();
+      }
+    } catch (error) {
+      console.error('Leave action error:', error);
+    }
+  };
+
   const handleBulkAction = async () => {
     if (selectedLeaves.length === 0) return;
 
@@ -1054,10 +1082,16 @@ export default function LeaveManagementPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       {leave.status === 'pending' && (
                         <div className="flex space-x-2">
-                          <button className="text-green-600 hover:text-green-900 transition-colors">
+                          <button 
+                            onClick={() => handleAction(leave._id, 'approve')}
+                            className="text-green-600 hover:text-green-900 transition-colors"
+                          >
                             <CheckIcon className="w-4 h-4" />
                           </button>
-                          <button className="text-red-600 hover:text-red-900 transition-colors">
+                          <button 
+                            onClick={() => handleAction(leave._id, 'reject')}
+                            className="text-red-600 hover:text-red-900 transition-colors"
+                          >
                             <XMarkIcon className="w-4 h-4" />
                           </button>
                         </div>

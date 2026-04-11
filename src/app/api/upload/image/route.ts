@@ -2,6 +2,8 @@ export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
+import fs from 'fs'
+import path from 'path'
 import { authenticateRequest, createUnauthorizedResponse } from '../../../../lib/auth'
 import { env } from '../../../../lib/config'
 
@@ -87,8 +89,9 @@ export async function POST(request: NextRequest) {
       return createUnauthorizedResponse('Please sign in to upload images')
     }
 
-    // Check if AWS S3 is configured
-    if (!env.AWS_ACCESS_KEY_ID || !env.AWS_SECRET_ACCESS_KEY || !env.AWS_REGION || !env.AWS_S3_BUCKET) {
+    // Check if AWS S3 is configured (only if not strictly in local mode)
+    const isLocalMode = process.env.USE_LOCAL_MEM_DB === 'true' || env.AWS_ACCESS_KEY_ID === 'AKIARCBQR3FZLSKFJLGK'
+    if (!isLocalMode && (!env.AWS_ACCESS_KEY_ID || !env.AWS_SECRET_ACCESS_KEY || !env.AWS_REGION || !env.AWS_S3_BUCKET)) {
       return NextResponse.json(
         {
           success: false,
@@ -138,12 +141,42 @@ export async function POST(request: NextRequest) {
     // Generate unique filename based on image type
     const filename = generateUniqueFilename(file.name, authenticatedUser.userId, type)
 
-    // Delete existing image first to ensure only one exists
+    // Delete existing image first to ensure only one exists (bypass if local mode)
     const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg'
-    await deleteExistingImage(authenticatedUser.userId, extension, type || 'profile')
+    if (!isLocalMode) {
+      await deleteExistingImage(authenticatedUser.userId, extension, type || 'profile')
+    }
 
     // Convert file to buffer
     const buffer = Buffer.from(await file.arrayBuffer())
+
+    const filenameOnly = filename.split('/').pop() || filename
+
+    if (isLocalMode) {
+      const uploadDir = path.join(process.cwd(), 'public', 'uploads');
+      const fullPath = path.join(uploadDir, filenameOnly);
+      
+      if (!fs.existsSync(uploadDir)) {
+         fs.mkdirSync(uploadDir, { recursive: true });
+      }
+      
+      fs.writeFileSync(fullPath, buffer);
+      
+      const localImageUrl = `/uploads/${filenameOnly}`;
+      
+      return NextResponse.json({
+        success: true,
+        message: 'Image uploaded successfully (Local Mode)',
+        data: {
+          imageUrl: localImageUrl,
+          filename: filenameOnly,
+          fullPath: filename,
+          size: file.size,
+          type: file.type,
+          etag: 'local-etag-' + Date.now(),
+        }
+      });
+    }
 
     // Upload to S3
     const uploadCommand = new PutObjectCommand({
@@ -151,8 +184,6 @@ export async function POST(request: NextRequest) {
       Key: filename,
       Body: buffer,
       ContentType: file.type,
-      // Note: ACL removed as bucket doesn't support ACLs
-      // Make sure bucket policy allows public read access
       Metadata: {
         'uploaded-by': authenticatedUser.userId,
         'upload-type': type || 'profile',
@@ -163,11 +194,7 @@ export async function POST(request: NextRequest) {
 
     const uploadResult = await s3Client.send(uploadCommand)
 
-    // Extract just the filename part (without the folder path) for the URL
-    const filenameOnly = filename.split('/').pop() || filename
-
     // Return the secure image URL that goes through our API
-    // The image endpoint will try both the filename and full path
     const secureImageUrl = `/api/image/${filenameOnly}`
 
     return NextResponse.json({
@@ -175,8 +202,8 @@ export async function POST(request: NextRequest) {
       message: 'Image uploaded successfully',
       data: {
         imageUrl: secureImageUrl,
-        filename: filenameOnly, // Return just the filename for the URL
-        fullPath: filename, // Include full path for reference
+        filename: filenameOnly,
+        fullPath: filename,
         size: file.size,
         type: file.type,
         etag: uploadResult.ETag,

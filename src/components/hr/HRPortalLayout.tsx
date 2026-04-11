@@ -17,7 +17,8 @@ import {
   XMarkIcon,
   ArrowRightOnRectangleIcon,
   BellIcon,
-  ChevronRightIcon
+  ChevronRightIcon,
+  ChatBubbleLeftRightIcon
 } from '@heroicons/react/24/outline'
 import { useDevSafeUser, useDevSafeClerk } from '../../lib/hooks/useDevSafeClerk'
 import MicIcon from './MicIcon'
@@ -87,6 +88,7 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
     { name: 'Leaves', href: getHRPortalPath('leaves'), icon: CalendarIcon, current: currentPage === 'leaves', description: 'Request and manage time off' },
     { name: 'Profile', href: getHRPortalPath('profile'), icon: UserIcon, current: currentPage === 'profile', description: 'Personal information' },
     { name: 'Team', href: getHRPortalPath('team'), icon: UsersIcon, current: currentPage === 'team', description: 'Team management' },
+    { name: 'Chat', href: getHRPortalPath('chat'), icon: ChatBubbleLeftRightIcon, current: currentPage === 'chat', description: 'Employee communication' },
     { name: 'Documents', href: getHRPortalPath('documents'), icon: DocumentTextIcon, current: currentPage === 'documents', description: 'File management' },
     { name: 'Settings', href: getHRPortalPath('settings'), icon: Cog6ToothIcon, current: currentPage === 'settings', description: 'Preferences and security' },
   ]
@@ -105,7 +107,6 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
 
   const handleSignOut = async () => {
     await signOut()
-    router.push('/hr/portal')
   }
 
   if (!showSidebar) {

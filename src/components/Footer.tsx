@@ -1,4 +1,4 @@
-﻿import Link from 'next/link'
+import Link from 'next/link'
 import Image from 'next/image'
 import { EnvelopeIcon, MapPinIcon, LinkIcon } from '@heroicons/react/24/outline'
 
@@ -103,7 +103,7 @@ const Footer = () => {
         <div className="border-t border-gray-800 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="text-gray-400 text-sm mb-4 md:mb-0">
-              © 2024 HR Dashboard. All rights reserved.
+              © 2026 HR Dashboard. All rights reserved.
             </div>
             
             {/* Social Links */}

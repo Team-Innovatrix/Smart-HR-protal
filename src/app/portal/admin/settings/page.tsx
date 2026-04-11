@@ -123,7 +123,23 @@ export default function SettingsPage() {
 
       const data = await response.json();
       if (data.success) {
-        setSettings(data.data);
+        // Merge safe defaults for integrations and features in case API omits them
+        setSettings({
+          ...data.data,
+          integrations: data.data.integrations || {
+            slack: { enabled: false },
+            email: { enabled: false },
+            calendar: { enabled: false },
+          },
+          features: data.data.features || {
+            voiceCommands: false,
+            realTimeUpdates: true,
+            advancedAnalytics: false,
+            customReports: false,
+            apiAccess: false,
+            mobileApp: false,
+          },
+        });
       } else {
         throw new Error(data.error || 'Failed to fetch settings');
       }

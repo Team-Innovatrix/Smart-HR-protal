@@ -53,7 +53,20 @@ export async function GET(req: NextRequest) {
         leave: leaveSettings,
         attendance: settings.attendance,
         notifications: settings.notifications,
-        security: settings.security
+        security: settings.security,
+        integrations: settings.integrations || {
+          slack: { enabled: false },
+          email: { enabled: false },
+          calendar: { enabled: false },
+        },
+        features: settings.features || {
+          voiceCommands: false,
+          realTimeUpdates: true,
+          advancedAnalytics: false,
+          customReports: false,
+          apiAccess: false,
+          mobileApp: false,
+        },
       }
     });
   } catch (error) {
@@ -87,7 +100,7 @@ export async function PUT(req: NextRequest) {
 
     const body = await req.json();
 
-    // Validate settings structure
+    // Validate settings structure (integrations and features are optional)
     if (!body.general || !body.leave || !body.attendance || !body.notifications || !body.security) {
       return NextResponse.json(
         { error: 'Invalid settings structure' },
@@ -137,7 +150,20 @@ export async function PUT(req: NextRequest) {
         leave: leaveSettingsResponse,
         attendance: settings.attendance,
         notifications: settings.notifications,
-        security: settings.security
+        security: settings.security,
+        integrations: settings.integrations || {
+          slack: { enabled: false },
+          email: { enabled: false },
+          calendar: { enabled: false },
+        },
+        features: settings.features || {
+          voiceCommands: false,
+          realTimeUpdates: true,
+          advancedAnalytics: false,
+          customReports: false,
+          apiAccess: false,
+          mobileApp: false,
+        },
       }
     });
   } catch (error) {

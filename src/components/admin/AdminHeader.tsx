@@ -41,57 +41,60 @@ export default function AdminHeader({ onToggleSidebar, isSidebarCollapsed }: Adm
 
 
   return (
-    <header className="bg-white shadow-lg sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center h-16 sm:h-16 md:h-16 lg:h-16 xl:h-16">
-          {/* Sidebar Toggle Button - Responsive positioning */}
+    <header className="topbar-root sticky top-0 z-50">
+      <div className="max-w-full px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center h-16 gap-3">
+          {/* Sidebar Toggle */}
           {onToggleSidebar && (
             <button
               onClick={onToggleSidebar}
-              className="lg:hidden mr-3 p-2 text-gray-600 hover:text-gray-900 transition-colors"
+              className="lg:hidden p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200"
               aria-label="Toggle sidebar"
             >
               <Bars3Icon className="w-5 h-5" />
             </button>
           )}
-          
-          {/* Logo and Title - Left aligned with responsive spacing */}
-          <Link href="/admin" className="flex items-center">
-            <div className="flex items-center mr-3">
-              {companyLogo.startsWith('/api/image/') ? (
-                <Image
-                  src={companyLogo}
-                  alt="Company Logo"
-                  width={40}
-                  height={40}
-                  className="h-10 w-auto object-contain"
-                  style={{ 
-                    height: '40px',
-                    width: 'auto',
-                    objectFit: 'contain'
-                  }}
-                  priority
-                />
-              ) : (
-                <Image
-                  src={companyLogo}
-                  alt="Company Logo"
-                  width={40}
-                  height={40}
-                  className="h-10 w-auto object-contain"
-                  style={{ 
-                    height: '40px',
-                    width: 'auto',
-                    objectFit: 'contain'
-                  }}
-                  priority
-                />
-              )}
+
+          {/* Logo + Name */}
+          <Link href="/portal/admin" className="flex items-center gap-3 group">
+            <div className="relative">
+              <div className="w-9 h-9 rounded-xl bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center shadow-lg
+                            group-hover:scale-105 transition-transform duration-200 overflow-hidden">
+                {companyLogo ? (
+                  <Image
+                    src={companyLogo}
+                    alt="Logo"
+                    width={36}
+                    height={36}
+                    className="w-full h-full object-contain"
+                    priority
+                  />
+                ) : (
+                  <span className="text-white font-black text-lg">T</span>
+                )}
+              </div>
+              {/* Pulse dot */}
+              <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-amber-400 rounded-full border-2 border-orange-600 animate-pulse" />
             </div>
-            <h1 className="text-xl font-semibold text-gray-900">{companyName}</h1>
+            <div>
+              <h1 className="text-base font-bold text-white leading-tight tracking-tight">{companyName}</h1>
+              <p className="text-orange-200 text-[10px] font-medium tracking-widest uppercase">Admin Portal</p>
+            </div>
           </Link>
+
+          {/* Spacer */}
+          <div className="flex-1" />
+
+          {/* Right side badge */}
+          <div className="hidden sm:flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5">
+            <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+            <span className="text-white/90 text-xs font-medium">Live</span>
+          </div>
         </div>
       </div>
+
+      {/* Bottom shimmer line */}
+      <div className="h-px w-full" style={{background:'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)'}} />
     </header>
   );
 }

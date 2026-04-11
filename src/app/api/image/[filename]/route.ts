@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { env } from '@/lib/config'
 import { getCachedImage } from '@/lib/imageCache'
+import fs from 'fs'
+import path from 'path'
 // Note: Authentication imports removed as this endpoint serves public images
 
 // Note: S3 client is now handled by the image cache system
@@ -113,17 +115,11 @@ export async function GET(
       )
     }
 
-    // Validate AWS configuration
-    console.log(`🔧 [API] AWS Config - Region: ${env.AWS_REGION}, Bucket: ${env.AWS_S3_BUCKET}, AccessKey: ${env.AWS_ACCESS_KEY_ID ? 'SET' : 'MISSING'}, SecretKey: ${env.AWS_SECRET_ACCESS_KEY ? 'SET' : 'MISSING'}`)
-    console.log(`🔧 [API] Environment Variables - NODE_ENV: ${env.NODE_ENV}, AWS_S3_BUCKET: ${process.env.AWS_S3_BUCKET}, AWS_S3_BUCKET_NAME: ${process.env.AWS_S3_BUCKET_NAME}`)
+    // Check if AWS S3 is configured (bypass in local mode)
+    const isLocalMode = process.env.USE_LOCAL_MEM_DB === 'true' || env.AWS_ACCESS_KEY_ID === 'AKIARCBQR3FZLSKFJLGK';
     
-    if (!env.AWS_ACCESS_KEY_ID || !env.AWS_SECRET_ACCESS_KEY || !env.AWS_REGION || !env.AWS_S3_BUCKET) {
-      console.error('❌ [API] AWS S3 configuration missing:', {
-        AWS_ACCESS_KEY_ID: env.AWS_ACCESS_KEY_ID ? 'SET' : 'MISSING',
-        AWS_SECRET_ACCESS_KEY: env.AWS_SECRET_ACCESS_KEY ? 'SET' : 'MISSING',
-        AWS_REGION: env.AWS_REGION || 'MISSING',
-        AWS_S3_BUCKET: env.AWS_S3_BUCKET || 'MISSING'
-      })
+    if (!isLocalMode && (!env.AWS_ACCESS_KEY_ID || !env.AWS_SECRET_ACCESS_KEY || !env.AWS_REGION || !env.AWS_S3_BUCKET)) {
+      console.error('❌ [API] AWS S3 configuration missing');
       return NextResponse.json(
         { error: 'Image service not configured' },
         { status: 503 }
@@ -140,6 +136,30 @@ export async function GET(
         { error: filenameValidation.error },
         { status: 400 }
       )
+    }
+
+    // Attempt to serve from local directory first if in local mode
+    if (isLocalMode) {
+      const localImagePath = path.join(process.cwd(), 'public', 'uploads', filename);
+      
+      if (fs.existsSync(localImagePath)) {
+        const buffer = fs.readFileSync(localImagePath);
+        const ext = path.extname(filename).toLowerCase();
+        let contentType = 'image/jpeg';
+        if (ext === '.png') contentType = 'image/png';
+        if (ext === '.webp') contentType = 'image/webp';
+        if (ext === '.gif') contentType = 'image/gif';
+        
+        const response = new NextResponse(buffer as BodyInit, {
+          status: 200,
+          headers: {
+            'Content-Type': contentType,
+            'Content-Length': buffer.length.toString(),
+            'Cache-Control': 'public, max-age=86400',
+          },
+        });
+        return response;
+      }
     }
 
     // Security: Validate origin (optional for public images, but good practice)

@@ -18,6 +18,8 @@ import {
   ArrowRightOnRectangleIcon,
   XMarkIcon,
   BriefcaseIcon,
+  SparklesIcon,
+  ShieldExclamationIcon,
 } from '@heroicons/react/24/outline';
 
 const navigation = [
@@ -55,6 +57,16 @@ const navigation = [
     name: 'Analytics',
     href: '/portal/admin/analytics',
     icon: <ChartBarIcon className="w-5 h-5" />
+  },
+  {
+    name: 'Predictive AI',
+    href: '/portal/admin/predictive',
+    icon: <SparklesIcon className="w-5 h-5" />
+  },
+  {
+    name: 'Risk Intelligence',
+    href: '/portal/admin/risk',
+    icon: <ShieldExclamationIcon className="w-5 h-5" />
   },
   {
     name: 'Settings',
@@ -150,7 +162,7 @@ export default function AdminSidebar({ isCollapsed, onToggle, onHoverChange }: A
         data-sidebar
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className={`hidden lg:flex lg:flex-col lg:fixed lg:top-16 lg:bottom-0 lg:left-0 lg:z-50 lg:bg-gray-50 lg:border-r lg:border-gray-200 transition-all duration-300 ease-in-out ${
+        className={`hidden lg:flex lg:flex-col lg:fixed lg:top-16 lg:bottom-0 lg:left-0 lg:z-50 transition-all duration-300 ease-in-out sidebar-root ${
           isCollapsed && !isHovered ? 'lg:w-16' : 'lg:w-64'
         }`}
       >
@@ -167,15 +179,15 @@ export default function AdminSidebar({ isCollapsed, onToggle, onHoverChange }: A
               <Link
                 key={item.name}
                 href={item.href}
-                className={`group relative flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                className={`group relative flex items-center px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 ${
                   isActive
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                    ? 'nav-item-active'
+                    : 'nav-item-inactive'
                 } ${!shouldShowDetails ? 'justify-center' : ''}`}
                 title={!shouldShowDetails ? item.name : undefined}
               >
                 <span className={`flex-shrink-0 ${
-                  isActive ? 'text-white' : 'text-gray-400 group-hover:text-blue-600'
+                  isActive ? 'text-white' : 'text-neutral-400 group-hover:text-orange-600'
                 }`}>
                   {item.icon}
                 </span>
@@ -188,26 +200,26 @@ export default function AdminSidebar({ isCollapsed, onToggle, onHoverChange }: A
         </nav>
 
         {/* User Profile Section */}
-        <div className="px-4 py-4 border-t border-gray-200">
+        <div className="px-4 py-4 border-t border-orange-100">
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsProfileOpen(!isProfileOpen)}
-              className={`w-full flex items-center p-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
+              className={`w-full flex items-center p-2 text-sm text-neutral-700 hover:bg-orange-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-400 transition-colors ${
                 isCollapsed && !isHovered ? 'justify-center' : ''
               }`}
             >
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <span className="text-sm font-medium text-blue-600">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{background:'linear-gradient(135deg,#fb923c,#ea580c)'}}>
+                <span className="text-sm font-bold text-white">
                   {user?.firstName?.charAt(0) || 'A'}
                 </span>
               </div>
               {(!isCollapsed || isHovered) && (
                 <>
                   <div className="ml-3 flex-1 text-left">
-                    <p className="text-sm font-medium text-gray-900 truncate">
+                    <p className="text-sm font-semibold text-neutral-900 truncate">
                       {user?.firstName} {user?.lastName}
                     </p>
-                    <p className="text-xs text-gray-500">Administrator</p>
+                    <p className="text-xs text-orange-500 font-medium">Administrator</p>
                   </div>
                   <ChevronDownIcon className="w-4 h-4 text-gray-400" />
                 </>
@@ -215,27 +227,27 @@ export default function AdminSidebar({ isCollapsed, onToggle, onHoverChange }: A
             </button>
 
             {isProfileOpen && (
-              <div className={`absolute bottom-full left-0 mb-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200 ${
+              <div className={`absolute bottom-full left-0 mb-2 w-52 bg-white rounded-2xl shadow-xl py-2 z-50 border border-orange-100 animate-fade-in ${
                 isCollapsed ? 'left-4' : ''
               }`}>
                 <Link
                   href="/portal/profile"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                  className="block px-4 py-2.5 text-sm text-neutral-700 hover:bg-orange-50 hover:text-orange-700 transition-colors rounded-xl mx-1"
                   onClick={() => setIsProfileOpen(false)}
                 >
                   Your Profile
                 </Link>
                 <Link
                   href="/portal/dashboard"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                  className="block px-4 py-2.5 text-sm text-neutral-700 hover:bg-orange-50 hover:text-orange-700 transition-colors rounded-xl mx-1"
                   onClick={() => setIsProfileOpen(false)}
                 >
                   Employee Portal
                 </Link>
-                <div className="border-t border-gray-100"></div>
+                <div className="border-t border-orange-100 my-1"></div>
                 <button
                   onClick={handleSignOut}
-                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                  className="block w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors rounded-xl mx-1"
                 >
                   Sign Out
                 </button>
@@ -255,14 +267,14 @@ export default function AdminSidebar({ isCollapsed, onToggle, onHoverChange }: A
           />
           
           {/* Mobile Sidebar */}
-          <div className="fixed top-0 left-0 bottom-0 w-64 bg-white shadow-lg z-50">
+          <div className="fixed top-0 left-0 bottom-0 w-64 bg-white shadow-2xl z-50 border-r border-orange-100">
             <div className="flex flex-col h-full">
               {/* Mobile Header */}
-              <div className="flex items-center justify-between p-4 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900">Navigation</h2>
+              <div className="flex items-center justify-between p-4 border-b border-orange-100">
+                <h2 className="text-base font-bold text-neutral-900">Navigation</h2>
                 <button
                   onClick={onToggle}
-                  className="p-2 text-gray-600 hover:text-gray-900 transition-colors"
+                  className="p-2 text-neutral-500 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
                   aria-label="Close sidebar"
                 >
                   <XMarkIcon className="w-5 h-5" />
@@ -280,14 +292,14 @@ export default function AdminSidebar({ isCollapsed, onToggle, onHoverChange }: A
                       key={item.name}
                       href={item.href}
                       onClick={onToggle} // Close mobile sidebar when navigating
-                      className={`group relative flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                      className={`group relative flex items-center px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 ${
                         isActive
-                          ? 'bg-blue-600 text-white shadow-sm'
-                          : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                          ? 'nav-item-active'
+                          : 'nav-item-inactive'
                       }`}
                     >
                       <span className={`flex-shrink-0 ${
-                        isActive ? 'text-white' : 'text-gray-400 group-hover:text-blue-600'
+                        isActive ? 'text-white' : 'text-neutral-400 group-hover:text-orange-600'
                       }`}>
                         {item.icon}
                       </span>
@@ -298,20 +310,20 @@ export default function AdminSidebar({ isCollapsed, onToggle, onHoverChange }: A
               </nav>
 
               {/* Mobile User Profile Section */}
-              <div className="px-4 py-4 border-t border-gray-200">
+              <div className="px-4 py-4 border-t border-orange-100">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center">
+                    <div className="h-8 w-8 rounded-full flex items-center justify-center" style={{background:'linear-gradient(135deg,#fb923c,#ea580c)'}}>
                       <span className="text-sm font-medium text-white">
                         {user?.firstName?.charAt(0) || 'U'}
                       </span>
                     </div>
                   </div>
                   <div className="ml-3">
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-semibold text-neutral-900">
                       {user?.firstName} {user?.lastName}
                     </p>
-                    <p className="text-xs text-gray-500">{user?.emailAddresses?.[0]?.emailAddress || 'No email'}</p>
+                    <p className="text-xs text-orange-500">{user?.emailAddresses?.[0]?.emailAddress || 'No email'}</p>
                   </div>
                 </div>
                 
@@ -321,7 +333,7 @@ export default function AdminSidebar({ isCollapsed, onToggle, onHoverChange }: A
                     signOut();
                     onToggle();
                   }}
-                  className="mt-3 w-full flex items-center px-3 py-2 text-sm text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  className="mt-3 w-full flex items-center px-3 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium"
                 >
                   <ArrowRightOnRectangleIcon className="w-4 h-4 mr-3" />
                   Sign Out

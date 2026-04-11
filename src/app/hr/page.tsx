@@ -1,4 +1,4 @@
-﻿import Link from 'next/link'
+import Link from 'next/link'
 import Image from 'next/image'
 import { UsersIcon, ClockIcon, ShieldCheckIcon, BoltIcon, ArrowRightIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
 
@@ -294,7 +294,7 @@ export default function HRHomePage() {
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 HR Dashboard. All rights reserved.</p>
+            <p>&copy; 2026 HR Dashboard. All rights reserved.</p>
           </div>
         </div>
       </footer>
