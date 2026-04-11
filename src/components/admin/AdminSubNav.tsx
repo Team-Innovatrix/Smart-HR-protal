@@ -303,19 +303,19 @@ export const adminSubNavConfigs = {
       {
         id: 'overview',
         label: 'Overview',
-        href: '/admin/attendance',
+        href: '/portal/admin/attendance',
         icon: null,
       },
       {
         id: 'reports',
         label: 'Reports',
-        href: '/admin/attendance/reports',
+        href: '/portal/admin/attendance/reports',
         icon: null,
       },
       {
         id: 'settings',
         label: 'Settings',
-        href: '/admin/attendance/settings',
+        href: '/portal/admin/attendance/settings',
         icon: null,
       },
     ],
@@ -326,13 +326,13 @@ export const adminSubNavConfigs = {
       {
         id: 'all-users',
         label: 'All Users',
-        href: '/admin/users',
+        href: '/portal/admin/users',
         icon: null,
       },
       {
         id: 'roles',
         label: 'Roles & Permissions',
-        href: '/admin/users/roles',
+        href: '/portal/admin/users/roles',
         icon: null,
       },
       {
@@ -349,20 +349,20 @@ export const adminSubNavConfigs = {
       {
         id: 'requests',
         label: 'Leave Requests',
-        href: '/admin/leaves',
+        href: '/portal/admin/leaves',
         icon: null,
         badge: 5,
       },
       {
         id: 'policies',
         label: 'Policies',
-        href: '/admin/leaves/policies',
+        href: '/portal/admin/leaves/policies',
         icon: null,
       },
       {
         id: 'calendar',
         label: 'Calendar',
-        href: '/admin/leaves/calendar',
+        href: '/portal/admin/leaves/calendar',
         icon: null,
       },
     ],

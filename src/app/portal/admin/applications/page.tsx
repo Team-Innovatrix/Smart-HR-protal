@@ -178,13 +178,13 @@ export default function AdminApplications() {
             {/* Admin Navigation */}
             <div className="mt-4 flex space-x-4">
               <a
-                href="/admin/applications"
+                href="/portal/admin/applications"
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Applications
               </a>
               <a
-                href="/admin/leads"
+                href="/portal/admin/leads"
                 className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
               >
                 Leads

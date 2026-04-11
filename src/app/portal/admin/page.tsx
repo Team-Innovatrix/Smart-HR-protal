@@ -184,7 +184,7 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-semibold text-gray-900">Recent Leave Requests</h3>
             <Link
-              href="/admin/leaves"
+              href="/portal/admin/leaves"
               className="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
             >
               View all →
@@ -221,7 +221,7 @@ export default function AdminDashboard() {
         <h3 className="text-xl font-semibold text-gray-900 mb-6">Quick Actions</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Link
-            href="/admin/users"
+            href="/portal/admin/users"
             className="group flex items-center p-6 border border-gray-200 rounded-xl hover:border-blue-300 hover:bg-blue-50 transition-all duration-300 hover:shadow-md"
           >
             <div className="p-3 bg-blue-100 rounded-xl group-hover:bg-blue-200 transition-colors">
@@ -236,7 +236,7 @@ export default function AdminDashboard() {
           </Link>
 
           <Link
-            href="/admin/leaves"
+            href="/portal/admin/leaves"
             className="group flex items-center p-6 border border-gray-200 rounded-xl hover:border-green-300 hover:bg-green-50 transition-all duration-300 hover:shadow-md"
           >
             <div className="p-3 bg-green-100 rounded-xl group-hover:bg-green-200 transition-colors">
@@ -251,7 +251,7 @@ export default function AdminDashboard() {
           </Link>
 
           <Link
-            href="/admin/analytics"
+            href="/portal/admin/analytics"
             className="group flex items-center p-6 border border-gray-200 rounded-xl hover:border-purple-300 hover:bg-purple-50 transition-all duration-300 hover:shadow-md"
           >
             <div className="p-3 bg-purple-100 rounded-xl group-hover:bg-purple-200 transition-colors">
