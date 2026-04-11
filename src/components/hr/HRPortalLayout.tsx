@@ -12,6 +12,7 @@ import {
   UsersIcon,
   DocumentTextIcon,
   Cog6ToothIcon,
+  ShieldCheckIcon,
   Bars3Icon,
   XMarkIcon,
   ArrowRightOnRectangleIcon,
@@ -80,7 +81,7 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
     )
   }
 
-  const navigation = [
+  const baseNavigation = [
     { name: 'Dashboard', href: getHRPortalPath('dashboard'), icon: HomeIcon, current: currentPage === 'home', description: 'Overview and insights' },
     { name: 'Attendance', href: getHRPortalPath('attendance'), icon: ClockIcon, current: currentPage === 'attendance', description: 'Clock in/out and tracking' },
     { name: 'Leaves', href: getHRPortalPath('leaves'), icon: CalendarIcon, current: currentPage === 'leaves', description: 'Request and manage time off' },
@@ -89,6 +90,12 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
     { name: 'Documents', href: getHRPortalPath('documents'), icon: DocumentTextIcon, current: currentPage === 'documents', description: 'File management' },
     { name: 'Settings', href: getHRPortalPath('settings'), icon: Cog6ToothIcon, current: currentPage === 'settings', description: 'Preferences and security' },
   ]
+
+  const isAdmin = user?.publicMetadata?.role === 'admin' || user?.publicMetadata?.role === 'HR Manager' || user?.publicMetadata?.roleId === 'admin'
+
+  const navigation = isAdmin 
+    ? [...baseNavigation, { name: 'HR Administration', href: '/portal/admin', icon: ShieldCheckIcon, current: false, description: 'Manage HR System' }]
+    : baseNavigation
 
   const isCurrentPage = (href: string) => {
     if (href === getHRPortalPath('dashboard') && currentPage === 'dashboard') return true
