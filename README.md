@@ -81,41 +81,6 @@ src/
 └── lib/                  # Utility functions (if any)
 ```
 
-## 🎨 Customization
-
-### Colors
-The website uses a blue-based color scheme. You can customize colors in `tailwind.config.js`:
-
-```js
-module.exports = {
-  theme: {
-    extend: {
-      colors: {
-        primary: {
-          50: '#eff6ff',
-          600: '#2563eb',
-          700: '#1d4ed8',
-        }
-      }
-    }
-  }
-}
-```
-
-### Content
-All content is stored in the component files. Update the data arrays in each page component to modify:
-- Service offerings
-- Pricing information
-- Team details
-- Contact information
-- Testimonials
-
-### Styling
-The website uses Tailwind CSS utility classes. You can:
-- Modify existing classes
-- Add custom CSS in `globals.css`
-- Create new component classes
-
 ## 📱 Responsive Design
 
 The website is built with a mobile-first approach:
