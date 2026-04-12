@@ -1,4 +1,4 @@
-﻿import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
@@ -59,11 +59,19 @@ const isPublicRoute = createRouteMatcher([
   '/portal$', // This will match subdomain root only
 ])
 
-export default clerkMiddleware((auth, req: NextRequest) => {
-  // Admin routes are protected at the API/page level via checkHRManagerAccess
-  // We don't add DB-dependent checks here to avoid Edge runtime issues
+// If Clerk publishable key is not configured, use a simple passthrough middleware
+// to avoid MIDDLEWARE_INVOCATION_FAILED on Vercel when key is not set
+const hasClerkKey = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+
+function passthroughMiddleware(_req: NextRequest) {
   return NextResponse.next()
-})
+}
+
+export default hasClerkKey
+  ? clerkMiddleware((_auth, _req: NextRequest) => {
+      return NextResponse.next()
+    })
+  : passthroughMiddleware
 
 export const config = {
   matcher: [
