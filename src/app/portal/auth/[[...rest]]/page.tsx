@@ -3,7 +3,7 @@
 import { SignIn, SignUp } from '@clerk/nextjs'
 import { useState } from 'react'
 import Link from 'next/link'
-import { DEV_USER } from '../../../lib/devAuth'
+import { DEV_USER } from '../../../../lib/devAuth'
 
 // Synchronous check — NEXT_PUBLIC_* vars are inlined at build time
 const IS_DEV_BYPASS = !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
