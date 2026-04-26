@@ -3,27 +3,25 @@
 import Link from 'next/link';
 import { useState, useMemo } from 'react';
 import { BlogPost } from '@/lib/blogUtils';
-import { useTimezone } from '../lib/hooks/useTimezone';
+
+// Simple date formatter — no timezone context needed on public pages
+function formatBlogDate(dateString: string): string {
+  if (!dateString || dateString === 'Invalid Date') return ''
+  try {
+    return new Date(dateString).toLocaleDateString('en-IN', {
+      year: 'numeric', month: 'long', day: 'numeric'
+    })
+  } catch {
+    return ''
+  }
+}
 
 interface BlogFiltersProps {
   blogs: BlogPost[];
 }
 
 export default function BlogFilters({ blogs }: BlogFiltersProps) {
-  const { formatDateString } = useTimezone();
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
-
-  const safeFormatDate = (dateString: string, format: string) => {
-    if (!dateString || dateString === 'Invalid Date') {
-      return 'Invalid Date'
-    }
-    try {
-      return formatDateString(dateString, format)
-    } catch (error) {
-      console.error('Error formatting date:', dateString, error)
-      return 'Invalid Date'
-    }
-  };
   
   // Define available categories
   const categories = ['All', 'Business', 'Technology', 'Backend', 'Frontend', 'HR', 'AI'];
@@ -81,7 +79,7 @@ export default function BlogFilters({ blogs }: BlogFiltersProps) {
                 
                 <div className="flex items-center justify-between">
                   <time className="text-sm text-gray-500">
-                    {safeFormatDate(blog.date, 'MMMM d, yyyy')}
+                    {formatBlogDate(blog.date)}
                   </time>
                   
                   <Link

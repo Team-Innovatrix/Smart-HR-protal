@@ -1,33 +1,22 @@
 import { ClerkProvider } from '@clerk/nextjs'
-import { DEV_BYPASS_ENABLED } from '@/lib/devAuth'
 
 export default function ClerkProviderWrapper({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || 'pk_test_Y2xlcmsuY2xlcmsuZGV2JA=='
+  const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 
-  // Debug logging
-  console.log('🔍 ClerkProviderWrapper Debug:', {
-    hasPublishableKey: !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
-    keyPrefix: publishableKey.substring(0, 7),
-    environment: process.env.NODE_ENV,
-    timestamp: new Date().toISOString()
-  })
-
-  // We always render ClerkProvider with the fallback dummy key so that useAuth() inside pages doesn't throw.
-  // The pages will see user = null, but our devAuth bypass will provide the mock user.
-
-  console.log('✅ ClerkProvider initializing with key:', publishableKey.substring(0, 20) + '...')
-
-  if (DEV_BYPASS_ENABLED) {
-    return <>{children}</>
+  if (!publishableKey) {
+    // This should never happen in production if env vars are set correctly.
+    // Render children anyway so the app doesn't hard-crash — Clerk components
+    // will simply show an "invalid key" warning instead of a full crash.
+    console.warn('[ClerkProviderWrapper] NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is not set.')
   }
 
   return (
     <ClerkProvider
-      publishableKey={publishableKey}
+      publishableKey={publishableKey || ''}
       appearance={{
         variables: {
           colorPrimary: '#2563eb',

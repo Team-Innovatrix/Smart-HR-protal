@@ -160,8 +160,8 @@ const nextConfig = {
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
   },
 
-  // Output optimization
-  output: 'standalone',
+  // Output: do NOT use 'standalone' on Vercel — Vercel manages its own output format
+  // output: 'standalone',
 
   // Experimental features - updated for Next.js 16+
   experimental: {
@@ -170,7 +170,7 @@ const nextConfig = {
     optimizeCss: true,
   },
 
-  // Turbopack configuration - Next.js 16 uses Turbopack by default
+  // Turbopack configuration — required by Next.js 16 to acknowledge Turbopack mode
   turbopack: {
     root: __dirname,
   },

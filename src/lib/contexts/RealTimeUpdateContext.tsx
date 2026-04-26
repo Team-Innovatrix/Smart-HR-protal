@@ -13,7 +13,13 @@ const RealTimeUpdateContext = createContext<RealTimeUpdateContextType | undefine
 export const useRealTimeUpdates = () => {
   const context = useContext(RealTimeUpdateContext)
   if (!context) {
-    throw new Error('useRealTimeUpdates must be used within a RealTimeUpdateProvider')
+    // Return safe no-ops instead of throwing — prevents full React tree crash
+    // if a component using this hook renders outside the provider tree.
+    return {
+      triggerAttendanceUpdate: () => {},
+      subscribeToAttendanceUpdates: (_callback: () => void) => () => {},
+      isUpdating: false,
+    }
   }
   return context
 }

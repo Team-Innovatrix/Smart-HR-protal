@@ -16,7 +16,15 @@ const ProfileContext = createContext<ProfileContextType | undefined>(undefined)
 export function useProfile() {
   const context = useContext(ProfileContext)
   if (context === undefined) {
-    throw new Error('useProfile must be used within a ProfileSyncProvider')
+    // Return safe defaults instead of throwing — prevents crash when
+    // a component renders outside the provider tree on initial hydration.
+    return {
+      profile: null,
+      loading: false,
+      error: null,
+      syncProfile: async () => {},
+      refreshProfile: async () => false,
+    } as ProfileContextType
   }
   return context
 }

@@ -1,13 +1,11 @@
 /**
  * Authentication Bypass
  *
- * When NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is not set (dev OR production),
- * this module provides a mock authenticated admin user so the app works
- * without a real Clerk account configured.
+ * DEV_BYPASS is permanently disabled. The app always uses real Clerk auth.
+ * This file is kept for backward compatibility with existing imports.
  */
 
-export const DEV_BYPASS_ENABLED =
-  !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+export const DEV_BYPASS_ENABLED = false;
 
 export const DEV_USER = {
   userId: 'dev_user_admin_001',
@@ -15,5 +13,5 @@ export const DEV_USER = {
   firstName: 'Mohit',
   lastName: 'Mohatkar',
   role: 'Chief Executive Officer',
-  permissions: ['*'], // All permissions in dev
+  permissions: ['*'],
 };
