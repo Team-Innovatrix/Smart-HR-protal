@@ -40,10 +40,10 @@ export default function AdminLayout({
 
   return (
     <AdminAuthGuard>
-      <div className="min-h-screen" style={{background:'linear-gradient(135deg, #fff7ed 0%, #ffffff 40%, #fffbf7 100%)'}}>
+      <div className="min-h-screen" style={{background:'linear-gradient(135deg, #f8fafc 0%, #eef2ff 40%, #f0fdfa 100%)'}}>
         {/* Subtle dot pattern */}
-        <div className="fixed inset-0 pointer-events-none opacity-30"
-          style={{backgroundImage:'radial-gradient(circle, #fb923c 1px, transparent 1px)', backgroundSize:'32px 32px'}} />
+        <div className="fixed inset-0 pointer-events-none opacity-[0.15]"
+          style={{backgroundImage:'radial-gradient(circle, #818cf8 0.5px, transparent 0.5px)', backgroundSize:'28px 28px'}} />
         {/* Navbar */}
         <AdminHeader
           onToggleSidebar={toggleSidebar}
@@ -67,8 +67,8 @@ export default function AdminLayout({
                 <Suspense fallback={
                   <div className="flex items-center justify-center h-64">
                     <div className="flex flex-col items-center gap-3">
-                      <div className="w-10 h-10 rounded-full border-4 border-orange-200 border-t-orange-500 animate-spin" />
-                      <p className="text-sm text-orange-500 font-medium">Loading...</p>
+                      <div className="w-10 h-10 rounded-full border-4 border-indigo-200 border-t-indigo-500 animate-spin" />
+                      <p className="text-sm text-indigo-500 font-medium">Loading...</p>
                     </div>
                   </div>
                 }>

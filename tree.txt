@@ -1,0 +1,634 @@
+Folder PATH listing
+Volume serial number is 3067-445F
+E:\TIELO-MAIN\TIELO-MAIN\SRC
+|   middleware.ts
+|   
++---app
+|   |   ClerkProviderWrapper.tsx
+|   |   favicon.ico
+|   |   globals.css
+|   |   layout.tsx
+|   |   page.tsx
+|   |   
+|   +---about
+|   |       page.tsx
+|   |       
+|   +---admin
+|   |       not-found.tsx
+|   |       
+|   +---api
+|   |   +---admin
+|   |   |   |   route.ts
+|   |   |   |   
+|   |   |   +---analytics
+|   |   |   |   |   route.ts
+|   |   |   |   |   
+|   |   |   |   +---attendance
+|   |   |   |   |       route.ts
+|   |   |   |   |       
+|   |   |   |   +---exits
+|   |   |   |   |       route.ts
+|   |   |   |   |       
+|   |   |   |   +---hires
+|   |   |   |   |       route.ts
+|   |   |   |   |       
+|   |   |   |   \---seniority
+|   |   |   |           route.ts
+|   |   |   |           
+|   |   |   +---attendance
+|   |   |   |       route.ts
+|   |   |   |       
+|   |   |   +---holidays
+|   |   |   |   |   route.ts
+|   |   |   |   |   
+|   |   |   |   \---[holidayId]
+|   |   |   |           route.ts
+|   |   |   |           
+|   |   |   +---jobs
+|   |   |   |   |   route.ts
+|   |   |   |   |   
+|   |   |   |   +---bulk
+|   |   |   |   |       route.ts
+|   |   |   |   |       
+|   |   |   |   \---[id]
+|   |   |   |           route.ts
+|   |   |   |           
+|   |   |   +---leaves
+|   |   |   |   |   route.ts
+|   |   |   |   |   
+|   |   |   |   \---bulk
+|   |   |   |           route.ts
+|   |   |   |           
+|   |   |   +---orgstructure
+|   |   |   |   |   route.ts
+|   |   |   |   |   
+|   |   |   |   +---departments
+|   |   |   |   |       route.ts
+|   |   |   |   |       
+|   |   |   |   \---positions
+|   |   |   |           route.ts
+|   |   |   |           
+|   |   |   +---payroll
+|   |   |   |       route.ts
+|   |   |   |       
+|   |   |   +---permissions
+|   |   |   |       route.ts
+|   |   |   |       
+|   |   |   +---roles
+|   |   |   |   |   route.ts
+|   |   |   |   |   
+|   |   |   |   \---[roleId]
+|   |   |   |           route.ts
+|   |   |   |           
+|   |   |   +---settings
+|   |   |   |       route.ts
+|   |   |   |       
+|   |   |   +---teams
+|   |   |   |   |   route.ts
+|   |   |   |   |   
+|   |   |   |   \---[teamId]
+|   |   |   |           route.ts
+|   |   |   |           
+|   |   |   \---users
+|   |   |       |   route.ts
+|   |   |       |   
+|   |   |       +---add-clerk-users
+|   |   |       |       route.ts
+|   |   |       |       
+|   |   |       +---bulk
+|   |   |       |       route.ts
+|   |   |       |       
+|   |   |       +---clerk-users
+|   |   |       |       route.ts
+|   |   |       |       
+|   |   |       +---list
+|   |   |       |       route.ts
+|   |   |       |       
+|   |   |       +---search
+|   |   |       |       route.ts
+|   |   |       |       
+|   |   |       \---[userId]
+|   |   |               route.ts
+|   |   |               
+|   |   +---applications
+|   |   |   |   route.ts
+|   |   |   |   
+|   |   |   \---[applicationId]
+|   |   |           route.ts
+|   |   |           
+|   |   +---attendance
+|   |   |   |   route.ts
+|   |   |   |   
+|   |   |   \---team
+|   |   |           route.ts
+|   |   |           
+|   |   +---auth
+|   |   |   \---dev-login
+|   |   |           route.ts
+|   |   |           
+|   |   +---cache
+|   |   |   +---manage
+|   |   |   |       route.ts
+|   |   |   |       
+|   |   |   \---stats
+|   |   |           route.ts
+|   |   |           
+|   |   +---chat
+|   |   |   |   route.ts
+|   |   |   |   
+|   |   |   \---contacts
+|   |   |           route.ts
+|   |   |           
+|   |   +---education
+|   |   |   |   route.ts
+|   |   |   |   
+|   |   |   \---[id]
+|   |   |           route.ts
+|   |   |           
+|   |   +---experience
+|   |   |   |   route.ts
+|   |   |   |   
+|   |   |   \---[id]
+|   |   |           route.ts
+|   |   |           
+|   |   +---health
+|   |   |       route.ts
+|   |   |       
+|   |   +---holidays
+|   |   |       route.ts
+|   |   |       
+|   |   +---image
+|   |   |   +---cache
+|   |   |   |   +---manage
+|   |   |   |   |       route.ts
+|   |   |   |   |       
+|   |   |   |   \---stats
+|   |   |   |           route.ts
+|   |   |   |           
+|   |   |   \---[filename]
+|   |   |           route.ts
+|   |   |           
+|   |   +---jobs
+|   |   |   |   route.ts
+|   |   |   |   
+|   |   |   \---[jobId]
+|   |   |           route.ts
+|   |   |           
+|   |   +---leads
+|   |   |       route.ts
+|   |   |       
+|   |   +---leaves
+|   |   |   |   route.ts
+|   |   |   |   
+|   |   |   +---balance
+|   |   |   |       route.ts
+|   |   |   |       
+|   |   |   +---direct-reports
+|   |   |   |       route.ts
+|   |   |   |       
+|   |   |   +---stats
+|   |   |   |       route.ts
+|   |   |   |       
+|   |   |   +---team
+|   |   |   |       route.ts
+|   |   |   |       
+|   |   |   \---[leaveId]
+|   |   |           route.ts
+|   |   |           
+|   |   +---notifications
+|   |   |       route.ts
+|   |   |       
+|   |   +---profile
+|   |   |   |   route.ts
+|   |   |   |   
+|   |   |   +---reportees
+|   |   |   |       route.ts
+|   |   |   |       
+|   |   |   +---sync
+|   |   |   |       route.ts
+|   |   |   |       
+|   |   |   \---team-membership
+|   |   |           route.ts
+|   |   |           
+|   |   +---regularization
+|   |   |   |   route.ts
+|   |   |   |   
+|   |   |   +---admin
+|   |   |   |       route.ts
+|   |   |   |       
+|   |   |   +---manager
+|   |   |   |       route.ts
+|   |   |   |       
+|   |   |   +---my
+|   |   |   |       route.ts
+|   |   |   |       
+|   |   |   +---team
+|   |   |   |       route.ts
+|   |   |   |       
+|   |   |   \---[requestId]
+|   |   |           route.ts
+|   |   |           
+|   |   +---settings
+|   |   |       route.ts
+|   |   |       
+|   |   +---teams
+|   |   |   |   route.ts
+|   |   |   |   
+|   |   |   \---stats
+|   |   |           route.ts
+|   |   |           
+|   |   +---timezones
+|   |   |       route.ts
+|   |   |       
+|   |   +---upload
+|   |   |   \---image
+|   |   |           route.ts
+|   |   |           
+|   |   +---user
+|   |   |   +---settings
+|   |   |   |       route.ts
+|   |   |   |       
+|   |   |   \---timezone
+|   |   |           route.ts
+|   |   |           
+|   |   +---voice-commands
+|   |   |   |   route.ts
+|   |   |   |   
+|   |   |   \---langgraph
+|   |   |       +---process
+|   |   |       |       route.ts
+|   |   |       |       
+|   |   |       \---session
+|   |   |           +---create
+|   |   |           |       route.ts
+|   |   |           |       
+|   |   |           +---delete
+|   |   |           |       route.ts
+|   |   |           |       
+|   |   |           +---get
+|   |   |           |       route.ts
+|   |   |           |       
+|   |   |           \---update
+|   |   |                   route.ts
+|   |   |                   
+|   |   +---voice-sessions
+|   |   |       route.ts
+|   |   |       
+|   |   \---webhooks
+|   |       \---clerk
+|   |               route.ts
+|   |               
+|   +---apply
+|   |   \---[jobId]
+|   |           page.tsx
+|   |           
+|   +---blogs
+|   |   |   not-found.tsx
+|   |   |   page.tsx
+|   |   |   
+|   |   \---[slug]
+|   |           page.tsx
+|   |           
+|   +---careers
+|   |       page.tsx
+|   |       
+|   +---case-studies
+|   |       page.tsx
+|   |       
+|   +---contact
+|   |       page.tsx
+|   |       
+|   +---hr
+|   |       page.tsx
+|   |       
+|   +---portal
+|   |   |   layout.tsx
+|   |   |   page.tsx
+|   |   |   
+|   |   +---admin
+|   |   |   |   layout.tsx
+|   |   |   |   page.tsx
+|   |   |   |   
+|   |   |   +---access-denied
+|   |   |   |       page.tsx
+|   |   |   |       
+|   |   |   +---analytics
+|   |   |   |       page.tsx
+|   |   |   |       
+|   |   |   +---applications
+|   |   |   |       page.tsx
+|   |   |   |       
+|   |   |   +---attendance
+|   |   |   |       page.tsx
+|   |   |   |       
+|   |   |   +---jobs
+|   |   |   |   |   ApplicationsTab.tsx
+|   |   |   |   |   JobsTabsWrapper.tsx
+|   |   |   |   |   page.tsx
+|   |   |   |   |   
+|   |   |   |   +---new
+|   |   |   |   |       page.tsx
+|   |   |   |   |       
+|   |   |   |   \---[id]
+|   |   |   |           page.tsx
+|   |   |   |           
+|   |   |   +---leads
+|   |   |   |       page.tsx
+|   |   |   |       
+|   |   |   +---leaves
+|   |   |   |       page.tsx
+|   |   |   |       
+|   |   |   +---predictive
+|   |   |   |       page.tsx
+|   |   |   |       
+|   |   |   +---risk
+|   |   |   |       page.tsx
+|   |   |   |       
+|   |   |   +---settings
+|   |   |   |       page.tsx
+|   |   |   |       
+|   |   |   +---teams
+|   |   |   |       page.tsx
+|   |   |   |       
+|   |   |   \---users
+|   |   |       |   page.tsx
+|   |   |       |   
+|   |   |       \---onboarding
+|   |   |               page.tsx
+|   |   |               
+|   |   +---attendance
+|   |   |       page.tsx
+|   |   |       
+|   |   +---auth
+|   |   |   |   layout.tsx
+|   |   |   |   page.tsx
+|   |   |   |   
+|   |   |   +---sign-in
+|   |   |   |       page.tsx
+|   |   |   |       
+|   |   |   \---sign-up
+|   |   |           page.tsx
+|   |   |           
+|   |   +---chat
+|   |   |       page.tsx
+|   |   |       
+|   |   +---dashboard
+|   |   |       page.tsx
+|   |   |       
+|   |   +---documents
+|   |   |       page.tsx
+|   |   |       
+|   |   +---jobs
+|   |   |       page.tsx
+|   |   |       
+|   |   +---leaves
+|   |   |       page.tsx
+|   |   |       
+|   |   +---notifications
+|   |   |       page.tsx
+|   |   |       
+|   |   +---profile
+|   |   |       page.tsx
+|   |   |       
+|   |   +---settings
+|   |   |       page.tsx
+|   |   |       
+|   |   +---team
+|   |   |       page.tsx
+|   |   |       
+|   |   \---voice-chat
+|   |           page.tsx
+|   |           
+|   \---services
+|           page.tsx
+|           
++---components
+|   |   BlogFilters.tsx
+|   |   Footer.tsx
+|   |   Navigation.tsx
+|   |   ProfilePhoto.tsx
+|   |   VoiceCommandChat.tsx
+|   |   VoiceCommandChatSimple.tsx
+|   |   
+|   +---admin
+|   |       AdminAuthGuard.tsx
+|   |       AdminHeader.tsx
+|   |       AdminRegularizationModal.tsx
+|   |       AdminSidebar.tsx
+|   |       AdminSubNav.tsx
+|   |       AdminTabs.example.md
+|   |       AdminTabs.tsx
+|   |       BarChart.tsx
+|   |       ClerkUsersModal.tsx
+|   |       ClusteredBarChart.tsx
+|   |       ConfirmationModal.tsx
+|   |       HorizontalBarChart.tsx
+|   |       ManagerSearchComponent.tsx
+|   |       UserEditModal.tsx
+|   |       
+|   +---global
+|   |       AddEducation.tsx
+|   |       AddEducationExample.tsx
+|   |       AddExperience.tsx
+|   |       Button.tsx
+|   |       FormInput.tsx
+|   |       GlobalImageDisplay.tsx
+|   |       GlobalImageUpload.tsx
+|   |       IconWrapper.tsx
+|   |       ImageCacheManager.tsx
+|   |       index.ts
+|   |       Loading.tsx
+|   |       ResponsiveTable.tsx
+|   |       TimezoneErrorBoundary.tsx
+|   |       TimezoneSelector.tsx
+|   |       
+|   \---hr
+|           ApprovedLeaves.tsx
+|           DashboardSummaryCards.tsx
+|           DatePicker.tsx
+|           DocumentManagement.tsx
+|           GaugeChart.tsx
+|           HRNavbar.tsx
+|           HRPortalLayout.tsx
+|           LeaveBalanceCharts.tsx
+|           LeaveCalendar.tsx
+|           LeaveHistory.tsx
+|           LeaveRequestForm.tsx
+|           LocationDisplay.tsx
+|           MicIcon.tsx
+|           MyAttendance.tsx
+|           NotificationBell.tsx
+|           PendingApprovals.tsx
+|           PredictiveAIFeatures.tsx
+|           ProfileSyncProvider.tsx
+|           RecentActivityWidget.tsx
+|           RegularizationModal.tsx
+|           RegularizationRequestManager.tsx
+|           SettingsConfiguration.tsx
+|           TeamAttendance.tsx
+|           TeamLeaveCalendar.tsx
+|           TeamLeavePlan.tsx
+|           TeamManagement.tsx
+|           Teams.tsx
+|           TeamStatsView.tsx
+|           UpcomingLeave.tsx
+|           UserProfileManagement.tsx
+|           
++---data
+|       leavePolicy.ts
+|       
++---lib
+|   |   adminAuth.ts
+|   |   attendanceUtils.ts
+|   |   auth.ts
+|   |   blogUtils.ts
+|   |   cachedServices.ts
+|   |   config.ts
+|   |   cors.ts
+|   |   dateQueryUtils.ts
+|   |   dateUtils.ts
+|   |   devAuth.ts
+|   |   devAuthWrapper.ts
+|   |   emailService.ts
+|   |   enhancedCache.ts
+|   |   geolocationUtils.ts
+|   |   imageCache.ts
+|   |   inputValidation.ts
+|   |   leaveCalculationUtils.ts
+|   |   leaveConfigService.ts
+|   |   locationPermissionUtils.ts
+|   |   logger.ts
+|   |   mongodb.ts
+|   |   notificationService.ts
+|   |   openaiService.ts
+|   |   profilePhotoUtils.ts
+|   |   profileSyncService.ts
+|   |   rateLimiter.ts
+|   |   redisCache.ts
+|   |   securityHeaders.ts
+|   |   settingsService.ts
+|   |   timezoneService.ts
+|   |   timezoneSyncService.ts
+|   |   timezoneUtils.ts
+|   |   urlUtils.ts
+|   |   utils.ts
+|   |   validateEnvironment.ts
+|   |   voiceCommandClient.ts
+|   |   voiceCommandStorage.ts
+|   |   voiceRecorder.ts
+|   |   
+|   +---contexts
+|   |       ImageContext.tsx
+|   |       RealTimeUpdateContext.tsx
+|   |       TimezoneContext.tsx
+|   |       
+|   +---hooks
+|   |       useDevSafeClerk.ts
+|   |       useImageCache.ts
+|   |       useImageDisplay.ts
+|   |       useImageUpload.ts
+|   |       useProfilePhoto.ts
+|   |       useProfileSync.ts
+|   |       useSystemSettings.ts
+|   |       useTimezone.ts
+|   |       
+|   +---image
+|   |       index.ts
+|   |       
+|   +---langGraph
+|   |   |   index.ts
+|   |   |   
+|   |   +---config
+|   |   |       availableIntents.ts
+|   |   |       parameterRequirements.ts
+|   |   |       
+|   |   +---nodes
+|   |   |   |   confirmation.ts
+|   |   |   |   dataCollection.ts
+|   |   |   |   execution.ts
+|   |   |   |   informationCompletion.ts
+|   |   |   |   intentContinuity.ts
+|   |   |   |   intentExtraction.ts
+|   |   |   |   
+|   |   |   \---actions
+|   |   |           applyLeave.ts
+|   |   |           clockIn.ts
+|   |   |           clockOut.ts
+|   |   |           getLeaveBalance.ts
+|   |   |           index.ts
+|   |   |           viewAttendanceHistory.ts
+|   |   |           viewTeamAttendance.ts
+|   |   |           viewTeamLeaves.ts
+|   |   |           
+|   |   +---types
+|   |   |       session.ts
+|   |   |       state.ts
+|   |   |       workflow.ts
+|   |   |       
+|   |   +---utils
+|   |   |       logger.ts
+|   |   |       
+|   |   \---workflows
+|   |       |   coreRouter.ts
+|   |       |   workflowEngine.ts
+|   |       |   
+|   |       +---conditions
+|   |       |       intent.ts
+|   |       |       
+|   |       \---definitions
+|   |               core.ts
+|   |               
+|   +---services
+|   |       attendanceService.ts
+|   |       imageService.ts
+|   |       
+|   +---session
+|   |       contextManager.ts
+|   |       sessionManager.ts
+|   |       sessionStore.ts
+|   |       
+|   +---utils
+|   |       breakpointUtils.ts
+|   |       iconUtils.ts
+|   |       imageUtils.ts
+|   |       loadingUtils.ts
+|   |       spacingUtils.ts
+|   |       textUtils.ts
+|   |       visualUtils.ts
+|   |       
+|   \---validation
+|           job.ts
+|           
++---models
+|   |   Application.ts
+|   |   Attendance.ts
+|   |   ChatMessage.ts
+|   |   Education.ts
+|   |   Job.ts
+|   |   Lead.ts
+|   |   Leave.ts
+|   |   Notification.ts
+|   |   OrgStructure.ts
+|   |   RegularizationRequest.ts
+|   |   Role.ts
+|   |   SystemSettings.ts
+|   |   Team.ts
+|   |   UserProfile.ts
+|   |   UserSettings.ts
+|   |   VoiceCommand.ts
+|   |   VoiceSession.ts
+|   |   
+|   \---careers
+|           Application.ts
+|           Job.ts
+|           
+\---scripts
+        checkHRDatabase.ts
+        cleanupFakeUsers.ts
+        createCoffeeTeam.ts
+        seedApplications.ts
+        seedCareersJobs.ts
+        seedDatabase.ts
+        seedDefaultRoles.ts
+        upsertManagerRelation.ts
+        

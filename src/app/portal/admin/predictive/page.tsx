@@ -2,64 +2,28 @@
 
 import BarChart from '@/components/admin/BarChart';
 import { SparklesIcon } from '@heroicons/react/24/outline';
+import { 
+  ArrowTrendingUpIcon, 
+  LightBulbIcon, 
+  CpuChipIcon,
+  ShieldCheckIcon,
+  UserGroupIcon
+} from '@heroicons/react/24/outline';
 
-const mockTurnoverPredictionData = {
-  chartData: [
-    { month: 'May 26', predicted: 2, baseline: 3 },
-    { month: 'Jun 26', predicted: 3, baseline: 3 },
-    { month: 'Jul 26', predicted: 5, baseline: 3 },
-    { month: 'Aug 26', predicted: 2, baseline: 4 },
-    { month: 'Sep 26', predicted: 1, baseline: 3 },
-    { month: 'Oct 26', predicted: 3, baseline: 4 },
-  ],
-  legend: [
-    { key: 'predicted', label: 'Predicted Exits', color: '#E11D48' }, // rose-600
-    { key: 'baseline', label: 'Historical Baseline', color: '#94A3B8' } // slate-400
-  ]
-};
-
-const mockPerformanceForecastData = {
-  chartData: [
-    { month: 'Q2 2026', score: 85, target: 80 },
-    { month: 'Q3 2026', score: 88, target: 82 },
-    { month: 'Q4 2026', score: 92, target: 85 },
-    { month: 'Q1 2027', score: 95, target: 88 }
-  ],
-  legend: [
-    { key: 'score', label: 'Forecasted Score', color: '#4F46E5' }, // indigo-600
-    { key: 'target', label: 'Target Score', color: '#CBD5E1' } // slate-300
-  ]
-};
-
-const mockLeavePredictionData = {
-  chartData: [
-    { month: 'May', sick: 12, vacation: 25, personal: 5 },
-    { month: 'Jun', sick: 10, vacation: 45, personal: 8 },
-    { month: 'Jul', sick: 8, vacation: 85, personal: 10 },
-    { month: 'Aug', sick: 15, vacation: 65, personal: 12 },
-    { month: 'Sep', sick: 25, vacation: 20, personal: 5 },
-    { month: 'Oct', sick: 35, vacation: 15, personal: 8 }
-  ],
-  legend: [
-    { key: 'vacation', label: 'Vacation Surge', color: '#D97706' }, // amber-600
-    { key: 'sick', label: 'Sick Leave Trend', color: '#059669' }, // emerald-600
-    { key: 'personal', label: 'Personal Time', color: '#3B82F6' } // blue-500
-  ]
-};
-
-const mockWorkforceCapacityData = {
-  chartData: [
-    { month: 'Eng', utilized: 85, available: 15 },
-    { month: 'Sales', utilized: 95, available: 5 },
-    { month: 'Mktg', utilized: 70, available: 30 },
-    { month: 'Support', utilized: 90, available: 10 },
-    { month: 'HR', utilized: 60, available: 40 }
-  ],
-  legend: [
-    { key: 'utilized', label: 'Predicted Utilization (%)', color: '#059669' }, // emerald-600
-    { key: 'available', label: 'Predicted Buffer (%)', color: '#A7F3D0' } // emerald-200
-  ]
-};
+// AI Analytics empty state for Day 1
+const EmptyAIState = ({ title, subtitle }: { title: string; subtitle: string }) => (
+  <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 flex items-center justify-center h-64 flex-col text-center hover:shadow-xl transition-shadow duration-300">
+    <div className="w-16 h-16 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-full flex items-center justify-center mb-4 shadow-inner">
+      <CpuChipIcon className="w-8 h-8 text-indigo-500 animate-pulse" />
+    </div>
+    <h3 className="text-lg font-bold text-gray-900 mb-1">{title}</h3>
+    <p className="text-sm text-gray-500 max-w-sm mx-auto">{subtitle}</p>
+    <p className="mt-6 text-[10px] font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full uppercase tracking-wider inline-flex items-center gap-2 border border-indigo-100">
+      <span className="w-2 h-2 rounded-full bg-indigo-500 animate-ping"></span>
+      Processing Real-time Data
+    </p>
+  </div>
+);
 
 export default function PredictiveAIPage() {
   return (
@@ -80,81 +44,12 @@ export default function PredictiveAIPage() {
         </div>
       </div>
 
-      {/* Grid of Predictive Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        
-        {/* Turnover Prediction widget */}
-        <div className="hover:shadow-lg transition-shadow duration-300 rounded-xl overflow-hidden">
-          <BarChart
-            title="Turnover Prediction"
-            subtitle="Historical baseline vs Model forecast (Next 6 Mo)"
-            data={mockTurnoverPredictionData.chartData}
-            legend={mockTurnoverPredictionData.legend}
-            dataKey="month"
-            valueKeys={mockTurnoverPredictionData.legend.map(l => l.key)}
-            height={260}
-            showTotals={true}
-            showLegend={true}
-            showEmptyBars={true}
-            rotateLabels={false}
-            barSpacing={16}
-          />
-        </div>
-
-        {/* Performance Forecast widget */}
-        <div className="hover:shadow-lg transition-shadow duration-300 rounded-xl overflow-hidden">
-          <BarChart
-            title="Performance Forecast"
-            subtitle="Predicted organizational performance scores"
-            data={mockPerformanceForecastData.chartData}
-            legend={mockPerformanceForecastData.legend}
-            dataKey="month"
-            valueKeys={mockPerformanceForecastData.legend.map(l => l.key)}
-            height={260}
-            showTotals={true}
-            showLegend={true}
-            showEmptyBars={true}
-            rotateLabels={false}
-            barSpacing={16}
-          />
-        </div>
-
-        {/* Leave Pattern Prediction widget */}
-        <div className="hover:shadow-lg transition-shadow duration-300 rounded-xl overflow-hidden">
-          <BarChart
-            title="Leave Pattern Prediction"
-            subtitle="Anticipated volume of employee absences"
-            data={mockLeavePredictionData.chartData}
-            legend={mockLeavePredictionData.legend}
-            dataKey="month"
-            valueKeys={mockLeavePredictionData.legend.map(l => l.key)}
-            height={260}
-            showTotals={true}
-            showLegend={true}
-            showEmptyBars={true}
-            rotateLabels={false}
-            barSpacing={16}
-          />
-        </div>
-
-        {/* Workforce Capacity widget */}
-        <div className="hover:shadow-lg transition-shadow duration-300 rounded-xl overflow-hidden">
-          <BarChart
-            title="Workforce Capacity Optimization"
-            subtitle="Predicted team utilization vs buffer capacity"
-            data={mockWorkforceCapacityData.chartData}
-            legend={mockWorkforceCapacityData.legend}
-            dataKey="month"
-            valueKeys={mockWorkforceCapacityData.legend.map(l => l.key)}
-            height={260}
-            showTotals={true}
-            showLegend={true}
-            showEmptyBars={true}
-            rotateLabels={false}
-            barSpacing={16}
-          />
-        </div>
-
+      {/* Charts Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fade-in-delay-1">
+        <EmptyAIState title="Turnover Prediction" subtitle="AI models are analyzing the new dataset to predict historical turnover baselines vs forecasts." />
+        <EmptyAIState title="Performance Forecast" subtitle="Generating predicted performance score models for upcoming quarters." />
+        <EmptyAIState title="Leave Pattern Prediction" subtitle="Anticipating employee sick and vacation leaves based on initial trends." />
+        <EmptyAIState title="Workforce Capacity AI" subtitle="Processing recent staffing data to predict departmental utilization gaps." />
       </div>
     </div>
   );

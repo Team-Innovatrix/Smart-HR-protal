@@ -306,13 +306,8 @@ export function useProfileSync(): UseProfileSyncReturn {
       // Wait for authentication to be fully established
       waitForAuth().then((isAuthenticated) => {
         if (isAuthenticated && isMountedRef.current) {
-          // First try to get existing profile
-          refreshProfile().then((result) => {
-            // If no profile exists, sync from Clerk
-            if (!result && isMountedRef.current) {
-              syncProfile()
-            }
-          })
+          // Always sync from Clerk to ensure roles, names, and organization are up to date
+          syncProfile()
         }
       })
     } else if (isLoaded && !isSignedIn) {

@@ -5,10 +5,9 @@ import { useRouter } from 'next/navigation'
 // Dev bypass: active when no real Clerk key is set
 const DEV_BYPASS = !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
+import { useAuth } from '@clerk/nextjs'
+
 function PortalRootPageWithClerk() {
-  // Dynamic import to avoid crash when provider missing
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { useAuth } = require('@clerk/nextjs');
   const { isLoaded, isSignedIn } = useAuth()
   const router = useRouter()
 

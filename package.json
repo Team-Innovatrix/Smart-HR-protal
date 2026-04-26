@@ -13,18 +13,11 @@
     "check:hr": "tsx src/scripts/checkHRDatabase.ts",
     "cleanup:fake-users": "tsx src/scripts/cleanupFakeUsers.ts",
     "seed:manager": "tsx src/scripts/upsertManagerRelation.ts",
-    "validate:env": "tsx src/lib/validateEnvironment.ts",
-    "migrate:attendance-dates": "tsx scripts/migrateAttendanceDates.ts",
-    "migrate:leave-alloted": "tsx scripts/migrateLeaveBalanceAlloted.ts",
-    "migrate:leave-allocated": "tsx scripts/migrateLeaveAllocatedField.ts",
-    "remove:leave-allocated": "tsx scripts/removeLeaveAllocatedFields.ts",
-    "optimize:indexes": "tsx scripts/optimizeDatabaseIndexes.ts",
-    "validate:production": "tsx scripts/deployProduction.ts"
+    "validate:env": "tsx src/lib/validateEnvironment.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.864.0",
     "@aws-sdk/s3-request-presigner": "^3.864.0",
-    "@clerk/clerk-sdk-node": "^4.13.23",
     "@clerk/nextjs": "^6.36.1",
     "@headlessui/react": "^2.2.7",
     "@heroicons/react": "^2.2.0",

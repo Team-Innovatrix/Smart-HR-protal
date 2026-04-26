@@ -3,13 +3,14 @@
 import { useEffect, useState, useCallback } from 'react';
 import { MagnifyingGlassIcon, UserPlusIcon, UserGroupIcon, ShieldCheckIcon, BuildingOfficeIcon, PlusIcon, TrashIcon, PencilIcon, XMarkIcon, ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import UserEditModal from '@/components/admin/UserEditModal';
-import ClerkUsersModal from '@/components/admin/ClerkUsersModal';
 import ConfirmationModal from '@/components/admin/ConfirmationModal';
 import { useTimezone } from '@/lib/hooks/useTimezone';
 import AdminSubNav from '@/components/admin/AdminSubNav';
+import { useDevSafeUser } from '@/lib/hooks/useDevSafeClerk';
 
 interface User {
   _id: string;
+  clerkUserId: string;
   employeeId: string;
   firstName: string;
   lastName: string;
@@ -50,6 +51,7 @@ interface Role {
 
 export default function UsersManagementPage() {
   const { formatDateString } = useTimezone();
+  const { user: currentUser } = useDevSafeUser();
 
   const safeFormatDate = (dateString: string, format: string) => {
     if (!dateString || dateString === 'Invalid Date') {
@@ -76,9 +78,19 @@ export default function UsersManagementPage() {
   const [showBulkActions, setShowBulkActions] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
-  const [showClerkUsersModal, setShowClerkUsersModal] = useState(false);
+  const [showClerkUsersModal, setShowClerkUsersModal] = useState(false); // kept for legacy compat, unused
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
+
+  // Import from Clerk modal state
+  const [showClerkImportModal, setShowClerkImportModal] = useState(false);
+  const [clerkImportUsers, setClerkImportUsers] = useState<Array<{id: string; email: string; firstName: string; lastName: string; fullName: string}>>([]);
+  const [clerkImportLoading, setClerkImportLoading] = useState(false);
+  const [clerkImportError, setClerkImportError] = useState<string | null>(null);
+  const [clerkImportSelected, setClerkImportSelected] = useState<Set<string>>(new Set());
+  const [clerkImportAssignments, setClerkImportAssignments] = useState<Record<string, { department: string; position: string; joinDate: string }>>({});
+  const [clerkImportSaving, setClerkImportSaving] = useState(false);
+  const [clerkImportResult, setClerkImportResult] = useState<{ added: number; errors: number } | null>(null);
   
   // Positions state
   const [departmentPositions, setDepartmentPositions] = useState<Record<string, Record<string, string[]>>>({});
@@ -886,8 +898,34 @@ export default function UsersManagementPage() {
                 Export Users
               </button>
               <button
-                onClick={() => setShowClerkUsersModal(true)}
-                className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors whitespace-nowrap"
+                onClick={async () => {
+                  setShowClerkImportModal(true);
+                  setClerkImportResult(null);
+                  setClerkImportError(null);
+                  setClerkImportSelected(new Set());
+                  setClerkImportAssignments({});
+                  setClerkImportLoading(true);
+                  try {
+                    const res = await fetch('/api/admin/users/clerk-users');
+                    const data = await res.json();
+                    if (data.success) {
+                      setClerkImportUsers(data.data.users);
+                      const defaults: Record<string, { department: string; position: string; joinDate: string }> = {};
+                      data.data.users.forEach((u: { id: string }) => {
+                        defaults[u.id] = { department: '', position: '', joinDate: new Date().toISOString().split('T')[0] };
+                      });
+                      setClerkImportAssignments(defaults);
+                    } else {
+                      setClerkImportError(data.error || 'Failed to fetch Clerk users');
+                    }
+                  } catch {
+                    setClerkImportError('Network error fetching Clerk users');
+                  } finally {
+                    setClerkImportLoading(false);
+                  }
+                }}
+                className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-bold rounded-xl text-white shadow-md transition-all duration-200 hover:scale-105 active:scale-95 whitespace-nowrap"
+                style={{ background: 'linear-gradient(135deg, #4f46e5, #6366f1)' }}
               >
                 <UserPlusIcon className="w-4 h-4 mr-2" />
                 Import from Clerk
@@ -993,18 +1031,24 @@ export default function UsersManagementPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <button 
-                        onClick={() => handleEditUser(user._id)}
-                        className="text-blue-600 hover:text-blue-900 transition-colors mr-3"
-                      >
-                        Edit
-                      </button>
-                      <button 
-                        onClick={() => handleDeactivateUser(user._id, user.isActive)}
-                        className={`${user.isActive ? 'text-red-600 hover:text-red-900' : 'text-emerald-600 hover:text-emerald-900'} transition-colors`}
-                      >
-                        {user.isActive ? 'Deactivate' : 'Activate'}
-                      </button>
+                      {(user.position === 'Chief Executive Officer' || user.position === 'CEO') && user.clerkUserId !== currentUser?.id ? (
+                        <span className="text-gray-400 italic text-xs">Cannot edit CEO</span>
+                      ) : (
+                        <>
+                          <button 
+                            onClick={() => handleEditUser(user._id)}
+                            className="text-blue-600 hover:text-blue-900 transition-colors mr-3"
+                          >
+                            Edit
+                          </button>
+                          <button 
+                            onClick={() => handleDeactivateUser(user._id, user.isActive)}
+                            className={`${user.isActive ? 'text-red-600 hover:text-red-900' : 'text-emerald-600 hover:text-emerald-900'} transition-colors`}
+                          >
+                            {user.isActive ? 'Deactivate' : 'Activate'}
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -1571,12 +1615,213 @@ export default function UsersManagementPage() {
         onUserUpdated={handleUserUpdated}
       />
 
-      {/* Clerk Users Import Modal */}
-      <ClerkUsersModal
-        isOpen={showClerkUsersModal}
-        onClose={() => setShowClerkUsersModal(false)}
-        onUsersAdded={fetchUsers}
-      />
+
+      {/* ── Import from Clerk Modal ──────────────────────────────── */}
+      {showClerkImportModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: 'rgba(15,10,40,0.6)', backdropFilter: 'blur(6px)' }}>
+          <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-3xl overflow-hidden animate-fade-in flex flex-col" style={{ maxHeight: '90vh' }}>
+
+            {/* Header */}
+            <div className="px-8 pt-8 pb-5 border-b border-slate-100 flex-shrink-0"
+              style={{ background: 'linear-gradient(135deg, #eef2ff, #ffffff)' }}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-2xl flex items-center justify-center shadow-lg text-xl"
+                    style={{ background: 'linear-gradient(135deg, #4f46e5, #6366f1)' }}>🔗</div>
+                  <div>
+                    <h2 className="text-lg font-black text-slate-900">Import from Clerk</h2>
+                    <p className="text-xs text-slate-500">Select Clerk users to onboard as employees</p>
+                  </div>
+                </div>
+                <button onClick={() => setShowClerkImportModal(false)}
+                  className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all">
+                  <XMarkIcon className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Body */}
+            <div className="flex-1 overflow-y-auto px-8 py-6">
+              {clerkImportError && (
+                <div className="mb-4 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700 font-medium">{clerkImportError}</div>
+              )}
+
+              {clerkImportResult && (
+                <div className="mb-4 bg-emerald-50 border border-emerald-200 rounded-xl px-5 py-4">
+                  <p className="font-bold text-emerald-800">✅ Import complete!</p>
+                  <p className="text-sm text-emerald-700 mt-1">{clerkImportResult.added} employee{clerkImportResult.added !== 1 ? 's' : ''} added{clerkImportResult.errors > 0 ? `, ${clerkImportResult.errors} skipped` : ''}.</p>
+                </div>
+              )}
+
+              {clerkImportLoading ? (
+                <div className="flex flex-col items-center justify-center py-16">
+                  <div className="relative w-14 h-14 mb-4">
+                    <div className="absolute inset-0 rounded-full border-4 border-indigo-100" />
+                    <div className="absolute inset-0 rounded-full border-4 border-t-indigo-500 animate-spin" />
+                  </div>
+                  <p className="text-slate-500 font-medium text-sm">Fetching users from Clerk…</p>
+                </div>
+              ) : clerkImportUsers.length === 0 && !clerkImportResult ? (
+                <div className="flex flex-col items-center justify-center py-16 text-center">
+                  <div className="text-5xl mb-4">🎉</div>
+                  <p className="text-slate-700 font-bold text-base">All Clerk users are already imported!</p>
+                  <p className="text-slate-400 text-sm mt-1">Invite new members via the Clerk Dashboard to add them here.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {/* Select all */}
+                  {clerkImportUsers.length > 0 && (
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-semibold text-slate-600">{clerkImportUsers.length} user{clerkImportUsers.length !== 1 ? 's' : ''} available to import</span>
+                      <button
+                        onClick={() => {
+                          if (clerkImportSelected.size === clerkImportUsers.length) {
+                            setClerkImportSelected(new Set());
+                          } else {
+                            setClerkImportSelected(new Set(clerkImportUsers.map(u => u.id)));
+                          }
+                        }}
+                        className="text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-colors"
+                      >
+                        {clerkImportSelected.size === clerkImportUsers.length ? 'Deselect all' : 'Select all'}
+                      </button>
+                    </div>
+                  )}
+
+                  {clerkImportUsers.map(u => {
+                    const isSelected = clerkImportSelected.has(u.id);
+                    const assignment = clerkImportAssignments[u.id] || { department: '', position: '', joinDate: new Date().toISOString().split('T')[0] };
+                    return (
+                      <div key={u.id}
+                        className={`rounded-2xl border-2 transition-all duration-200 overflow-hidden ${
+                          isSelected ? 'border-indigo-400 bg-indigo-50/60' : 'border-slate-100 bg-white hover:border-slate-200'
+                        }`}>
+                        {/* User row */}
+                        <div className="flex items-center gap-4 px-5 py-4 cursor-pointer"
+                          onClick={() => {
+                            setClerkImportSelected(prev => {
+                              const next = new Set(prev);
+                              if (next.has(u.id)) next.delete(u.id); else next.add(u.id);
+                              return next;
+                            });
+                          }}>
+                          <input type="checkbox" readOnly checked={isSelected}
+                            className="w-4 h-4 rounded text-indigo-600 border-slate-300 pointer-events-none" />
+                          <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
+                            style={{ background: 'linear-gradient(135deg, #4f46e5, #6366f1)' }}>
+                            {u.firstName.charAt(0)}{u.lastName.charAt(0)}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-bold text-slate-900 text-sm truncate">{u.fullName}</p>
+                            <p className="text-xs text-slate-500 truncate">{u.email}</p>
+                          </div>
+                          <span className="text-xs font-semibold text-indigo-500 bg-indigo-100 px-2.5 py-1 rounded-full flex-shrink-0">Clerk ✓</span>
+                        </div>
+
+                        {/* Assignment fields — shown only when selected */}
+                        {isSelected && (
+                          <div className="px-5 pb-4 grid grid-cols-3 gap-3 border-t border-indigo-100 pt-3">
+                            <div>
+                              <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Department *</label>
+                              <select
+                                value={assignment.department}
+                                onChange={e => setClerkImportAssignments(prev => ({ ...prev, [u.id]: { ...prev[u.id], department: e.target.value } }))}
+                                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
+                              >
+                                <option value="">Select…</option>
+                                {['Executive','Engineering','Product','Design','Marketing','Sales','Finance','Operations','Human Resources'].map(d => (
+                                  <option key={d} value={d}>{d}</option>
+                                ))}
+                              </select>
+                            </div>
+                            <div>
+                              <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Position *</label>
+                              <input type="text" placeholder="e.g. Engineer"
+                                value={assignment.position}
+                                onChange={e => setClerkImportAssignments(prev => ({ ...prev, [u.id]: { ...prev[u.id], position: e.target.value } }))}
+                                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Join Date</label>
+                              <input type="date"
+                                value={assignment.joinDate}
+                                onChange={e => setClerkImportAssignments(prev => ({ ...prev, [u.id]: { ...prev[u.id], joinDate: e.target.value } }))}
+                                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="px-8 py-5 border-t border-slate-100 flex items-center justify-between gap-3 flex-shrink-0 bg-white">
+              <p className="text-xs text-slate-400">
+                {clerkImportSelected.size > 0 ? `${clerkImportSelected.size} user${clerkImportSelected.size !== 1 ? 's' : ''} selected` : 'Select users to import'}
+              </p>
+              <div className="flex gap-3">
+                <button onClick={() => setShowClerkImportModal(false)}
+                  className="px-5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all">
+                  Close
+                </button>
+                <button
+                  disabled={clerkImportSelected.size === 0 || clerkImportSaving || Array.from(clerkImportSelected).some(id => !clerkImportAssignments[id]?.department || !clerkImportAssignments[id]?.position)}
+                  onClick={async () => {
+                    setClerkImportSaving(true);
+                    setClerkImportError(null);
+                    try {
+                      const usersToImport = Array.from(clerkImportSelected).map(id => {
+                        const u = clerkImportUsers.find(x => x.id === id)!;
+                        const a = clerkImportAssignments[id];
+                        return {
+                          clerkUserId: u.id,
+                          email: u.email,
+                          firstName: u.firstName,
+                          lastName: u.lastName,
+                          department: a.department,
+                          position: a.position,
+                          joinDate: a.joinDate,
+                        };
+                      });
+                      const res = await fetch('/api/admin/users/add-clerk-users', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ users: usersToImport }),
+                      });
+                      const data = await res.json();
+                      if (data.success) {
+                        setClerkImportResult({ added: data.data.summary.successful, errors: data.data.summary.failed });
+                        setClerkImportSelected(new Set());
+                        // Refresh the remaining available users
+                        const refreshRes = await fetch('/api/admin/users/clerk-users');
+                        const refreshData = await refreshRes.json();
+                        if (refreshData.success) setClerkImportUsers(refreshData.data.users);
+                        fetchUsers();
+                      } else {
+                        setClerkImportError(data.error || 'Import failed');
+                      }
+                    } catch {
+                      setClerkImportError('Network error — please try again');
+                    } finally {
+                      setClerkImportSaving(false);
+                    }
+                  }}
+                  className="px-6 py-2.5 rounded-xl text-sm font-bold text-white shadow-md transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100"
+                  style={{ background: 'linear-gradient(135deg, #4f46e5, #6366f1)' }}
+                >
+                  {clerkImportSaving ? 'Importing…' : `Import ${clerkImportSelected.size > 0 ? clerkImportSelected.size : ''} Employee${clerkImportSelected.size !== 1 ? 's' : ''}`}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Confirmation Modal */}
       <ConfirmationModal

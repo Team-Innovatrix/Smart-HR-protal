@@ -16,6 +16,7 @@ import {
 
 interface Contact {
   clerkUserId: string;
+  _id?: string;
   firstName: string;
   lastName: string;
   position: string;
@@ -90,7 +91,8 @@ export default function ChatPage() {
   const fetchMessages = async () => {
     try {
       let url = `/api/chat?userId=${user?.id}`;
-      if (selectedContact) url += `&otherId=${selectedContact.clerkUserId}`;
+      const otherId = selectedContact?.clerkUserId || selectedContact?._id;
+      if (otherId) url += `&otherId=${otherId}`;
       if (selectedTeam) url += `&groupId=${selectedTeam._id}`;
 
       const res = await fetch(url);
@@ -111,12 +113,14 @@ export default function ChatPage() {
     setNewMessage('');
 
     try {
+      const receiverId = selectedContact?.clerkUserId || selectedContact?._id;
+
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           senderId: user?.id,
-          receiverId: selectedContact?.clerkUserId,
+          receiverId: receiverId,
           groupId: selectedTeam?._id,
           content: tmpMsg,
           type: 'text'
@@ -132,7 +136,7 @@ export default function ChatPage() {
   };
 
   const filteredContacts = contacts.filter(c => 
-    `${c.firstName} ${c.lastName}`.toLowerCase().includes(search.toLowerCase())
+    `${c.firstName || ''} ${c.lastName || ''}`.toLowerCase().includes(search.toLowerCase())
   );
 
   if (!isLoaded || loading) {
@@ -205,31 +209,35 @@ export default function ChatPage() {
             {/* Private Messages */}
             <div>
               <p className="px-4 text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-2">Private Messages</p>
-              {filteredContacts.map(contact => (
+              {filteredContacts.map(contact => {
+                const contactId = contact.clerkUserId || contact._id;
+                const isSelected = (selectedContact?.clerkUserId || selectedContact?._id) === contactId;
+                
+                return (
                 <button
-                  key={contact.clerkUserId}
+                  key={contactId}
                   onClick={() => { setSelectedContact(contact); setSelectedTeam(null); }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 group
-                             ${selectedContact?.clerkUserId === contact.clerkUserId 
+                             ${isSelected 
                                ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg scale-[1.02]' 
                                : 'hover:bg-orange-100 text-neutral-700'}`}
                 >
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm overflow-hidden
-                               ${selectedContact?.clerkUserId === contact.clerkUserId ? 'bg-white/20' : 'bg-orange-200 text-orange-700 font-bold'}`}>
+                               ${isSelected ? 'bg-white/20' : 'bg-orange-200 text-orange-700 font-bold'}`}>
                     {contact.imageUrl ? (
                       <img src={contact.imageUrl} alt="" className="w-full h-full object-cover" />
                     ) : (
-                      <span>{contact.firstName[0]}{contact.lastName[0]}</span>
+                      <span>{(contact.firstName?.[0] || 'U')}{(contact.lastName?.[0] || 'U')}</span>
                     )}
                   </div>
                   <div className="text-left overflow-hidden">
-                    <p className="font-bold text-sm truncate">{contact.firstName} {contact.lastName}</p>
-                    <p className={`text-[10px] truncate ${selectedContact?.clerkUserId === contact.clerkUserId ? 'text-white/70' : 'text-neutral-500'}`}>
-                      {contact.position}
+                    <p className="font-bold text-sm truncate">{contact.firstName || 'Unknown'} {contact.lastName || 'User'}</p>
+                    <p className={`text-[10px] truncate ${isSelected ? 'text-white/70' : 'text-neutral-500'}`}>
+                      {contact.position || 'Employee'}
                     </p>
                   </div>
                 </button>
-              ))}
+              )})}
             </div>
           </div>
         </div>
@@ -246,7 +254,7 @@ export default function ChatPage() {
                   </div>
                   <div>
                     <h2 className="font-black text-neutral-900 leading-tight">
-                      {selectedTeam ? selectedTeam.name : `${selectedContact?.firstName} ${selectedContact?.lastName}`}
+                      {selectedTeam ? selectedTeam.name : `${selectedContact?.firstName || 'Unknown'} ${selectedContact?.lastName || 'User'}`}
                     </h2>
                     <p className="text-xs text-orange-500 font-semibold uppercase tracking-tighter">
                       {selectedTeam ? 'Group Channel' : selectedContact?.position}
@@ -292,7 +300,7 @@ export default function ChatPage() {
                               <img src={selectedContact.imageUrl} className="w-full h-full object-cover" />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center text-[10px] font-black text-orange-700">
-                                {selectedContact?.firstName[0]}{selectedContact?.lastName[0]}
+                                {selectedContact?.firstName?.[0] || 'U'}{selectedContact?.lastName?.[0] || 'U'}
                               </div>
                             )}
                           </div>

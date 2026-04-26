@@ -56,87 +56,10 @@ const DocumentManagement: React.FC = () => {
     tags: ''
   });
 
-  // Mock data for demonstration - replace with actual API calls
+  // For Day 1, fetch real data. For now, it starts blank!
   useEffect(() => {
-    console.log('DocumentManagement: Starting to load mock data');
-    let timeoutId: NodeJS.Timeout | null = null;
-    
-    // Simple timeout to prevent hanging
-    timeoutId = setTimeout(() => {
-      console.log('DocumentManagement: Timeout reached, setting loading to false');
-      // setLoading(false); // Removed to prevent mobile loading issues
-    }, 5000); // 5 second timeout
-    
-    const mockDocuments: Document[] = [
-      {
-        id: '1',
-        name: 'Employee Handbook 2024',
-        type: 'pdf',
-        category: 'policies',
-        size: 2048576, // 2MB
-        uploadedBy: 'HR Manager',
-        uploadedAt: '2024-01-15T10:30:00Z',
-        description: 'Comprehensive employee handbook with updated policies and procedures',
-        tags: ['handbook', 'policies', '2024'],
-        status: 'active'
-      },
-      {
-        id: '2',
-        name: 'Leave Request Form',
-        type: 'doc',
-        category: 'forms',
-        size: 512000, // 500KB
-        uploadedBy: 'HR Admin',
-        uploadedAt: '2024-01-10T14:20:00Z',
-        description: 'Standard leave request form for all employees',
-        tags: ['form', 'leave', 'request'],
-        status: 'active'
-      },
-      {
-        id: '3',
-        name: 'Monthly Attendance Report',
-        type: 'spreadsheet',
-        category: 'reports',
-        size: 1024000, // 1MB
-        uploadedBy: 'System',
-        uploadedAt: '2024-01-31T23:59:00Z',
-        description: 'Automated monthly attendance report for January 2024',
-        tags: ['report', 'attendance', 'monthly'],
-        status: 'active'
-      },
-      {
-        id: '4',
-        name: 'Employment Contract Template',
-        type: 'pdf',
-        category: 'contracts',
-        size: 1536000, // 1.5MB
-        uploadedBy: 'Legal Team',
-        uploadedAt: '2024-01-05T09:15:00Z',
-        description: 'Standard employment contract template for new hires',
-        tags: ['contract', 'template', 'employment'],
-        status: 'active'
-      },
-      {
-        id: '5',
-        name: 'Company Logo',
-        type: 'image',
-        category: 'other',
-        size: 256000, // 250KB
-        uploadedBy: 'Marketing Team',
-        uploadedAt: '2024-01-20T11:45:00Z',
-        description: 'High-resolution company logo for official use',
-        tags: ['logo', 'branding', 'marketing'],
-        status: 'active'
-      }
-    ];
-
-    setDocuments(mockDocuments);
-    console.log('DocumentManagement: Mock data loaded, setting loading to false');
-    // setLoading(false); // Removed to prevent mobile loading issues
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
-    
+    // In the future: api/documents
+    setDocuments([]);
   }, []);
 
   const filteredDocuments = documents.filter(doc => {
@@ -375,9 +298,9 @@ const DocumentManagement: React.FC = () => {
             <div className="w-16 h-16 bg-gradient-to-br from-gray-400 to-gray-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
               <DocumentTextIcon className="w-8 h-8 text-white" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-3">No documents found</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-3">Your Document Vault is Empty</h3>
             <p className="text-gray-600">
-              {searchTerm ? 'Try adjusting your search terms' : 'Try changing your filters'}
+              {searchTerm ? 'No documents matched your search.' : "You haven't uploaded any company policies, handbooks, or forms yet. Click 'Upload' to get started."}
             </p>
           </div>
         </div>

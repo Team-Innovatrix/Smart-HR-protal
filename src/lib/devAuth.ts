@@ -11,9 +11,9 @@ export const DEV_BYPASS_ENABLED =
 
 export const DEV_USER = {
   userId: 'dev_user_admin_001',
-  email: 'mohit@inovatrix.io',
+  email: 'mohit@innovatrix.io',
   firstName: 'Mohit',
   lastName: 'Mohatkar',
-  role: 'HR Manager',
+  role: 'Chief Executive Officer',
   permissions: ['*'], // All permissions in dev
 };

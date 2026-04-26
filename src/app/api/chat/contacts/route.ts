@@ -31,9 +31,9 @@ export async function GET(request: NextRequest) {
     // Since in local dev we use FALLBACK_TEAMS, let's provide fallback data if empty
     if (users.length === 0) {
       const fallbackUsers = [
-        { clerkUserId: 'dev_user_admin_001', firstName: 'Mohit', lastName: 'Mohatkar', position: 'HR Manager', department: 'HR' },
-        { clerkUserId: 'dev_user_rudra_006', firstName: 'Rudra', lastName: 'Bambal', position: 'Software Engineer', department: 'Engineering' },
-        { clerkUserId: 'dev_user_viplav_007', firstName: 'Viplav', lastName: 'Bhure', position: 'Backend Engineer', department: 'Engineering' }
+        { _id: 'dev_user_admin_001', clerkUserId: 'dev_user_admin_001', firstName: 'Mohit', lastName: 'Mohatkar', position: 'HR Manager', department: 'HR' },
+        { _id: 'dev_user_rudra_006', clerkUserId: 'dev_user_rudra_006', firstName: 'Rudra', lastName: 'Bambal', position: 'Software Engineer', department: 'Engineering' },
+        { _id: 'dev_user_viplav_007', clerkUserId: 'dev_user_viplav_007', firstName: 'Viplav', lastName: 'Bhure', position: 'Backend Engineer', department: 'Engineering' }
       ].filter(u => u.clerkUserId !== userId);
       
       const fallbackTeams = [

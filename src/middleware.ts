@@ -67,9 +67,27 @@ function passthroughMiddleware(_req: NextRequest) {
   return NextResponse.next()
 }
 
+const REQUIRED_ORG_ID = 'org_3Ct1snEHEPxFYUqZpmQRvYFwPUa';
+
 export default hasClerkKey
-  ? clerkMiddleware((_auth, _req: NextRequest) => {
-      return NextResponse.next()
+  ? clerkMiddleware(async (auth, req: NextRequest) => {
+      if (isProtectedRoute(req)) {
+        const authObj = await auth();
+        
+        // 1. Force Sign In if not logged in
+        if (!authObj.userId) {
+          return authObj.redirectToSignIn();
+        }
+        
+        // 2. Enforce Organization Restriction
+        // If they are not actively in the organization, redirect them out
+        if (authObj.orgId !== REQUIRED_ORG_ID) {
+          // You could redirect to a specific "Unauthorized" page. 
+          // For now, redirect to the home page.
+          return NextResponse.redirect(new URL('/', req.url));
+        }
+      }
+      return NextResponse.next();
     })
   : passthroughMiddleware
 

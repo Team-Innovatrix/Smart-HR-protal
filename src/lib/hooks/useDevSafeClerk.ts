@@ -10,11 +10,7 @@
 import { useState, useEffect } from 'react'
 import { DEV_BYPASS_ENABLED, DEV_USER } from '../devAuth'
 
-// Lazy-load real Clerk hooks only when not bypassed
-function getClerkHooks() {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  return require('@clerk/nextjs')
-}
+import { useUser, useAuth, useClerk, SignOutButton as ClerkSignOutButton } from '@clerk/nextjs'
 
 // Function to safely get the current mock user from local storage
 const getLocalDevUser = () => {
@@ -33,7 +29,7 @@ const getLocalDevUser = () => {
 export function useDevSafeUser() {
   if (!DEV_BYPASS_ENABLED) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    return getClerkHooks().useUser();
+    return useUser();
   }
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -59,7 +55,7 @@ export function useDevSafeUser() {
 export function useDevSafeAuth() {
   if (!DEV_BYPASS_ENABLED) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    return getClerkHooks().useAuth();
+    return useAuth();
   }
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -92,7 +88,7 @@ export function useDevSafeAuth() {
 export function useDevSafeClerk() {
   if (!DEV_BYPASS_ENABLED) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    return getClerkHooks().useClerk();
+    return useClerk();
   }
 
   return {
@@ -109,7 +105,6 @@ export function useDevSafeClerk() {
 import React from 'react'
 export function SignOutButton({ children, ...props }: any) {
   if (!DEV_BYPASS_ENABLED) {
-    const { SignOutButton: ClerkSignOutButton } = getClerkHooks();
     return React.createElement(ClerkSignOutButton, props, children);
   }
 

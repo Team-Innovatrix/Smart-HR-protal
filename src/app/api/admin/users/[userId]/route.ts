@@ -143,6 +143,16 @@ export async function PUT(
       );
     }
 
+    // Security check: HR cannot edit the CEO unless they are the CEO
+    const isTargetCEO = user.position === 'CEO' || user.position === 'Chief Executive Officer';
+    const isSelf = adminUser.clerkUserId === user.clerkUserId;
+    if (isTargetCEO && !isSelf) {
+      return NextResponse.json(
+        { error: 'Access denied. You cannot modify the Chief Executive Officer.' },
+        { status: 403 }
+      );
+    }
+
     // Validate and update fields
     const updateData: Record<string, unknown> = {};
 
@@ -246,10 +256,11 @@ export async function PUT(
 
     // Timezone and location
     if (body.timezone !== undefined) {
-      const timezoneRegex = /^[A-Za-z_]+\/[A-Za-z_]+$/;
-      if (body.timezone !== 'UTC' && !timezoneRegex.test(body.timezone)) {
+      // Accept 'UTC' or any IANA timezone (e.g. Asia/Kolkata, America/New_York, Etc/GMT+5)
+      const isValidTimezone = body.timezone === 'UTC' || /^[A-Za-z_][A-Za-z0-9_+-]*\/[A-Za-z0-9_+\-\/]+$/.test(body.timezone);
+      if (!isValidTimezone) {
         return NextResponse.json(
-          { error: 'Timezone must be a valid IANA timezone identifier' },
+          { error: `Invalid timezone: ${body.timezone}` },
           { status: 400 }
         );
       }

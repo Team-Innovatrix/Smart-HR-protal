@@ -6,6 +6,7 @@ import UserProfile, { IUserProfileModel } from '../../../models/UserProfile';
 import { authenticateRequest, createUnauthorizedResponse, getUserRole, hasAnyRole } from '../../../lib/auth';
 import { TimezoneSyncService } from '../../../lib/timezoneSyncService';
 import { currentUser } from '@/lib/devAuthWrapper';
+import { DEV_BYPASS_ENABLED, DEV_USER } from '../../../lib/devAuth';
 import mongoose from 'mongoose';
 
 // Create or update user profile
@@ -198,6 +199,64 @@ export async function PUT(request: NextRequest) {
 
 // Get user profile
 export async function GET(request: NextRequest) {
+  // In dev bypass mode, look up the actual logged-in user from MongoDB
+  if (DEV_BYPASS_ENABLED) {
+    try {
+      await connectDB();
+      const { searchParams } = new URL(request.url);
+      const userId = searchParams.get('userId');
+      const employeeId = searchParams.get('employeeId');
+
+      // Build query from the request params (client sends their own userId/employeeId)
+      let query: Record<string, string> = {};
+      if (userId) query = { clerkUserId: userId };
+      else if (employeeId) query = { employeeId };
+      else query = { clerkUserId: DEV_USER.userId }; // fallback to admin
+
+      let userProfile = await UserProfile.findOne(query);
+
+      // Fallback: if user not in DB yet, return a sensible mock based on the userId
+      if (!userProfile) {
+        // Try to find any profile matching the userId pattern
+        const isMohit = !userId || userId === DEV_USER.userId;
+        const devProfile = {
+          clerkUserId: userId || DEV_USER.userId,
+          employeeId: isMohit ? 'EMP001' : (employeeId || 'EMP999'),
+          firstName: isMohit ? DEV_USER.firstName : 'Unknown',
+          lastName: isMohit ? DEV_USER.lastName : 'User',
+          email: isMohit ? DEV_USER.email : `${userId}@innovatrix.io`,
+          department: isMohit ? 'Executive' : 'General',
+          position: isMohit ? 'Chief Executive Officer' : 'Employee',
+          joinDate: new Date().toISOString(),
+          organization: 'Innovatrix',
+          leaveBalance: { sick: 0, casual: 0, annual: 0, maternity: 0, paternity: 0 },
+          isActive: true,
+          managerName: null,
+        };
+        return NextResponse.json({ success: true, data: devProfile });
+      }
+
+      return NextResponse.json({ success: true, data: userProfile.toObject() });
+    } catch {
+      // Hard fallback — only used if DB connection fails entirely
+      const devProfile = {
+        clerkUserId: DEV_USER.userId,
+        employeeId: 'EMP001',
+        firstName: DEV_USER.firstName,
+        lastName: DEV_USER.lastName,
+        email: DEV_USER.email,
+        department: 'Executive',
+        position: 'Chief Executive Officer',
+        joinDate: new Date().toISOString(),
+        organization: 'Innovatrix',
+        leaveBalance: { sick: 0, casual: 0, annual: 0, maternity: 0, paternity: 0 },
+        isActive: true,
+        managerName: null,
+      };
+      return NextResponse.json({ success: true, data: devProfile });
+    }
+  }
+
   try {
     // Authenticate the request
     let authenticatedUser;

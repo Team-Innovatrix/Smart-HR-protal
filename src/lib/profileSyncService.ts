@@ -135,6 +135,7 @@ export class ProfileSyncService {
           lastName: string;
           email: string;
           organization: string;
+          roleId: any;
         }> = {}
         let clerkNeedsUpdate = false
         let clerkUpdateData = { firstName: '', lastName: '' }
@@ -176,12 +177,30 @@ export class ProfileSyncService {
           console.log(`📝 [${syncId}] Scenario 4: Both blank, no updates needed`);
         }
 
-        // Handle email and organization updates (unchanged logic)
+        // Extract role from metadata
+        const clerkRole = (user.publicMetadata?.role as string)?.toLowerCase() || '';
+        let targetRoleId = userProfile.roleId;
+
+        if (clerkRole === 'admin' || clerkRole === 'hr manager' || clerkRole === 'ceo') {
+          // Find the HR Manager role
+          const Role = require('../models/Role').default;
+          const adminRole = await Role.findOne({ name: 'HR Manager' });
+          if (adminRole && String(targetRoleId) !== String(adminRole._id)) {
+            targetRoleId = adminRole._id;
+          }
+        }
+
+
+
+        // Handle email and organization updates
         if (email && email !== userProfile.email) {
           updatedFields.email = email
         }
         if (organization && organization !== userProfile.organization) {
           updatedFields.organization = organization
+        }
+        if (targetRoleId && String(targetRoleId) !== String(userProfile.roleId)) {
+          updatedFields.roleId = targetRoleId;
         }
 
         console.log(`📝 [${syncId}] Update analysis`, {
@@ -229,6 +248,19 @@ export class ProfileSyncService {
         // Get default leave balance from configuration
         const defaultLeaveBalance = await (UserProfile as IUserProfileModel).getDefaultLeaveBalance();
 
+        // Extract role from metadata for new profiles
+        const clerkRole = (user.publicMetadata?.role as string)?.toLowerCase() || '';
+        let targetRoleId = undefined;
+
+        if (clerkRole === 'admin' || clerkRole === 'hr manager' || clerkRole === 'ceo') {
+          // Find the HR Manager role
+          const Role = require('../models/Role').default;
+          const adminRole = await Role.findOne({ name: 'HR Manager' });
+          if (adminRole) {
+            targetRoleId = adminRole._id;
+          }
+        }
+
         userProfile = new UserProfile({
           clerkUserId: user.id,
           employeeId,
@@ -240,7 +272,8 @@ export class ProfileSyncService {
           joinDate,
           organization,
           leaveBalance: defaultLeaveBalance,
-          isActive: true
+          isActive: true,
+          ...(targetRoleId && { roleId: targetRoleId })
         })
         
         await userProfile.save()

@@ -6,9 +6,11 @@ import Team from '../models/Team';
 import OrgStructure from '../models/OrgStructure';
 import Role from '../models/Role';
 
-export async function seedDatabase() {
+export async function wipeAndInitialize() {
   try {
-    console.log('🌱 Seeding database — Day 1 of Innovatrix...');
+    console.log('🔄 Connecting to MongoDB Cluster...');
+    await connectDB();
+    console.log('✅ Connected. Wiping ALL existing data...');
 
     // Clear ALL existing data — fresh start
     await Promise.all([
@@ -19,7 +21,7 @@ export async function seedDatabase() {
       OrgStructure.deleteMany({}),
       Role.deleteMany({}),
     ]);
-    console.log('🧹 All data cleared — clean slate');
+    console.log('🧹 All data cleared — clean slate achieved.');
 
     // ----- ROLES -----
     const roles = await Role.insertMany([
@@ -48,24 +50,7 @@ export async function seedDatabase() {
         createdBy: 'system'
       }
     ]);
-    console.log(`🛡️  Created ${roles.length} roles`);
-
-    // ----- DAY 1: ONLY MOHIT — CEO + Admin -----
-    // DYNAMIC FAKE EMPLOYEES DISABLED FOR FRESH START
-    // The user will be the only one in the system when they log in.
-
-    const createdUsers = [];
-    console.log(`👤 Created ${createdUsers.length} total users (System Admin only)`);
-
-    // ----- EXECUTIVE TEAM -----
-    // Team removed since dummy admin is removed.
-    console.log('🏢 Skipped Executive Leadership team (no dummy admin)');
-
-    // No attendance — Day 1, nobody has clocked in yet
-    console.log('🕒 No attendance records (Day 1)');
-
-    // No leaves — Day 1, nothing applied yet
-    console.log('📅 No leave records (Day 1)');
+    console.log(`🛡️  Created ${roles.length} core roles`);
 
     // ----- ORG STRUCTURE (departments ready for future hires) -----
     await OrgStructure.create({
@@ -82,28 +67,21 @@ export async function seedDatabase() {
       ],
       seniorityLevels: [],
     });
-    console.log('🏛️  Created org structure with 9 departments');
+    console.log('🏛️  Created core organization structure with 9 departments');
 
-    console.log('\n🎉 Day 1 of Innovatrix seeded successfully!');
-    console.log(`   • ${createdUsers.length} employees populated with 5-year randomized backdating!`);
-    console.log('   • 1 team: Executive Leadership');
+    console.log('\n🎉 Fresh start successful!');
+    console.log('   • 0 generated employees (You will be the only one when you sign in!)');
     console.log('   • 0 attendance records');
     console.log('   • 0 leave requests');
-    console.log(`   • ${roles.length} roles`);
-    console.log('   • 9 departments ready for action');
+    console.log('   • 0 teams');
+    console.log('   • Core roles and departments initialized successfully.');
 
   } catch (error) {
-    console.error('❌ Error seeding database:', error);
-    throw error;
+    console.error('❌ Error initializing fresh start:', error);
+    process.exit(1);
+  } finally {
+    process.exit(0);
   }
 }
 
-if (require.main === module) {
-  seedDatabase().then(() => {
-    console.log('Seeder finished.');
-    process.exit(0);
-  }).catch((err) => {
-    console.error('Seeder failed:', err);
-    process.exit(1);
-  });
-}
+wipeAndInitialize();

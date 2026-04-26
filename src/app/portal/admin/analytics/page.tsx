@@ -66,63 +66,19 @@ interface JobsData {
   totalJobs: number;
 }
 
-const mockTurnoverPredictionData = {
-  chartData: [
-    { month: 'May 26', predicted: 2, baseline: 3 },
-    { month: 'Jun 26', predicted: 3, baseline: 3 },
-    { month: 'Jul 26', predicted: 5, baseline: 3 },
-    { month: 'Aug 26', predicted: 2, baseline: 4 },
-    { month: 'Sep 26', predicted: 1, baseline: 3 },
-    { month: 'Oct 26', predicted: 3, baseline: 4 },
-  ],
-  legend: [
-    { key: 'predicted', label: 'Predicted Exits', color: '#E11D48' },
-    { key: 'baseline', label: 'Historical Baseline', color: '#94A3B8' }
-  ]
-};
-
-const mockPerformanceForecastData = {
-  chartData: [
-    { month: 'Q2 2026', score: 85, target: 80 },
-    { month: 'Q3 2026', score: 88, target: 82 },
-    { month: 'Q4 2026', score: 92, target: 85 },
-    { month: 'Q1 2027', score: 95, target: 88 }
-  ],
-  legend: [
-    { key: 'score', label: 'Forecasted Score', color: '#4F46E5' },
-    { key: 'target', label: 'Target Score', color: '#CBD5E1' }
-  ]
-};
-
-const mockLeavePredictionData = {
-  chartData: [
-    { month: 'May', sick: 12, vacation: 25, personal: 5 },
-    { month: 'Jun', sick: 10, vacation: 45, personal: 8 },
-    { month: 'Jul', sick: 8, vacation: 85, personal: 10 },
-    { month: 'Aug', sick: 15, vacation: 65, personal: 12 },
-    { month: 'Sep', sick: 25, vacation: 20, personal: 5 },
-    { month: 'Oct', sick: 35, vacation: 15, personal: 8 }
-  ],
-  legend: [
-    { key: 'vacation', label: 'Vacation Surge', color: '#D97706' },
-    { key: 'sick', label: 'Sick Leave Trend', color: '#059669' },
-    { key: 'personal', label: 'Personal Time', color: '#3B82F6' }
-  ]
-};
-
-const mockWorkforceCapacityData = {
-  chartData: [
-    { month: 'Eng', utilized: 85, available: 15 },
-    { month: 'Sales', utilized: 95, available: 5 },
-    { month: 'Mktg', utilized: 70, available: 30 },
-    { month: 'Support', utilized: 90, available: 10 },
-    { month: 'HR', utilized: 60, available: 40 }
-  ],
-  legend: [
-    { key: 'utilized', label: 'Predicted Utilization (%)', color: '#059669' },
-    { key: 'available', label: 'Predicted Buffer (%)', color: '#A7F3D0' }
-  ]
-};
+// AI Analytics empty state for Day 1
+const EmptyAIState = ({ title, subtitle }: { title: string; subtitle: string }) => (
+  <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 flex items-center justify-center h-64 flex-col text-center">
+    <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4">
+      <CpuChipIcon className="w-8 h-8 text-blue-500" />
+    </div>
+    <h3 className="text-lg font-bold text-gray-900 mb-1">{title}</h3>
+    <p className="text-sm text-gray-500 max-w-sm mx-auto">{subtitle}</p>
+    <p className="mt-4 text-[10px] font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-wider">
+      Processing Real-time Data
+    </p>
+  </div>
+);
 
 export default function AnalyticsPage() {
   const [activeTab, setActiveTab] = useState('projects');
@@ -690,25 +646,11 @@ export default function AnalyticsPage() {
                 </div>
               );
             }
-            // Predictive AI Charts
+            // Predictive AI Charts (Day 1 State)
             if (activeTab === 'predictive-ai' && subItem.id === 'turnover-prediction') {
               return (
                 <div key={subItem.id}>
-                  <BarChart
-                    title="Turnover Prediction"
-                    subtitle="Historical baseline vs Model forecast (Next 6 Mo)"
-                    data={mockTurnoverPredictionData.chartData}
-                    legend={mockTurnoverPredictionData.legend}
-                    dataKey="month"
-                    valueKeys={mockTurnoverPredictionData.legend.map(l => l.key)}
-                    height={160}
-                    showTotals={true}
-                    showLegend={true}
-                    showEmptyBars={true}
-                    maxBars={6}
-                    rotateLabels={false}
-                    barSpacing={16}
-                  />
+                  <EmptyAIState title="Turnover Prediction" subtitle="AI models are analyzing the new dataset to predict historical turnover baselines vs forecasts." />
                 </div>
               );
             }
@@ -716,21 +658,7 @@ export default function AnalyticsPage() {
             if (activeTab === 'predictive-ai' && subItem.id === 'performance-forecast') {
               return (
                 <div key={subItem.id}>
-                  <BarChart
-                    title="Performance Forecast"
-                    subtitle="Predicted performance scores"
-                    data={mockPerformanceForecastData.chartData}
-                    legend={mockPerformanceForecastData.legend}
-                    dataKey="month"
-                    valueKeys={mockPerformanceForecastData.legend.map(l => l.key)}
-                    height={160}
-                    showTotals={true}
-                    showLegend={true}
-                    showEmptyBars={true}
-                    maxBars={4}
-                    rotateLabels={false}
-                    barSpacing={16}
-                  />
+                  <EmptyAIState title="Performance Forecast" subtitle="Generating predicted performance score models for upcoming quarters." />
                 </div>
               );
             }
@@ -738,21 +666,7 @@ export default function AnalyticsPage() {
             if (activeTab === 'predictive-ai' && subItem.id === 'leave-prediction') {
               return (
                 <div key={subItem.id}>
-                  <BarChart
-                    title="Leave Pattern Prediction"
-                    subtitle="Anticipated volume of employee absences"
-                    data={mockLeavePredictionData.chartData}
-                    legend={mockLeavePredictionData.legend}
-                    dataKey="month"
-                    valueKeys={mockLeavePredictionData.legend.map(l => l.key)}
-                    height={160}
-                    showTotals={true}
-                    showLegend={true}
-                    showEmptyBars={true}
-                    maxBars={6}
-                    rotateLabels={false}
-                    barSpacing={12}
-                  />
+                  <EmptyAIState title="Leave Pattern Prediction" subtitle="Anticipating employee sick and vacation leaves based on initial trends." />
                 </div>
               );
             }
@@ -760,21 +674,7 @@ export default function AnalyticsPage() {
             if (activeTab === 'predictive-ai' && subItem.id === 'workforce-capacity') {
               return (
                 <div key={subItem.id}>
-                  <BarChart
-                    title="Workforce Capacity"
-                    subtitle="Predicted utilization against target thresholds"
-                    data={mockWorkforceCapacityData.chartData}
-                    legend={mockWorkforceCapacityData.legend}
-                    dataKey="month"
-                    valueKeys={mockWorkforceCapacityData.legend.map(l => l.key)}
-                    height={160}
-                    showTotals={true}
-                    showLegend={true}
-                    showEmptyBars={true}
-                    maxBars={5}
-                    rotateLabels={false}
-                    barSpacing={12}
-                  />
+                  <EmptyAIState title="Workforce Capacity AI" subtitle="Processing recent staffing data to predict departmental utilization gaps." />
                 </div>
               );
             }

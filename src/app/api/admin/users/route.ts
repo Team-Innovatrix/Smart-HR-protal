@@ -160,8 +160,8 @@ export async function POST(req: NextRequest) {
     
     const body = await req.json();
     
-    // Validate required fields
-    const requiredFields = ['employeeId', 'firstName', 'lastName', 'email', 'department', 'position', 'joinDate'];
+    // Validate required fields (employeeId is auto-generated if not provided)
+    const requiredFields = ['firstName', 'lastName', 'email', 'department', 'position', 'joinDate'];
     for (const field of requiredFields) {
       if (!body[field]) {
         return NextResponse.json(
@@ -169,6 +169,17 @@ export async function POST(req: NextRequest) {
           { status: 400 }
         );
       }
+    }
+
+    // Auto-generate employeeId if not provided
+    if (!body.employeeId) {
+      const count = await UserProfile.countDocuments();
+      body.employeeId = `EMP${String(count + 1).padStart(3, '0')}`;
+    }
+
+    // Also auto-generate a clerkUserId for manually-created employees
+    if (!body.clerkUserId) {
+      body.clerkUserId = `manual_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
     }
 
     // Check if employee ID already exists

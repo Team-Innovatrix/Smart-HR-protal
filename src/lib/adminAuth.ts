@@ -74,6 +74,21 @@ export async function checkHRManagerAccess(req: NextRequest): Promise<AdminUser 
       return null;
     }
 
+    // FAILSAFE: Always grant Mohit full admin access to prevent lockout during DB wipes
+    if (userId === 'user_3Ct0FoCvLcRHnOXgp8fiwr62Dj1') {
+      return {
+        clerkUserId: userId,
+        employeeId: 'EMP001',
+        firstName: 'Mohit',
+        lastName: 'Mohatkar',
+        email: 'mohit@innovatrix.io',
+        department: 'Executive',
+        position: 'CEO',
+        isHRManager: true,
+        permissions: ['*']
+      } as AdminUser;
+    }
+
     // Connect to database
     await connectDB();
 
@@ -100,10 +115,10 @@ export async function checkHRManagerAccess(req: NextRequest): Promise<AdminUser 
 
     // Check if user has any admin permission
     const hasAdminPermission = userPermissions.some(permission => 
+      permission === '*' ||
       permission.startsWith('admin:') || 
       permission.includes('admin') ||
-      permission === 'admin:hr' ||
-      permission === 'admin:all'
+      permission === 'manage:users' // Added this because HR Manager uses this permission
     );
 
     if (!hasAdminPermission) {

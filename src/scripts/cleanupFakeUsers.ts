@@ -15,7 +15,8 @@ async function cleanupFakeUsers() {
     const fakeUserIds = [
       'user-emp-001',
       'user-emp-002', 
-      'user-mgr-001'
+      'user-mgr-001',
+      'dev_user_admin_001'
     ];
 
     const fakeUsers = await UserProfile.find({ clerkUserId: { $in: fakeUserIds } });

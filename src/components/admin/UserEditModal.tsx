@@ -199,13 +199,8 @@ export default function UserEditModal({ isOpen, onClose, userId, onUserUpdated }
   const validateForm = (): boolean => {
     const errors: Record<string, string> = {};
 
-    if (!formData.firstName?.trim()) {
-      errors.firstName = 'First name is required';
-    }
-
-    if (!formData.lastName?.trim()) {
-      errors.lastName = 'Last name is required';
-    }
+    if (!formData.firstName?.trim()) errors.firstName = 'First name is required';
+    if (!formData.lastName?.trim()) errors.lastName = 'Last name is required';
 
     if (!formData.email?.trim()) {
       errors.email = 'Email is required';
@@ -213,31 +208,20 @@ export default function UserEditModal({ isOpen, onClose, userId, onUserUpdated }
       errors.email = 'Please enter a valid email';
     }
 
-    if (!formData.employeeId?.trim()) {
-      errors.employeeId = 'Employee ID is required';
-    }
-
-    if (!formData.department?.trim()) {
-      errors.department = 'Department is required';
-    }
-
-    if (!formData.position?.trim()) {
-      errors.position = 'Position is required';
-    }
-
-    if (!formData.joinDate) {
-      errors.joinDate = 'Join date is required';
-    }
+    if (!formData.employeeId?.trim()) errors.employeeId = 'Employee ID is required';
+    if (!formData.department?.trim()) errors.department = 'Department is required';
+    if (!formData.position?.trim()) errors.position = 'Position is required';
+    if (!formData.joinDate) errors.joinDate = 'Join date is required';
 
     if (formData.contactNumber && !/^[\+]?[1-9][\d]{0,15}$/.test(formData.contactNumber.replace(/[\s\-\(\)]/g, ''))) {
       errors.contactNumber = 'Please enter a valid phone number';
     }
-
     if (formData.emergencyContact?.phone && !/^[\+]?[1-9][\d]{0,15}$/.test(formData.emergencyContact.phone.replace(/[\s\-\(\)]/g, ''))) {
       errors.emergencyContact = 'Please enter a valid emergency contact phone number';
     }
 
-    if (!formData.roleId?.trim()) {
+    // Only require roleId if roles have loaded — if they haven't, skip this check
+    if (roles.length > 0 && !formData.roleId?.trim()) {
       errors.roleId = 'User role is required';
     }
 
@@ -295,7 +279,7 @@ export default function UserEditModal({ isOpen, onClose, userId, onUserUpdated }
     }
   };
 
-  // Filter positions when department changes
+  // Build datalist suggestions when department changes
   useEffect(() => {
     if (formData.department && departmentPositions[formData.department]) {
       const allPositions: string[] = [];
@@ -303,23 +287,13 @@ export default function UserEditModal({ isOpen, onClose, userId, onUserUpdated }
         allPositions.push(...positions);
       });
       setFilteredPositions(allPositions);
-      
-      // Reset position if current position is not available in the new department
-      if (formData.position && !allPositions.includes(formData.position)) {
-        setFormData(prev => ({
-          ...prev,
-          position: ''
-        }));
-        // Clear validation error for position field
-        setValidationErrors(prev => ({
-          ...prev,
-          position: ''
-        }));
-      }
     } else {
       setFilteredPositions([]);
     }
-  }, [formData.department, departmentPositions, formData.position]);
+    // NOTE: intentionally NOT resetting position here — position is a free-text field
+    // NOTE: do NOT add formData.position to deps — it would clear the field every keystroke
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.department, departmentPositions]);
 
   const handleNestedInputChange = (parentField: string, childField: string, value: any) => {
     setFormData(prev => ({
@@ -451,19 +425,21 @@ export default function UserEditModal({ isOpen, onClose, userId, onUserUpdated }
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Department *
                   </label>
-                  <select
+                  <input
+                    type="text"
+                    list="department-suggestions"
                     value={formData.department || ''}
                     onChange={(e) => handleInputChange('department', e.target.value)}
-                    disabled={departmentsLoading}
+                    placeholder="e.g. Engineering, Marketing, Sales…"
                     className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       validationErrors.department ? 'border-red-500' : 'border-gray-300'
-                    } ${departmentsLoading ? 'bg-gray-100 cursor-not-allowed' : ''}`}
-                  >
-                    <option value="">{departmentsLoading ? 'Loading departments...' : 'Select Department'}</option>
+                    }`}
+                  />
+                  <datalist id="department-suggestions">
                     {departments.map(dept => (
-                      <option key={dept} value={dept}>{dept}</option>
+                      <option key={dept} value={dept} />
                     ))}
-                  </select>
+                  </datalist>
                   {validationErrors.department && (
                     <p className="mt-1 text-sm text-red-600">{validationErrors.department}</p>
                   )}
@@ -473,31 +449,23 @@ export default function UserEditModal({ isOpen, onClose, userId, onUserUpdated }
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Position *
                   </label>
-                  <select
+                  <input
+                    type="text"
+                    list="position-suggestions"
                     value={formData.position || ''}
                     onChange={(e) => handleInputChange('position', e.target.value)}
-                    disabled={departmentsLoading || !formData.department}
+                    placeholder="e.g. Software Engineer, Product Manager…"
                     className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       validationErrors.position ? 'border-red-500' : 'border-gray-300'
-                    } ${departmentsLoading || !formData.department ? 'bg-gray-100 cursor-not-allowed' : ''}`}
-                  >
-                    <option value="">
-                      {departmentsLoading 
-                        ? 'Loading positions...' 
-                        : !formData.department 
-                          ? 'Select Department first' 
-                          : 'Select Position'
-                      }
-                    </option>
+                    }`}
+                  />
+                  <datalist id="position-suggestions">
                     {filteredPositions.map(pos => (
-                      <option key={pos} value={pos}>{pos}</option>
+                      <option key={pos} value={pos} />
                     ))}
-                  </select>
+                  </datalist>
                   {validationErrors.position && (
                     <p className="mt-1 text-sm text-red-600">{validationErrors.position}</p>
-                  )}
-                  {!formData.department && (
-                    <p className="mt-1 text-sm text-gray-500">Please select a department first</p>
                   )}
                 </div>
 
@@ -507,7 +475,11 @@ export default function UserEditModal({ isOpen, onClose, userId, onUserUpdated }
                   </label>
                   <input
                     type="date"
-                    value={formData.joinDate ? getTodayDateString() : ''}
+                    value={formData.joinDate
+                      ? (formData.joinDate.includes('T')
+                          ? formData.joinDate.split('T')[0]
+                          : formData.joinDate)
+                      : ''}
                     onChange={(e) => handleInputChange('joinDate', e.target.value)}
                     className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       validationErrors.joinDate ? 'border-red-500' : 'border-gray-300'
@@ -864,11 +836,21 @@ export default function UserEditModal({ isOpen, onClose, userId, onUserUpdated }
               </div>
             </div>
 
+            {/* Validation error summary + API error — visible right at the Save button */}
+            {(Object.keys(validationErrors).some(k => validationErrors[k]) || error) && (
+              <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                {error && <p className="text-red-700 text-sm font-semibold mb-1">⚠️ {error}</p>}
+                {Object.entries(validationErrors).filter(([, v]) => v).map(([field, msg]) => (
+                  <p key={field} className="text-red-600 text-xs">• {msg}</p>
+                ))}
+              </div>
+            )}
+
             {/* Action Buttons */}
-            <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+            <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200 mt-4">
               <button
                 onClick={onClose}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                className="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium"
                 disabled={isSaving}
               >
                 Cancel
@@ -876,9 +858,19 @@ export default function UserEditModal({ isOpen, onClose, userId, onUserUpdated }
               <button
                 onClick={handleSave}
                 disabled={isSaving}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2.5 text-white font-bold rounded-lg transition-all duration-200 hover:scale-[1.02] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100"
+                style={{ background: isSaving ? '#ea580c99' : 'linear-gradient(135deg,#c2410c,#ea580c,#f97316)' }}
               >
-                {isSaving ? 'Saving...' : 'Save Changes'}
+                {isSaving
+                  ? <span className="flex items-center gap-2">
+                      <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+                      </svg>
+                      Saving…
+                    </span>
+                  : 'Save Changes'
+                }
               </button>
             </div>
           </div>

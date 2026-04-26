@@ -22,250 +22,415 @@ interface DashboardData {
   };
 }
 
+/* ── Animated counter ─────────────────────────────────────────────── */
+function useCountUp(target: number, duration = 1000, delay = 0) {
+  const [val, setVal] = useState(0);
+  useEffect(() => {
+    const t = setTimeout(() => {
+      let start: number | null = null;
+      const step = (ts: number) => {
+        if (!start) start = ts;
+        const p = Math.min((ts - start) / duration, 1);
+        setVal(Math.round((1 - Math.pow(1 - p, 3)) * target));
+        if (p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }, delay);
+    return () => clearTimeout(t);
+  }, [target, duration, delay]);
+  return val;
+}
+
+/* ── Stat Card ────────────────────────────────────────────────────── */
+function StatCard({ label, value, icon, gradient, accentColor, delay, sub }: {
+  label: string; value: number; icon: string; gradient: string;
+  accentColor: string; delay: number; sub: string;
+}) {
+  const count = useCountUp(value, 900, delay);
+  const pct = Math.min(value * 12, 100);
+  const r = 20; const circ = 2 * Math.PI * r;
+
+  return (
+    <div className="group relative rounded-2xl p-6 overflow-hidden border transition-all duration-500
+                     hover:-translate-y-2 hover:shadow-2xl cursor-default"
+      style={{
+        background: 'rgba(255,255,255,0.7)',
+        backdropFilter: 'blur(20px)',
+        borderColor: 'rgba(99,102,241,0.08)',
+      }}>
+      {/* Gradient top accent */}
+      <div className={`absolute top-0 left-0 right-0 h-1 ${gradient}`} />
+      {/* Hover glow */}
+      <div className={`absolute -top-10 -right-10 w-28 h-28 rounded-full blur-3xl opacity-0 group-hover:opacity-40
+                        transition-opacity duration-700 ${gradient.replace('bg-gradient-to-r', 'bg-gradient-to-br')}`} />
+      <div className="relative flex items-start justify-between">
+        <div>
+          <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-slate-400 mb-1.5">{label}</p>
+          <p className="text-4xl font-black text-slate-900 tabular-nums tracking-tight">{count}</p>
+          <p className="text-[11px] text-slate-400 mt-2 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: accentColor }} />
+            {sub}
+          </p>
+        </div>
+        <div className="flex flex-col items-center gap-1.5">
+          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-lg ${gradient}`}>
+            {icon}
+          </div>
+          <svg width={48} height={48} style={{ transform: 'rotate(-90deg)' }}>
+            <circle cx={24} cy={24} r={r} fill="none" stroke="rgba(99,102,241,0.08)" strokeWidth={3.5} />
+            <circle cx={24} cy={24} r={r} fill="none" stroke={accentColor} strokeWidth={3.5}
+              strokeDasharray={`${circ * pct / 100} ${circ}`} strokeLinecap="round"
+              style={{ transition: 'stroke-dasharray 1.4s cubic-bezier(0.16,1,0.3,1)' }} />
+          </svg>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Quick Action Card ────────────────────────────────────────────── */
+function ActionCard({ href, icon, label, description, gradient, badgeText }: {
+  href: string; icon: string; label: string; description: string; gradient: string; badgeText?: string;
+}) {
+  return (
+    <Link href={href}
+      className="group relative flex items-center gap-4 p-5 rounded-2xl border transition-all duration-300
+                 hover:-translate-y-1 hover:shadow-xl overflow-hidden"
+      style={{
+        background: 'rgba(255,255,255,0.65)',
+        backdropFilter: 'blur(16px)',
+        borderColor: 'rgba(99,102,241,0.08)',
+      }}>
+      <div className={`absolute inset-0 opacity-0 group-hover:opacity-[0.04] transition-opacity duration-500 ${gradient}`} />
+      <div className={`absolute top-0 left-0 right-0 h-0.5 ${gradient}`} />
+      <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl shadow-lg flex-shrink-0
+                        transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 ${gradient}`}>
+        {icon}
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2">
+          <p className="font-bold text-sm text-slate-800">{label}</p>
+          {badgeText && (
+            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full text-white ${gradient}`}>{badgeText}</span>
+          )}
+        </div>
+        <p className="text-xs text-slate-400 mt-0.5 truncate">{description}</p>
+      </div>
+      <svg className="w-4 h-4 text-slate-300 group-hover:text-indigo-500 transition-all duration-200 group-hover:translate-x-0.5 flex-shrink-0"
+        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+      </svg>
+    </Link>
+  );
+}
+
+/* ── Department Row ───────────────────────────────────────────────── */
+const DEPT_COLORS: Record<string, string> = {
+  Executive: 'bg-gradient-to-r from-violet-500 to-purple-600',
+  Engineering: 'bg-gradient-to-r from-indigo-500 to-blue-600',
+  Product: 'bg-gradient-to-r from-fuchsia-500 to-pink-500',
+  Design: 'bg-gradient-to-r from-rose-400 to-pink-500',
+  Marketing: 'bg-gradient-to-r from-teal-400 to-emerald-500',
+  Sales: 'bg-gradient-to-r from-cyan-400 to-sky-500',
+  Finance: 'bg-gradient-to-r from-amber-400 to-orange-500',
+  Operations: 'bg-gradient-to-r from-slate-400 to-slate-600',
+  'Human Resources': 'bg-gradient-to-r from-rose-500 to-red-500',
+};
+
+function DeptRow({ name, count, max }: { name: string; count: number; max: number }) {
+  const grad = DEPT_COLORS[name] || 'bg-gradient-to-r from-slate-400 to-slate-500';
+  const pct = max > 0 ? Math.round((count / max) * 100) : 0;
+  return (
+    <div className="flex items-center gap-3 group">
+      <div className={`w-2.5 h-2.5 rounded-full ${grad} flex-shrink-0 transition-transform duration-200 group-hover:scale-125`} />
+      <span className="text-sm text-slate-600 font-medium w-36 truncate">{name}</span>
+      <div className="flex-1 h-2.5 rounded-full bg-slate-100 overflow-hidden">
+        <div className={`h-2.5 rounded-full ${grad} transition-all duration-1000`}
+          style={{ width: `${pct}%` }} />
+      </div>
+      <span className="text-xs font-bold text-slate-500 w-14 text-right tabular-nums">{count} {count === 1 ? 'emp' : 'emps'}</span>
+    </div>
+  );
+}
+
+/* ── Main Page ────────────────────────────────────────────────────── */
 export default function AdminDashboard() {
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState<DashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [now, setNow] = useState(new Date());
 
   useEffect(() => {
-    // Only fetch data after AdminAuthGuard has verified admin access
-    fetchDashboardData();
+    const id = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(id);
   }, []);
 
-  const fetchDashboardData = async () => {
+  const fetchData = async () => {
     try {
-      setIsLoading(true);
-      const response = await fetch('/api/admin');
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch dashboard data');
-      }
-
-      const data = await response.json();
-      if (data.success) {
-        setDashboardData(data.data);
-      } else {
-        throw new Error(data.error || 'Failed to fetch dashboard data');
-      }
-    } catch (error) {
-      console.error('Dashboard fetch error:', error);
-      setError(error instanceof Error ? error.message : 'Failed to fetch dashboard data');
+      setLoading(true);
+      const res = await fetch('/api/admin');
+      if (!res.ok) throw new Error('Failed to fetch dashboard data');
+      const json = await res.json();
+      if (json.success) setData(json.data);
+      else throw new Error(json.error || 'Failed to fetch');
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Unknown error');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
+  useEffect(() => { fetchData(); }, []);
 
-  if (error) {
-    return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-        <div className="flex">
-          <div className="flex-shrink-0">
-            <svg className="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-            </svg>
-          </div>
-          <div className="ml-3">
-            <h3 className="text-sm font-medium text-red-800">Error loading dashboard</h3>
-            <p className="mt-2 text-sm text-red-700">{error}</p>
-            <button
-              onClick={fetchDashboardData}
-              className="mt-3 text-sm font-medium text-red-800 hover:text-red-900 underline transition-colors"
-            >
-              Try again
-            </button>
-          </div>
+  const hour = now.getHours();
+  const greeting = hour < 12 ? 'Good Morning' : hour < 17 ? 'Good Afternoon' : 'Good Evening';
+  const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+  const dateStr = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+  if (loading) return (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="text-center">
+        <div className="relative w-16 h-16 mx-auto mb-4">
+          <div className="absolute inset-0 rounded-full border-4 border-indigo-100" />
+          <div className="absolute inset-0 rounded-full border-4 border-t-indigo-500 animate-spin" />
         </div>
+        <p className="text-indigo-600 font-bold">Loading command centre…</p>
       </div>
-    );
-  }
+    </div>
+  );
 
-  if (!dashboardData) {
-    return <div>No data available</div>;
-  }
+  if (error) return (
+    <div className="flex items-center justify-center min-h-[40vh]">
+      <div className="rounded-2xl p-8 max-w-md text-center border"
+        style={{ background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(16px)', borderColor: 'rgba(239,68,68,0.2)' }}>
+        <div className="text-4xl mb-3">⚠️</div>
+        <h3 className="text-red-700 font-bold mb-2">Failed to load dashboard</h3>
+        <p className="text-red-500 text-sm mb-4">{error}</p>
+        <button onClick={fetchData}
+          className="px-6 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 text-white text-sm font-semibold hover:shadow-lg transition-all">
+          Retry
+        </button>
+      </div>
+    </div>
+  );
+
+  if (!data) return null;
+
+  const { overview, departmentStats, recentLeaves } = data;
+  const maxDept = Math.max(...departmentStats.map(d => d.count), 1);
+
+  const stats = [
+    { label: 'Total Employees', value: overview.totalUsers, icon: '👥', gradient: 'bg-gradient-to-r from-indigo-500 to-violet-600', accentColor: '#6366f1', delay: 0, sub: 'Active headcount' },
+    { label: 'Pending Leaves', value: overview.pendingLeaves, icon: '📅', gradient: 'bg-gradient-to-r from-fuchsia-500 to-pink-500', accentColor: '#d946ef', delay: 120, sub: 'Awaiting review' },
+    { label: "Today's Attendance", value: overview.todayAttendance, icon: '✅', gradient: 'bg-gradient-to-r from-teal-400 to-emerald-500', accentColor: '#14b8a6', delay: 240, sub: 'Clocked in today' },
+    { label: 'Active Teams', value: overview.totalTeams, icon: '🏢', gradient: 'bg-gradient-to-r from-cyan-400 to-blue-500', accentColor: '#06b6d4', delay: 360, sub: 'Teams configured' },
+  ];
+
+  const quickActions = [
+    { href: '/portal/admin/users', icon: '👤', label: 'Manage Employees', description: 'Add, edit, and manage your team', gradient: 'bg-gradient-to-r from-indigo-500 to-violet-600', badgeText: `${overview.totalUsers} total` },
+    { href: '/portal/admin/leaves', icon: '📋', label: 'Leave Requests', description: 'Review and approve leave applications', gradient: 'bg-gradient-to-r from-fuchsia-500 to-pink-500', badgeText: overview.pendingLeaves > 0 ? `${overview.pendingLeaves} pending` : undefined },
+    { href: '/portal/admin/attendance', icon: '🕐', label: 'Attendance Log', description: 'Track daily attendance records', gradient: 'bg-gradient-to-r from-teal-400 to-emerald-500' },
+    { href: '/portal/admin/teams', icon: '🏢', label: 'Team Management', description: 'Organise departments and teams', gradient: 'bg-gradient-to-r from-cyan-400 to-blue-500' },
+    { href: '/portal/admin/analytics', icon: '📊', label: 'Analytics & Reports', description: 'Performance insights and trends', gradient: 'bg-gradient-to-r from-rose-400 to-pink-500' },
+    { href: '/portal/admin/predictive', icon: '🤖', label: 'AI Predictions', description: 'ML-powered workforce forecasting', gradient: 'bg-gradient-to-r from-amber-400 to-orange-500', badgeText: 'BETA' },
+    { href: '/portal/admin/risk', icon: '🛡️', label: 'Risk Intelligence', description: 'Attrition and compliance monitoring', gradient: 'bg-gradient-to-r from-red-400 to-rose-500' },
+    { href: '/portal/admin/settings', icon: '⚙️', label: 'Settings', description: 'System configuration and preferences', gradient: 'bg-gradient-to-r from-slate-400 to-slate-600' },
+  ];
 
   return (
-    <div className="space-y-8">
-      {/* Welcome Header */}
-      <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
-        <h1 className="text-3xl font-bold text-gray-900 mb-3">
-          Welcome back, {dashboardData.adminUser.name}! 👋
-        </h1>
-        <p className="text-lg text-gray-600">
-          Here&apos;s what&apos;s happening in your organization today.
-        </p>
-      </div>
+    <div className="space-y-8 animate-fade-in">
 
-      {/* Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300">
-          <div className="flex items-center">
-            <div className="p-3 bg-blue-100 rounded-xl">
-              <svg className="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Employees</p>
-              <p className="text-3xl font-bold text-gray-900">{dashboardData.overview.totalUsers}</p>
-            </div>
-          </div>
-        </div>
+      {/* ── HERO BANNER ───────────────────────────────────────── */}
+      <div className="relative rounded-3xl overflow-hidden shadow-2xl"
+        style={{
+          background: 'linear-gradient(135deg, #312e81 0%, #4338ca 20%, #6366f1 45%, #818cf8 70%, #a5b4fc 100%)',
+        }}>
+        {/* Mesh gradient overlays */}
+        <div className="absolute inset-0"
+          style={{
+            background: 'radial-gradient(ellipse at 80% 20%, rgba(45,212,191,0.25) 0%, transparent 50%), radial-gradient(ellipse at 20% 80%, rgba(244,63,94,0.15) 0%, transparent 50%)',
+          }} />
+        {/* Dot pattern */}
+        <div className="absolute inset-0 opacity-[0.06]"
+          style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+        {/* Floating orbs */}
+        <div className="absolute top-0 right-0 w-72 h-72 rounded-full blur-3xl opacity-20 animate-float"
+          style={{ background: 'radial-gradient(circle, #2dd4bf, transparent)', transform: 'translate(25%,-25%)' }} />
+        <div className="absolute bottom-0 left-0 w-52 h-52 rounded-full blur-3xl opacity-15 animate-float"
+          style={{ background: 'radial-gradient(circle, #f43f5e, transparent)', transform: 'translate(-25%,25%)', animationDelay: '2s' }} />
 
-        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300">
-          <div className="flex items-center">
-            <div className="p-3 bg-green-100 rounded-xl">
-              <svg className="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Pending Leaves</p>
-              <p className="text-3xl font-bold text-gray-900">{dashboardData.overview.pendingLeaves}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300">
-          <div className="flex items-center">
-            <div className="p-3 bg-yellow-100 rounded-xl">
-              <svg className="w-7 h-7 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Today&apos;s Attendance</p>
-              <p className="text-3xl font-bold text-gray-900">{dashboardData.overview.todayAttendance}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300">
-          <div className="flex items-center">
-            <div className="p-3 bg-purple-100 rounded-xl">
-              <svg className="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Teams</p>
-              <p className="text-3xl font-bold text-gray-900">{dashboardData.overview.totalTeams}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Department Stats and Recent Leaves */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Department Distribution */}
-        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-          <h3 className="text-xl font-semibold text-gray-900 mb-6">Department Distribution</h3>
-          <div className="space-y-4">
-            {dashboardData.departmentStats.map((dept) => (
-              <div key={dept._id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-sm font-medium text-gray-700">{dept._id}</span>
-                <span className="text-sm font-semibold text-gray-900 bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
-                  {dept.count} employees
+        <div className="relative z-10 p-8 lg:p-10">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div>
+              {/* Brand pill */}
+              <div className="inline-flex items-center gap-2.5 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 mb-4">
+                <div className="w-5 h-5 rounded-lg bg-white/20 flex items-center justify-center text-sm">⚡</div>
+                <span className="text-white/90 text-xs font-semibold tracking-wide">Innovatrix Smart Dashboard</span>
+                <span className="flex items-center gap-1 text-teal-300 text-xs font-bold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
+                  Live
                 </span>
+              </div>
+
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-white/60 text-sm">✨ {greeting}</span>
+              </div>
+              <h1 className="text-4xl lg:text-5xl font-black text-white tracking-tight mb-2">
+                {data.adminUser.name.split(' ')[0]}! 🚀
+              </h1>
+              <p className="text-indigo-200/80 text-sm">
+                {dateStr} · Command Centre
+              </p>
+              <div className="flex items-center gap-2 mt-3">
+                <span className="inline-flex items-center gap-1.5 bg-teal-400/20 border border-teal-400/30 text-teal-200 text-xs font-bold px-3 py-1 rounded-full">
+                  👑 Chief Executive Officer
+                </span>
+                <span className="inline-flex items-center gap-1.5 bg-white/10 border border-white/20 text-white/80 text-xs font-bold px-3 py-1 rounded-full">
+                  🛡️ Administrator
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-start lg:items-end gap-4">
+              <div className="text-right">
+                <div className="text-5xl font-black text-white tabular-nums tracking-tight">{timeStr.split(' ')[0]}</div>
+                <div className="text-indigo-200 text-sm font-medium">{timeStr.split(' ')[1]}</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-5 py-3 text-center">
+                <div className="text-3xl font-black text-white">Day 1</div>
+                <div className="text-indigo-200 text-xs font-semibold mt-0.5">of Innovatrix 🎉</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Mini stats row */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-8">
+            {[
+              { label: 'Employees', value: overview.totalUsers, icon: '👥' },
+              { label: 'Teams', value: overview.totalTeams, icon: '🏢' },
+              { label: 'Leaves Pending', value: overview.pendingLeaves, icon: '📅' },
+              { label: 'Present Today', value: overview.todayAttendance, icon: '✅' },
+            ].map(s => (
+              <div key={s.label}
+                className="bg-white/10 backdrop-blur-sm border border-white/15 rounded-2xl px-4 py-3 hover:bg-white/20 transition-all duration-300 hover:-translate-y-0.5">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-base">{s.icon}</span>
+                </div>
+                <div className="text-2xl font-black text-white tabular-nums">{s.value}</div>
+                <div className="text-indigo-200/70 text-[10px] font-medium">{s.label}</div>
               </div>
             ))}
           </div>
         </div>
+      </div>
 
-        {/* Recent Leave Requests */}
-        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-semibold text-gray-900">Recent Leave Requests</h3>
-            <Link
-              href="/portal/admin/leaves"
-              className="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
-            >
+      {/* ── STAT CARDS ────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {stats.map(s => <StatCard key={s.label} {...s} />)}
+      </div>
+
+      {/* ── QUICK ACTIONS ─────────────────────────────────────── */}
+      <div>
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-md text-base">⚡</div>
+          <h2 className="text-lg font-black text-slate-800">Command Centre</h2>
+          <span className="ml-auto text-xs font-semibold text-slate-400">{quickActions.length} modules</span>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {quickActions.map(a => <ActionCard key={a.label} {...a} />)}
+        </div>
+      </div>
+
+      {/* ── DEPARTMENTS + RECENT LEAVES ───────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Department Distribution */}
+        <div className="rounded-2xl border p-6"
+          style={{ background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(16px)', borderColor: 'rgba(99,102,241,0.08)' }}>
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-base shadow-md">🏛️</div>
+            <div>
+              <h3 className="font-black text-sm text-slate-800">Department Distribution</h3>
+              <p className="text-xs text-slate-400">Employees per department</p>
+            </div>
+            <span className="ml-auto px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-500 text-xs font-semibold">{departmentStats.length} depts</span>
+          </div>
+          {departmentStats.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-10 text-center">
+              <div className="text-4xl mb-3">🏗️</div>
+              <p className="text-slate-500 font-semibold text-sm">No departments populated yet</p>
+              <p className="text-slate-400 text-xs mt-1">Add employees to see distribution</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {departmentStats.map(d => <DeptRow key={d._id} name={d._id} count={d.count} max={maxDept} />)}
+            </div>
+          )}
+        </div>
+
+        {/* Recent Leaves */}
+        <div className="rounded-2xl border p-6"
+          style={{ background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(16px)', borderColor: 'rgba(99,102,241,0.08)' }}>
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-fuchsia-500 to-pink-500 flex items-center justify-center text-base shadow-md">📋</div>
+            <div>
+              <h3 className="font-black text-sm text-slate-800">Recent Leave Requests</h3>
+              <p className="text-xs text-slate-400">Latest applications</p>
+            </div>
+            <Link href="/portal/admin/leaves" className="ml-auto text-xs font-semibold text-indigo-500 hover:text-indigo-600 flex items-center gap-1 transition-colors">
               View all →
             </Link>
           </div>
-          <div className="space-y-3">
-            {dashboardData.recentLeaves.length > 0 ? (
-              dashboardData.recentLeaves.map((leave: Record<string, unknown>) => (
-                <div key={leave._id as string} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+          {recentLeaves.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-10 text-center">
+              <div className="text-4xl mb-3">🌅</div>
+              <p className="text-slate-500 font-semibold text-sm">No leave requests yet</p>
+              <p className="text-slate-400 text-xs mt-1">Day 1 — the board is clean!</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {recentLeaves.map((leave) => (
+                <div key={leave._id as string}
+                  className="flex items-center justify-between p-4 bg-slate-50/80 rounded-xl hover:bg-indigo-50/50 transition-all duration-200 border border-transparent hover:border-indigo-100">
                   <div>
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-semibold text-slate-800">
                       {(leave.userId as Record<string, unknown>)?.firstName as string} {(leave.userId as Record<string, unknown>)?.lastName as string}
                     </p>
-                    <p className="text-xs text-gray-500">{(leave.userId as Record<string, unknown>)?.department as string}</p>
+                    <p className="text-xs text-slate-500">{(leave.userId as Record<string, unknown>)?.department as string}</p>
                   </div>
-                  <span className={`px-3 py-1 text-xs font-medium rounded-full ${
-                    leave.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                    leave.status === 'approved' ? 'bg-green-100 text-green-800' :
-                    'bg-red-100 text-red-800'
-                  }`}>
+                  <span className={`px-3 py-1.5 text-xs font-bold rounded-full
+                    ${leave.status === 'pending' ? 'bg-amber-100 text-amber-700 border border-amber-200' :
+                      leave.status === 'approved' ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' :
+                      'bg-red-100 text-red-700 border border-red-200'}`}>
                     {leave.status as string}
                   </span>
                 </div>
-              ))
-            ) : (
-              <p className="text-sm text-gray-500 text-center py-8">No pending leave requests</p>
-            )}
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── WELCOME FOOTER ────────────────────────────────────── */}
+      <div className="relative rounded-2xl overflow-hidden border shadow-md"
+        style={{ background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(16px)', borderColor: 'rgba(99,102,241,0.1)' }}>
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-violet-500 to-fuchsia-500" />
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 p-7">
+          <div className="text-5xl flex-shrink-0">🚀</div>
+          <div className="flex-1">
+            <h3 className="font-black text-xl text-slate-900">Welcome to Innovatrix 🎉</h3>
+            <p className="text-slate-500 text-sm mt-0.5">
+              Today is Day 1. Your Smart Dashboard is live and ready. Start by adding your first employees, 
+              configuring teams, and setting up your HR workflows.
+            </p>
           </div>
-        </div>
-      </div>
-
-      {/* Quick Actions */}
-      <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
-        <h3 className="text-xl font-semibold text-gray-900 mb-6">Quick Actions</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Link
-            href="/portal/admin/users"
-            className="group flex items-center p-6 border border-gray-200 rounded-xl hover:border-blue-300 hover:bg-blue-50 transition-all duration-300 hover:shadow-md"
-          >
-            <div className="p-3 bg-blue-100 rounded-xl group-hover:bg-blue-200 transition-colors">
-              <svg className="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <p className="font-semibold text-gray-900 group-hover:text-blue-800 transition-colors">Manage Users</p>
-              <p className="text-sm text-gray-500">Add, edit, or remove employees</p>
-            </div>
-          </Link>
-
-          <Link
-            href="/portal/admin/leaves"
-            className="group flex items-center p-6 border border-gray-200 rounded-xl hover:border-green-300 hover:bg-green-50 transition-all duration-300 hover:shadow-md"
-          >
-            <div className="p-3 bg-green-100 rounded-xl group-hover:bg-green-200 transition-colors">
-              <svg className="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <p className="font-semibold text-gray-900 group-hover:text-green-800 transition-colors">Review Leaves</p>
-              <p className="text-sm text-gray-500">Approve or reject requests</p>
-            </div>
-          </Link>
-
-          <Link
-            href="/portal/admin/analytics"
-            className="group flex items-center p-6 border border-gray-200 rounded-xl hover:border-purple-300 hover:bg-purple-50 transition-all duration-300 hover:shadow-md"
-          >
-            <div className="p-3 bg-purple-100 rounded-xl group-hover:bg-purple-200 transition-colors">
-              <svg className="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <p className="font-semibold text-gray-900 group-hover:text-purple-800 transition-colors">View Reports</p>
-              <p className="text-sm text-gray-500">Analytics and insights</p>
-            </div>
+          <Link href="/portal/admin/users"
+            className="flex-shrink-0 inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold text-white shadow-lg transition-all duration-200 hover:scale-105 active:scale-95"
+            style={{ background: 'linear-gradient(135deg, #4f46e5, #6366f1)' }}>
+            Add First Employee →
           </Link>
         </div>
       </div>
+
     </div>
   );
 }
