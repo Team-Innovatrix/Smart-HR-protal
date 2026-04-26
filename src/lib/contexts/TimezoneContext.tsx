@@ -132,7 +132,41 @@ export function TimezoneProvider({ children }: { children: ReactNode }) {
 export function useTimezone() {
   const context = useContext(TimezoneContext)
   if (context === undefined) {
-    throw new Error('useTimezone must be used within a TimezoneProvider')
+    // Return safe defaults instead of crashing — prevents TimezoneErrorBoundary from triggering
+    const fallbackTz = 'Asia/Kolkata'
+    const noop = () => {}
+    const noopAsync = async () => {}
+    return {
+      timezone: fallbackTz,
+      isLoading: false,
+      timezoneReady: true,
+      error: null,
+      setTimezone: noop,
+      refreshTimezone: noopAsync,
+      formatDate: (date: Date) => date.toLocaleDateString(),
+      formatTime: (date: Date) => date.toLocaleTimeString(),
+      getToday: () => new Date(),
+      isToday: (date: Date) => {
+        const today = new Date()
+        return date.toDateString() === today.toDateString()
+      },
+      formatDateString: (dateString: string) => {
+        try { return new Date(dateString).toLocaleDateString() } catch { return 'Invalid Date' }
+      },
+      getTodayDateString: () => new Date().toISOString().split('T')[0],
+      isSameDay: (d1: Date, d2: Date) => d1.toDateString() === d2.toDateString(),
+      getDayBoundaries: (date: Date) => {
+        const start = new Date(date); start.setHours(0, 0, 0, 0)
+        const end = new Date(date); end.setHours(23, 59, 59, 999)
+        return { start, end }
+      },
+      formatTimeWithOffset: (date: Date) => date.toISOString(),
+      parseDateString: (dateString: string) => new Date(dateString),
+      safeFormatDate: (dateString: string) => {
+        try { return new Date(dateString).toLocaleDateString() } catch { return 'Invalid Date' }
+      },
+    } as TimezoneContextType
   }
   return context
 }
+
