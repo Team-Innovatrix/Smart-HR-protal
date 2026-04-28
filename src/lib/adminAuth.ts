@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import UserProfile from '@/models/UserProfile';
@@ -74,8 +74,13 @@ export async function checkHRManagerAccess(req: NextRequest): Promise<AdminUser 
       return null;
     }
 
+    // Let's also get the current user to verify by email instead of hardcoded clerk user ID
+    // which might change across different environments
+    const clerkUser = await currentUser();
+    const email = clerkUser?.emailAddresses[0]?.emailAddress;
+
     // FAILSAFE: Always grant Mohit full admin access to prevent lockout during DB wipes
-    if (userId === 'user_3Ct0FoCvLcRHnOXgp8fiwr62Dj1') {
+    if (userId === 'user_3Ct0FoCvLcRHnOXgp8fiwr62Dj1' || email === 'mohit@innovatrix.io') {
       return {
         clerkUserId: userId,
         employeeId: 'EMP001',

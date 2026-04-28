@@ -32,6 +32,7 @@ const isProtectedRoute = createRouteMatcher([
   '/team(.*)',
   '/user(.*)',
   '/admin(.*)',
+  '/portal/admin(.*)',
   '/notifications(.*)',
   // Protected API routes
   '/api/voice-commands(.*)',
