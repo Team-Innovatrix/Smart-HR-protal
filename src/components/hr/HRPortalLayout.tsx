@@ -35,7 +35,8 @@ interface HRPortalLayoutProps {
 
 const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: HRPortalLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [sidebarHovered, setSidebarHovered] = useState(false)
+  const [sidebarPinned, setSidebarPinned] = useState(false)
   const [companyName, setCompanyName] = useState<string>('HR Dashboard')
   const [companyLogo, setCompanyLogo] = useState<string>('')
   const [userProfile, setUserProfile] = useState<{ position?: string; department?: string } | null>(null)
@@ -154,10 +155,18 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
       {/* Cursor glow */}
       <div ref={cursorRef} className={`cursor-glow ${!cursorMotion ? 'disabled' : ''}`} />
 
+      {/* Hover trigger area to open sidebar */}
+      <div 
+        className="fixed left-0 top-0 bottom-0 w-6 z-40 hidden lg:block"
+        onMouseEnter={() => setSidebarHovered(true)}
+      />
+
       {/* ═══ FLOATING LEFT SIDEBAR ═══ */}
-      <aside className={`fixed left-0 top-0 bottom-0 z-40 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hidden lg:flex flex-col ${
-        sidebarCollapsed ? 'w-[72px]' : 'w-[260px]'
-      }`}
+      <aside 
+        className={`fixed left-0 top-0 bottom-0 z-50 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hidden lg:flex flex-col w-[260px] shadow-2xl ${
+          (sidebarHovered || sidebarPinned) ? 'translate-x-0' : '-translate-x-[260px]'
+        }`}
+        onMouseLeave={() => setSidebarHovered(false)}
         style={{
           background: 'rgba(22, 22, 42, 0.75)',
           backdropFilter: 'blur(32px) saturate(180%)',
@@ -183,12 +192,10 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
                 ⚡
               </div>
             )}
-            {!sidebarCollapsed && (
-              <div className="leading-tight animate-fade-in">
-                <div className="text-[13px] font-bold text-[var(--text-primary)]">{companyName}</div>
-                <div className="text-[9px] text-[var(--text-muted)] font-semibold uppercase tracking-[0.15em]">Dashboard</div>
-              </div>
-            )}
+            <div className="leading-tight animate-fade-in">
+              <div className="text-[13px] font-bold text-[var(--text-primary)]">{companyName}</div>
+              <div className="text-[9px] text-[var(--text-muted)] font-semibold uppercase tracking-[0.15em]">Dashboard</div>
+            </div>
           </Link>
         </div>
 
@@ -207,22 +214,19 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
                 <Icon className={`h-[18px] w-[18px] flex-shrink-0 transition-colors duration-300 ${
                   active ? 'text-[var(--accent)]' : 'text-[var(--text-muted)]'
                 }`} />
-                {!sidebarCollapsed && (
-                  <span className="truncate">{item.name}</span>
-                )}
+                <span className="truncate">{item.name}</span>
               </Link>
             )
           })}
         </nav>
 
-        {/* Sidebar Footer — Collapse toggle */}
         <div className="px-3 pb-4 border-t border-[var(--glass-border)] pt-3">
           <button 
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            onClick={() => setSidebarPinned(!sidebarPinned)}
             className="sidebar-nav-item w-full justify-center"
           >
-            <ChevronRightIcon className={`h-4 w-4 text-[var(--text-muted)] transition-transform duration-300 ${sidebarCollapsed ? '' : 'rotate-180'}`} />
-            {!sidebarCollapsed && <span className="text-[12px] text-[var(--text-muted)]">Collapse</span>}
+            <ChevronRightIcon className={`h-4 w-4 text-[var(--text-muted)] transition-transform duration-300 ${sidebarPinned ? 'rotate-180' : ''}`} />
+            <span className="text-[12px] text-[var(--text-muted)]">{sidebarPinned ? 'Unpin' : 'Pin Sidebar'}</span>
           </button>
         </div>
       </aside>
@@ -303,7 +307,7 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
 
       {/* ═══ MAIN CONTENT AREA ═══ */}
       <div className={`relative z-10 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-        sidebarCollapsed ? 'lg:ml-[72px]' : 'lg:ml-[260px]'
+        sidebarPinned ? 'lg:ml-[260px]' : 'lg:ml-0'
       }`}>
         {/* ═══ TOP NAVBAR ═══ */}
         <header className="sticky top-0 z-30 border-b border-[var(--glass-border)]"

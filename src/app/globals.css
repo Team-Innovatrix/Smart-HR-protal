@@ -387,15 +387,28 @@
 /* ── Cursor Motion Effect ──────────────────────────────────────── */
 .cursor-glow {
   position: fixed;
-  width: 400px;
-  height: 400px;
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--accent);
   border-radius: 50%;
   pointer-events: none;
-  z-index: 1;
-  background: radial-gradient(circle, rgba(52, 211, 153, 0.06) 0%, transparent 70%);
+  z-index: 9999;
   transform: translate(-50%, -50%);
-  transition: opacity 0.4s ease;
-  will-change: left, top;
+  transition: opacity 0.4s ease, width 0.2s ease, height 0.2s ease;
+  will-change: left, top, width, height;
+  box-shadow: 0 0 10px var(--accent-glow), inset 0 0 10px var(--accent-glow);
+}
+.cursor-glow::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background-color: var(--accent);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 8px var(--accent);
 }
 .cursor-glow.disabled {
   opacity: 0 !important;
@@ -500,6 +513,10 @@ input[type="password"], input[type="number"], input[type="search"], input[type="
 input[type="url"], select, textarea {
   background-color: rgba(255, 255, 255, 0.06) !important;
   border-color: var(--glass-border) !important;
+  color: var(--text-primary) !important;
+}
+option {
+  background-color: var(--bg-surface) !important;
   color: var(--text-primary) !important;
 }
 input[type="date"]:focus, input[type="month"]:focus, select:focus, textarea:focus {
