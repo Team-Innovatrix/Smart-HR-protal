@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useDevSafeUser } from '../../lib/hooks/useDevSafeClerk';
 
 interface AdminAuthGuardProps {
   children: React.ReactNode;
@@ -9,36 +10,37 @@ interface AdminAuthGuardProps {
 
 export default function AdminAuthGuard({ children }: AdminAuthGuardProps) {
   const router = useRouter();
+  const { user, isLoaded } = useDevSafeUser();
   const [status, setStatus] = useState<'checking' | 'authorized' | 'denied'>('checking');
 
   useEffect(() => {
-    fetch('/api/admin/auth/check')
-      .then(r => r.json())
-      .then(d => {
-        if (d.authenticated) {
+    if (isLoaded) {
+      if (!user) {
+        router.replace('/portal/auth');
+      } else {
+        const role = user.publicMetadata?.role as string;
+        if (role === 'admin' || role === 'owner') {
           setStatus('authorized');
         } else {
-          router.replace('/portal/admin/login');
+          router.replace('/portal/admin/access-denied');
         }
-      })
-      .catch(() => {
-        router.replace('/portal/admin/login');
-      });
-  }, [router]);
+      }
+    }
+  }, [isLoaded, user, router]);
 
   if (status === 'checking') {
     return (
       <div
         className="min-h-screen flex items-center justify-center"
-        style={{ background: 'linear-gradient(135deg, #f8fafc, #eef2ff, #f0fdfa)' }}
+        style={{ background: 'var(--bg-base)' }}
         suppressHydrationWarning
       >
         <div className="text-center">
           <div className="relative w-14 h-14 mx-auto mb-4">
-            <div className="absolute inset-0 rounded-full border-4 border-indigo-100" />
-            <div className="absolute inset-0 rounded-full border-4 border-t-indigo-500 animate-spin" />
+            <div className="absolute inset-0 rounded-full border-4 border-[var(--glass-border)]" />
+            <div className="absolute inset-0 rounded-full border-4 border-t-[var(--accent)] animate-spin" />
           </div>
-          <p className="text-indigo-600 font-bold text-sm">Verifying admin access…</p>
+          <p className="text-[var(--accent)] font-bold text-sm">Verifying admin access…</p>
         </div>
       </div>
     );

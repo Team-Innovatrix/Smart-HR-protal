@@ -132,6 +132,17 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
     { name: 'Settings', href: getHRPortalPath('settings'), icon: Cog6ToothIcon, current: currentPage === 'settings', description: 'Preferences' },
   ]
 
+  const userRole = user?.publicMetadata?.role as string
+  if (userRole === 'admin' || userRole === 'owner') {
+    navigation.push({
+      name: 'Admin Portal',
+      href: '/portal/admin/dashboard',
+      icon: SparklesIcon,
+      current: currentPage === 'admin',
+      description: 'Admin Control Panel'
+    })
+  }
+
   const isCurrentPage = (href: string) => {
     if (href === getHRPortalPath('dashboard') && currentPage === 'dashboard') return true
     if (href === getHRPortalPath('dashboard') && currentPage === 'home') return true
