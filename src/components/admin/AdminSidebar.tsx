@@ -20,6 +20,7 @@ import {
   BriefcaseIcon,
   SparklesIcon,
   ShieldExclamationIcon,
+  MegaphoneIcon,
 } from '@heroicons/react/24/outline';
 
 const navigation = [
@@ -32,6 +33,7 @@ const navigation = [
   { name: 'Analytics', href: '/portal/admin/analytics', icon: <ChartBarIcon className="w-5 h-5" /> },
   { name: 'Predictive AI', href: '/portal/admin/predictive', icon: <SparklesIcon className="w-5 h-5" /> },
   { name: 'Risk Intelligence', href: '/portal/admin/risk', icon: <ShieldExclamationIcon className="w-5 h-5" /> },
+  { name: 'Priority Msg', href: '/portal/admin/priority-msg', icon: <MegaphoneIcon className="w-5 h-5" /> },
   { name: 'Settings', href: '/portal/admin/settings', icon: <Cog6ToothIcon className="w-5 h-5" /> },
 ];
 

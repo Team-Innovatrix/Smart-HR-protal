@@ -73,6 +73,7 @@ export default function HRPortalDashboard() {
   const [leaveData, setLeaveData] = useState<{ label: string; used: number; total: number; color: string }[]>([])
   const [notifCount, setNotifCount] = useState(0)
   const [totalLeaveRemaining, setTotalLeaveRemaining] = useState(0)
+  const [priorityMsg, setPriorityMsg] = useState<{message: string, senderName: string} | null>(null)
 
   // Fetch real dashboard data
   useEffect(() => {
@@ -124,6 +125,14 @@ export default function HRPortalDashboard() {
       .then(r => r.json())
       .then(d => {
         if (d.success) setNotifCount(d.data?.length || d.notifications?.length || 0)
+      })
+      .catch(() => {})
+
+    // Priority Message
+    fetch('/api/priority-msg')
+      .then(r => r.json())
+      .then(d => {
+        if (d.success && d.data) setPriorityMsg(d.data)
       })
       .catch(() => {})
   }, [user?.id])
@@ -228,6 +237,33 @@ export default function HRPortalDashboard() {
             </div>
           </div>
         </div>
+
+        {/* ━━ PRIORITY MESSAGE ━━ */}
+        {priorityMsg && (
+          <div className="mb-8 animate-fade-in-delay-1">
+            <div className="relative overflow-hidden rounded-2xl p-6"
+              style={{
+                background: 'rgba(248, 113, 113, 0.08)',
+                border: '1px solid rgba(248, 113, 113, 0.3)',
+                boxShadow: '0 4px 20px rgba(248, 113, 113, 0.1)'
+              }}
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--color-danger)] rounded-full blur-[60px] opacity-20 pointer-events-none" />
+              <div className="relative z-10 flex items-start gap-4">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{ background: 'rgba(248, 113, 113, 0.2)', border: '1px solid rgba(248, 113, 113, 0.4)' }}
+                >
+                  <span className="text-xl">🚨</span>
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-[var(--color-danger)] mb-1">PRIORITY ANNOUNCEMENT</h3>
+                  <p className="text-[14px] text-[var(--text-primary)] font-medium leading-relaxed">{priorityMsg.message}</p>
+                  <p className="text-[11px] text-[var(--text-muted)] mt-2">Sent by {priorityMsg.senderName}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* ━━ STAT PILLS ━━ */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8 animate-fade-in-delay-1">
