@@ -6,12 +6,12 @@ import mongoose from 'mongoose';
 
 export async function GET(req: NextRequest) {
   try {
-    if (!isAdminSessionValid(req)) {
+    if (!await isAdminSessionValid(req)) {
       return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
     }
 
     // HR Managers have full access to user data - no need for specific permission check
-    // if (!hasPermission(adminUser.permissions, 'users:read')) {
+    // if (!hasPermission(['all'], 'users:read')) {
     //   return NextResponse.json(
     //     { error: 'Insufficient permissions to read users.' },
     //     { status: 403 }
@@ -133,12 +133,12 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    if (!isAdminSessionValid(req)) {
+    if (!await isAdminSessionValid(req)) {
       return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
     }
 
     // HR Managers have full access to create users - no need for specific permission check
-    // if (!hasPermission(adminUser.permissions, 'users:write')) {
+    // if (!hasPermission(['all'], 'users:write')) {
     //   return NextResponse.json(
     //     { error: 'Insufficient permissions to create users.' },
     //     { status: 403 }

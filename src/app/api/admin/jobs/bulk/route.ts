@@ -5,7 +5,7 @@ import { getCareersJobModel } from '@/models/careers/Job'
 export const dynamic = 'force-dynamic'
 
 export async function POST(req: NextRequest) {
-  if (!isAdminSessionValid(req)) return NextResponse.json({ error: 'Access denied.' }, { status: 403 })
+  if (!await isAdminSessionValid(req)) return NextResponse.json({ error: 'Access denied.' }, { status: 403 })
 
   try {
     const { action, ids } = await req.json() as { action: 'activate' | 'deactivate' | 'delete', ids: string[] }

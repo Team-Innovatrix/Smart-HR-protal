@@ -6,7 +6,7 @@ import { isAdminSessionValid } from '@/lib/adminCookieAuth';
 export async function GET(request: NextRequest) {
   try {
     // Check if user is admin
-    if (!isAdminSessionValid(request)) { return NextResponse.json({ error: 'Access denied.' }, { status: 403 }); }
+    if (!await isAdminSessionValid(request)) { return NextResponse.json({ error: 'Access denied.' }, { status: 403 }); }
 
     await connectDB();
 
@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // Check if user is admin
-    if (!isAdminSessionValid(request)) { return NextResponse.json({ error: 'Access denied.' }, { status: 403 }); }
+    if (!await isAdminSessionValid(request)) { return NextResponse.json({ error: 'Access denied.' }, { status: 403 }); }
 
     await connectDB();
 

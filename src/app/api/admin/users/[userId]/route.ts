@@ -10,7 +10,7 @@ export async function GET(
   { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
-    if (!isAdminSessionValid(req)) {
+    if (!await isAdminSessionValid(req)) {
       return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
     }
 
@@ -93,7 +93,7 @@ export async function PUT(
   { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
-    if (!isAdminSessionValid(req)) {
+    if (!await isAdminSessionValid(req)) {
       return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
     }
 
@@ -361,7 +361,7 @@ export async function DELETE(
   { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
-    if (!isAdminSessionValid(req)) {
+    if (!await isAdminSessionValid(req)) {
       return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
     }
 

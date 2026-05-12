@@ -8,10 +8,10 @@ import { createDateRangeQuery } from '@/lib/dateQueryUtils';
 export async function GET(req: NextRequest) {
   try {
     // Check if user has HR Manager access
-    if (!isAdminSessionValid(req)) { return NextResponse.json({ error: 'Access denied.' }, { status: 403 }); }
+    if (!await isAdminSessionValid(req)) { return NextResponse.json({ error: 'Access denied.' }, { status: 403 }); }
 
     // HR Managers have full access to leave data - no need for specific permission check
-    // if (!hasPermission(adminUser.permissions, 'leaves:read')) {
+    // if (!hasPermission(['all'], 'leaves:read')) {
     //   return NextResponse.json(
     //     { error: 'Insufficient permissions to read leaves.' },
     //     { status: 403 }
@@ -164,10 +164,10 @@ export async function GET(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
   try {
     // Check if user has HR Manager access
-    if (!isAdminSessionValid(req)) { return NextResponse.json({ error: 'Access denied.' }, { status: 403 }); }
+    if (!await isAdminSessionValid(req)) { return NextResponse.json({ error: 'Access denied.' }, { status: 403 }); }
 
     // HR Managers have full access to approve leaves - no need for specific permission check
-    // if (!hasPermission(adminUser.permissions, 'leaves:approve')) {
+    // if (!hasPermission(['all'], 'leaves:approve')) {
     //   return NextResponse.json(
     //     { error: 'Insufficient permissions to approve leaves.' },
     //     { status: 500 }

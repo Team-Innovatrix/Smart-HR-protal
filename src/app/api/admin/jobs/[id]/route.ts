@@ -21,7 +21,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  if (!isAdminSessionValid(req)) return NextResponse.json({ error: 'Access denied.' }, { status: 403 })
+  if (!await isAdminSessionValid(req)) return NextResponse.json({ error: 'Access denied.' }, { status: 403 })
 
   try {
     const payload = await req.json()
@@ -71,7 +71,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  if (!isAdminSessionValid(req)) return NextResponse.json({ error: 'Access denied.' }, { status: 403 })
+  if (!await isAdminSessionValid(req)) return NextResponse.json({ error: 'Access denied.' }, { status: 403 })
   const Job = await getCareersJobModel()
   try {
     await Job.findByIdAndDelete(id)

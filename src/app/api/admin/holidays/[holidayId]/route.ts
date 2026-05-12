@@ -8,7 +8,7 @@ export async function PUT(
   context: any
 ) {
   try {
-    if (!isAdminSessionValid(request)) {
+    if (!await isAdminSessionValid(request)) {
       return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
     }
 
@@ -130,7 +130,7 @@ export async function DELETE(
   context: any
 ) {
   try {
-    if (!isAdminSessionValid(request)) {
+    if (!await isAdminSessionValid(request)) {
       return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
     }
 

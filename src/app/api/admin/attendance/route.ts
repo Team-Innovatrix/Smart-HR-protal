@@ -10,10 +10,10 @@ import { calculateMonthlyAttendanceStats } from '@/lib/attendanceUtils';
 export async function GET(req: NextRequest) {
   try {
     // Check if user has HR Manager access
-    if (!isAdminSessionValid(req)) { return NextResponse.json({ error: 'Access denied.' }, { status: 403 }); }
+    if (!await isAdminSessionValid(req)) { return NextResponse.json({ error: 'Access denied.' }, { status: 403 }); }
 
     // HR Managers have full access to attendance data - no need for specific permission check
-    // if (!hasPermission(adminUser.permissions, 'attendance:read')) {
+    // if (!hasPermission(['all'], 'attendance:read')) {
     //   return NextResponse.json(
     //     { error: 'Insufficient permissions to read attendance.' },
     //     { status: 403 }
@@ -333,10 +333,10 @@ export async function GET(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
   try {
     // Check if user has HR Manager access
-    if (!isAdminSessionValid(req)) { return NextResponse.json({ error: 'Access denied.' }, { status: 403 }); }
+    if (!await isAdminSessionValid(req)) { return NextResponse.json({ error: 'Access denied.' }, { status: 403 }); }
 
     // HR Managers have full access to modify attendance - no need for specific permission check
-    // if (!hasPermission(adminUser.permissions, 'attendance:write')) {
+    // if (!hasPermission(['all'], 'attendance:write')) {
     //   return NextResponse.json(
     //     { error: 'Insufficient permissions to modify attendance.' },
     //     { status: 403 }

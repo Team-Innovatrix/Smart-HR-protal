@@ -8,7 +8,7 @@ import { calculateMonthlyAttendanceStats } from '@/lib/attendanceUtils';
 export async function GET(req: NextRequest) {
   try {
     // Check if user has HR Manager access
-    if (!isAdminSessionValid(req)) { return NextResponse.json({ error: 'Access denied.' }, { status: 403 }); }
+    if (!await isAdminSessionValid(req)) { return NextResponse.json({ error: 'Access denied.' }, { status: 403 }); }
 
     // Connect to database
     await connectDB();

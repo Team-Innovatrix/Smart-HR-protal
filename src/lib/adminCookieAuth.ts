@@ -1,18 +1,22 @@
 import { NextRequest } from 'next/server';
-
-const SESSION_COOKIE = 'admin_session';
-const SESSION_VALUE = 'innovatrix_admin_authenticated';
+import { auth, currentUser } from '@clerk/nextjs/server';
 
 /**
- * Check if the incoming request has a valid admin session cookie.
- * Use this in all /api/admin/* routes instead of checkHRManagerAccess.
+ * Check if the incoming request comes from a Clerk user with an admin/owner role.
  */
-export function isAdminSessionValid(req: NextRequest): boolean {
-  const cookie = req.cookies.get(SESSION_COOKIE);
-  return cookie?.value === SESSION_VALUE;
+export async function isAdminSessionValid(req: NextRequest): Promise<boolean> {
+  const { userId } = await auth();
+  const user = await currentUser();
+
+  if (!userId || !user) {
+    return false;
+  }
+
+  const role = user.publicMetadata?.role as string;
+  return role === 'admin' || role === 'owner';
 }
 
-/** Standard admin user object returned to API routes */
+/** Standard admin user object returned to API routes (Deprecated, but kept for compatibility if needed) */
 export const ADMIN_IDENTITY = {
   clerkUserId: 'admin',
   employeeId: 'ADM001',

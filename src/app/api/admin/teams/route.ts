@@ -11,7 +11,7 @@ export async function HEAD() {
 
 export async function GET(req: NextRequest) {
   try {
-    if (!isAdminSessionValid(req)) {
+    if (!await isAdminSessionValid(req)) {
       return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
     }
 
@@ -103,7 +103,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     // Check if user has HR Manager access
-    if (!isAdminSessionValid(req)) { return NextResponse.json({ error: 'Access denied.' }, { status: 403 }); }
+    if (!await isAdminSessionValid(req)) { return NextResponse.json({ error: 'Access denied.' }, { status: 403 }); }
 
     // Connect to database
     await connectDB();

@@ -5,7 +5,7 @@ import Team from '@/models/Team';
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ teamId: string }> }) {
   try {
-    if (!isAdminSessionValid(req)) {
+    if (!await isAdminSessionValid(req)) {
       return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
     }
 
@@ -76,7 +76,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ team
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ teamId: string }> }) {
   try {
-    if (!isAdminSessionValid(req)) {
+    if (!await isAdminSessionValid(req)) {
       return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
     }
 
@@ -112,7 +112,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ t
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ teamId: string }> }) {
   try {
-    if (!isAdminSessionValid(req)) {
+    if (!await isAdminSessionValid(req)) {
       return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
     }
 

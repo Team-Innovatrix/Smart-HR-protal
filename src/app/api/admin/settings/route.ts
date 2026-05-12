@@ -5,7 +5,7 @@ import SystemSettings from '@/models/SystemSettings';
 
 export async function GET(req: NextRequest) {
   try {
-    if (!isAdminSessionValid(req)) {
+    if (!await isAdminSessionValid(req)) {
       return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
     }
 
@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
-    if (!isAdminSessionValid(req)) {
+    if (!await isAdminSessionValid(req)) {
       return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
     }
 

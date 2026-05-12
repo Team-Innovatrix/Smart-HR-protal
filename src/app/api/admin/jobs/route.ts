@@ -7,7 +7,7 @@ import { SettingsService } from '@/lib/settingsService'
 export const dynamic = 'force-dynamic'
 
 export async function GET(req: NextRequest) {
-  if (!isAdminSessionValid(req)) return NextResponse.json({ error: 'Access denied.' }, { status: 403 })
+  if (!await isAdminSessionValid(req)) return NextResponse.json({ error: 'Access denied.' }, { status: 403 })
 
   const { searchParams } = new URL(req.url)
   const page = Math.max(parseInt(searchParams.get('page') || '1', 10) || 1, 1)
@@ -49,7 +49,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  if (!isAdminSessionValid(req)) return NextResponse.json({ error: 'Access denied.' }, { status: 403 })
+  if (!await isAdminSessionValid(req)) return NextResponse.json({ error: 'Access denied.' }, { status: 403 })
 
   try {
     const payload = await req.json()
