@@ -209,7 +209,7 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
                 key={item.name}
                 href={item.href}
                 className={`sidebar-nav-item ${active ? 'active' : ''}`}
-                title={sidebarCollapsed ? item.name : undefined}
+                title={item.name}
               >
                 <Icon className={`h-[18px] w-[18px] flex-shrink-0 transition-colors duration-300 ${
                   active ? 'text-[var(--accent)]' : 'text-[var(--text-muted)]'
