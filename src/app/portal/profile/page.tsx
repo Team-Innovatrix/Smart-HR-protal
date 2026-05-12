@@ -35,9 +35,13 @@ export default function ProfilePage() {
 
   return (
     <HRPortalLayout currentPage="profile">
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-4 sm:p-6">
-        {/* Profile Management Component with Education */}
-        <UserProfileManagement userId={user.id} />
+      <div className="min-h-screen p-4 sm:p-6 relative">
+        <div className="ambient-bg"></div>
+        <div className="mesh-overlay"></div>
+        <div className="relative z-10">
+          {/* Profile Management Component with Education */}
+          <UserProfileManagement userId={user.id} />
+        </div>
       </div>
     </HRPortalLayout>
   )

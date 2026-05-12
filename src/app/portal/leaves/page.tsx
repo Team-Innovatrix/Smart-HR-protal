@@ -212,8 +212,10 @@ export default function LeavesPage() {
 
   return (
     <HRPortalLayout currentPage="leaves">
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-4 sm:p-6">
-        <div className="max-w-7xl mx-auto space-y-4 sm:space-y-8">
+      <div className="min-h-screen p-4 sm:p-6 relative">
+        <div className="ambient-bg"></div>
+        <div className="mesh-overlay"></div>
+        <div className="max-w-7xl mx-auto space-y-4 sm:space-y-8 relative z-10">
 
         {/* Leave Balance Charts */}
         <LeaveBalanceCharts userId={user.id} className="mb-8" />
@@ -250,7 +252,7 @@ export default function LeavesPage() {
         )}
 
         {/* View Switcher */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-lg border border-gray-200/50 p-4 sm:p-6 relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+        <div className="glass-strong p-4 sm:p-6 relative overflow-hidden group">
           {/* Modern wave pattern decoration - hidden on mobile */}
           <div className="absolute top-0 right-0 w-40 h-40 opacity-5 hidden sm:block">
             <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full"></div>
@@ -341,7 +343,7 @@ export default function LeavesPage() {
 
         {/* Sub-tabs for My Leave */}
         {activeView === 'my' && (
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-lg border border-gray-200/50 p-4 sm:p-6 relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+          <div className="glass-strong p-4 sm:p-6 relative overflow-hidden group">
             {/* Modern geometric pattern decoration - hidden on mobile */}
             <div className="absolute top-0 right-0 w-40 h-40 opacity-5 hidden sm:block">
               <div className="absolute top-4 right-4 w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg rotate-45"></div>
@@ -356,7 +358,7 @@ export default function LeavesPage() {
                   className={`flex items-center justify-center gap-2 sm:gap-3 py-2 sm:py-3 px-4 sm:px-6 rounded-lg sm:rounded-xl font-medium text-xs sm:text-sm transition-all duration-200 ${
                     activeTab === 'calendar'
                       ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg'
-                      : 'text-gray-500 hover:text-gray-700 hover:bg-white/60 backdrop-blur-sm'
+                      : 'text-gray-500 hover:text-white hover:bg-white/10 backdrop-blur-sm'
                   }`}
                 >
                   <CalendarIcon className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -368,7 +370,7 @@ export default function LeavesPage() {
                   className={`flex items-center justify-center gap-2 sm:gap-3 py-2 sm:py-3 px-4 sm:px-6 rounded-lg sm:rounded-xl font-medium text-xs sm:text-sm transition-all duration-200 ${
                     activeTab === 'history'
                       ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg'
-                      : 'text-gray-500 hover:text-gray-700 hover:bg-white/60 backdrop-blur-sm'
+                      : 'text-gray-500 hover:text-white hover:bg-white/10 backdrop-blur-sm'
                   }`}
                 >
                   <ClockIcon className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -380,7 +382,7 @@ export default function LeavesPage() {
         )}
 
         {/* Tab Content */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-lg border border-gray-200/50 p-4 sm:p-8 relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+        <div className="glass-strong p-4 sm:p-8 relative overflow-hidden group">
           {/* Modern diagonal pattern decoration - hidden on mobile */}
           <div className="absolute top-0 right-0 w-40 h-40 opacity-5 hidden sm:block">
             <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-green-500 to-emerald-600 transform rotate-12 rounded-lg"></div>
@@ -510,7 +512,7 @@ export default function LeavesPage() {
                     {selectedLeave.reason && (
                       <div>
                         <span className="text-sm font-medium text-gray-500 block mb-2">Reason:</span>
-                        <p className="text-sm text-gray-900 bg-gray-50 p-3 rounded-lg">
+                        <p className="text-sm text-gray-900 glass p-3 rounded-lg">
                           {selectedLeave.reason}
                         </p>
                       </div>
@@ -519,7 +521,7 @@ export default function LeavesPage() {
                     {selectedLeave.rejectionReason && (
                       <div>
                         <span className="text-sm font-medium text-gray-500 block mb-2">Rejection Reason:</span>
-                        <p className="text-sm text-red-600 bg-red-50 p-3 rounded-lg">
+                        <p className="text-sm text-red-400 glass p-3 rounded-lg border border-red-500/20">
                           {selectedLeave.rejectionReason}
                         </p>
                       </div>

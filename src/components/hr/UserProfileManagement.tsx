@@ -287,7 +287,7 @@ const UserProfileManagement = ({ userId }: UserProfileManagementProps) => {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="glass-strong p-6">
         <div className="text-center py-12">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading profile...</p>
@@ -298,7 +298,7 @@ const UserProfileManagement = ({ userId }: UserProfileManagementProps) => {
 
   if (!profile) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="glass-strong p-6">
         <div className="text-center py-12">
           <ShieldCheckIcon className="h-12 w-12 text-red-400 mx-auto mb-3" />
           <p className="text-gray-500">Profile not found</p>
@@ -311,7 +311,7 @@ const UserProfileManagement = ({ userId }: UserProfileManagementProps) => {
   return (
     <div className="space-y-4 sm:space-y-8">
       {/* Profile Header */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-lg border border-gray-200/50 p-4 sm:p-8 relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+      <div className="glass-strong p-4 sm:p-8 relative overflow-hidden group">
         {/* Background decoration - hidden on mobile */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500 to-indigo-600 opacity-5 rounded-full -translate-y-16 translate-x-16 hidden sm:block"></div>
         <div className="relative z-10">
@@ -357,7 +357,7 @@ const UserProfileManagement = ({ userId }: UserProfileManagementProps) => {
 
 
       {/* Employment Information */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-lg border border-gray-200/50 p-4 sm:p-8 relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+      <div className="glass-strong p-4 sm:p-8 relative overflow-hidden group">
         {/* Background decoration - hidden on mobile */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-500 to-emerald-600 opacity-5 rounded-full -translate-y-16 translate-x-16 hidden sm:block"></div>
         
@@ -397,7 +397,7 @@ const UserProfileManagement = ({ userId }: UserProfileManagementProps) => {
       </div>
 
       {/* Leave Balance */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-lg border border-gray-200/50 p-4 sm:p-8 relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+      <div className="glass-strong p-4 sm:p-8 relative overflow-hidden group">
         {/* Background decoration - hidden on mobile */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500 to-pink-600 opacity-5 rounded-full -translate-y-16 translate-x-16 hidden sm:block"></div>
         
@@ -421,7 +421,7 @@ const UserProfileManagement = ({ userId }: UserProfileManagementProps) => {
             const allottedBalance = (profile.leaveBalance as any)[allottedType] || 0;
             
             return (
-              <div key={type} className="text-center p-3 sm:p-4 bg-gray-50 rounded-lg">
+              <div key={type} className="text-center p-3 sm:p-4 glass rounded-lg border border-gray-200/20">
                 <div className={`inline-flex items-center px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-medium ${getLeaveTypeColor(type)} mb-1 sm:mb-2`}>
                   {type.charAt(0).toUpperCase() + type.slice(1)}
                 </div>
@@ -441,7 +441,7 @@ const UserProfileManagement = ({ userId }: UserProfileManagementProps) => {
       </div>
 
       {/* Personal Information */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-lg border border-gray-200/50 p-4 sm:p-8 relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+      <div className="glass-strong p-4 sm:p-8 relative overflow-hidden group">
         {/* Background decoration - hidden on mobile */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500 to-indigo-600 opacity-5 rounded-full -translate-y-16 translate-x-16 hidden sm:block"></div>
         
@@ -457,7 +457,7 @@ const UserProfileManagement = ({ userId }: UserProfileManagementProps) => {
           </div>
         
         {/* Contact Number */}
-        <div className="mb-4 sm:mb-6 bg-white/60 backdrop-blur-sm p-4 sm:p-6 rounded-xl border border-gray-200/50 shadow-sm hover:shadow-md transition-all duration-200">
+        <div className="mb-4 sm:mb-6 glass p-4 sm:p-6 rounded-xl border border-gray-200/50 shadow-sm hover:shadow-md transition-all duration-200">
           <div className="flex items-center justify-between mb-3">
             <h4 className="text-base sm:text-lg font-semibold text-gray-900">Contact Information</h4>
             {!editingContact ? (
@@ -494,7 +494,7 @@ const UserProfileManagement = ({ userId }: UserProfileManagementProps) => {
         </div>
 
         {/* Address */}
-        <div className="mb-4 sm:mb-6 bg-white/60 backdrop-blur-sm p-4 sm:p-6 rounded-xl border border-gray-200/50 shadow-sm hover:shadow-md transition-all duration-200">
+        <div className="mb-4 sm:mb-6 glass p-4 sm:p-6 rounded-xl border border-gray-200/50 shadow-sm hover:shadow-md transition-all duration-200">
           <div className="flex items-center justify-between mb-3">
             <h4 className="text-base sm:text-lg font-semibold text-gray-900">Address</h4>
             {!editingAddress ? (
@@ -591,7 +591,7 @@ const UserProfileManagement = ({ userId }: UserProfileManagementProps) => {
         </div>
 
         {/* Emergency Contact */}
-        <div className="bg-white/60 backdrop-blur-sm p-4 sm:p-6 rounded-xl border border-gray-200/50 shadow-sm hover:shadow-md transition-all duration-200">
+        <div className="glass p-4 sm:p-6 rounded-xl border border-gray-200/50 shadow-sm hover:shadow-md transition-all duration-200">
           <div className="flex items-center justify-between mb-3">
             <h4 className="text-base sm:text-lg font-semibold text-gray-900">Emergency Contact</h4>
             {!editingEmergency ? (
@@ -662,7 +662,7 @@ const UserProfileManagement = ({ userId }: UserProfileManagementProps) => {
       </div>
 
       {/* Education Section */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-lg border border-gray-200/50 p-4 sm:p-8 relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+      <div className="glass-strong p-4 sm:p-8 relative overflow-hidden group">
         {/* Background decoration - hidden on mobile */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-500 to-purple-600 opacity-5 rounded-full -translate-y-16 translate-x-16 hidden sm:block"></div>
         
@@ -676,7 +676,7 @@ const UserProfileManagement = ({ userId }: UserProfileManagementProps) => {
       </div>
 
       {/* Work Experience Section */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-lg border border-gray-200/50 p-4 sm:p-8 relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+      <div className="glass-strong p-4 sm:p-8 relative overflow-hidden group">
         {/* Background decoration - hidden on mobile */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-500 to-red-600 opacity-5 rounded-full -translate-y-16 translate-x-16 hidden sm:block"></div>
         

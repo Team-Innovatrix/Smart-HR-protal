@@ -226,7 +226,7 @@ const SettingsConfiguration: React.FC = () => {
           <span className="text-sm sm:text-base">Notification Channels</span>
         </h3>
         <div className="space-y-3 sm:space-y-4">
-          <div className="flex items-center justify-between p-4 sm:p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg sm:rounded-xl border border-blue-200/50 hover:shadow-md transition-all duration-200">
+          <div className="flex items-center justify-between p-4 sm:p-6 glass rounded-lg sm:rounded-xl border border-blue-500/20 hover:shadow-md transition-all duration-200">
             <div className="flex-1 min-w-0">
               <h4 className="font-medium text-gray-900 text-sm sm:text-base">Email Notifications</h4>
               <p className="text-xs sm:text-sm text-gray-600">Receive notifications via email</p>
@@ -242,7 +242,7 @@ const SettingsConfiguration: React.FC = () => {
             </label>
           </div>
 
-          <div className="flex items-center justify-between p-4 sm:p-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg sm:rounded-xl border border-purple-200/50 hover:shadow-md transition-all duration-200">
+          <div className="flex items-center justify-between p-4 sm:p-6 glass rounded-lg sm:rounded-xl border border-purple-500/20 hover:shadow-md transition-all duration-200">
             <div className="flex-1 min-w-0">
               <h4 className="font-medium text-gray-900 text-sm sm:text-base">SMS Notifications</h4>
               <p className="text-xs sm:text-sm text-gray-600">Receive notifications via SMS</p>
@@ -268,7 +268,7 @@ const SettingsConfiguration: React.FC = () => {
           <span className="text-sm sm:text-base">Notification Types</span>
         </h3>
         <div className="grid gap-3 sm:gap-6 sm:grid-cols-2">
-          <div className="flex items-center justify-between p-4 sm:p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg sm:rounded-xl border border-green-200/50 hover:shadow-md transition-all duration-200">
+          <div className="flex items-center justify-between p-4 sm:p-6 glass rounded-lg sm:rounded-xl border border-green-500/20 hover:shadow-md transition-all duration-200">
             <div className="flex-1 min-w-0">
               <h4 className="font-medium text-gray-900 text-sm sm:text-base">Attendance Reminders</h4>
               <p className="text-xs sm:text-sm text-gray-600">Daily clock in/out reminders</p>
@@ -284,7 +284,7 @@ const SettingsConfiguration: React.FC = () => {
             </label>
           </div>
 
-          <div className="flex items-center justify-between p-4 sm:p-6 bg-gradient-to-r from-orange-50 to-red-50 rounded-lg sm:rounded-xl border border-orange-200/50 hover:shadow-md transition-all duration-200">
+          <div className="flex items-center justify-between p-4 sm:p-6 glass rounded-lg sm:rounded-xl border border-orange-500/20 hover:shadow-md transition-all duration-200">
             <div className="flex-1 min-w-0">
               <h4 className="font-medium text-gray-900 text-sm sm:text-base">Leave Updates</h4>
               <p className="text-xs sm:text-sm text-gray-600">Leave request status changes</p>
@@ -300,7 +300,7 @@ const SettingsConfiguration: React.FC = () => {
             </label>
           </div>
 
-          <div className="flex items-center justify-between p-4 sm:p-6 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg sm:rounded-xl border border-purple-200/50 hover:shadow-md transition-all duration-200 sm:col-span-2">
+          <div className="flex items-center justify-between p-4 sm:p-6 glass rounded-lg sm:rounded-xl border border-purple-500/20 hover:shadow-md transition-all duration-200 sm:col-span-2">
             <div className="flex-1 min-w-0">
               <h4 className="font-medium text-gray-900 text-sm sm:text-base">Weekly Reports</h4>
               <p className="text-xs sm:text-sm text-gray-600">Weekly summary reports</p>
@@ -329,7 +329,7 @@ const SettingsConfiguration: React.FC = () => {
           </div>
           <span className="text-sm sm:text-base">Change Password</span>
         </h3>
-        <div className="space-y-4 sm:space-y-6 p-4 sm:p-6 lg:p-8 bg-gradient-to-r from-red-50 to-rose-50 rounded-lg sm:rounded-xl border border-red-200/50">
+        <div className="space-y-4 sm:space-y-6 p-4 sm:p-6 lg:p-8 glass rounded-lg sm:rounded-xl border border-red-500/20">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
             <div className="relative">
@@ -405,7 +405,7 @@ const SettingsConfiguration: React.FC = () => {
           <span className="text-sm sm:text-base">Theme & Display</span>
         </h3>
         <div className="space-y-4 sm:space-y-6">
-          <div className="p-4 sm:p-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg sm:rounded-xl border border-purple-200/50 hover:shadow-md transition-all duration-200">
+          <div className="p-4 sm:p-6 glass rounded-lg sm:rounded-xl border border-purple-500/20 hover:shadow-md transition-all duration-200">
             <label className="block text-sm font-medium text-gray-700 mb-2">Theme</label>
             <select
               value={appearanceSettings.theme}
@@ -418,7 +418,7 @@ const SettingsConfiguration: React.FC = () => {
             </select>
           </div>
 
-          <div className="p-4 sm:p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg sm:rounded-xl border border-blue-200/50 hover:shadow-md transition-all duration-200">
+          <div className="p-4 sm:p-6 glass rounded-lg sm:rounded-xl border border-blue-500/20 hover:shadow-md transition-all duration-200">
             <label className="block text-sm font-medium text-gray-700 mb-2">Language</label>
             <select
               value={appearanceSettings.language}
@@ -431,7 +431,7 @@ const SettingsConfiguration: React.FC = () => {
             </select>
           </div>
 
-          <div className="p-4 sm:p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg sm:rounded-xl border border-green-200/50 hover:shadow-md transition-all duration-200">
+          <div className="p-4 sm:p-6 glass rounded-lg sm:rounded-xl border border-green-500/20 hover:shadow-md transition-all duration-200">
             <label className="block text-sm font-medium text-gray-700 mb-2">Timezone</label>
             <TimezoneSelector
               value={appearanceSettings.timezone}
@@ -441,7 +441,7 @@ const SettingsConfiguration: React.FC = () => {
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="p-4 sm:p-6 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg sm:rounded-xl border border-orange-200/50 hover:shadow-md transition-all duration-200">
+            <div className="p-4 sm:p-6 glass rounded-lg sm:rounded-xl border border-orange-500/20 hover:shadow-md transition-all duration-200">
               <label className="block text-sm font-medium text-gray-700 mb-2">Date Format</label>
               <select
                 value={appearanceSettings.dateFormat}
@@ -454,7 +454,7 @@ const SettingsConfiguration: React.FC = () => {
               </select>
             </div>
 
-            <div className="p-4 sm:p-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg sm:rounded-xl border border-indigo-200/50 hover:shadow-md transition-all duration-200">
+            <div className="p-4 sm:p-6 glass rounded-lg sm:rounded-xl border border-indigo-500/20 hover:shadow-md transition-all duration-200">
               <label className="block text-sm font-medium text-gray-700 mb-2">Time Format</label>
               <select
                 value={appearanceSettings.timeFormat}
@@ -488,7 +488,7 @@ const SettingsConfiguration: React.FC = () => {
   return (
     <div className="space-y-8">
       {/* Tabs */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-lg border border-gray-200/50 p-4 sm:p-6 relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+      <div className="glass-strong p-4 sm:p-6 relative overflow-hidden group">
         {/* Modern geometric pattern decoration */}
         <div className="absolute top-0 right-0 w-40 h-40 opacity-5">
           <div className="absolute top-4 right-4 w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg rotate-45"></div>
@@ -529,7 +529,7 @@ const SettingsConfiguration: React.FC = () => {
       </div>
 
       {/* Tab Content */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-lg border border-gray-200/50 p-4 sm:p-6 lg:p-8 relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+      <div className="glass-strong p-4 sm:p-6 lg:p-8 relative overflow-hidden group">
         {/* Modern diagonal pattern decoration */}
         <div className="absolute top-0 right-0 w-40 h-40 opacity-5">
           <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-green-500 to-emerald-600 transform rotate-12 rounded-lg"></div>
@@ -543,7 +543,7 @@ const SettingsConfiguration: React.FC = () => {
       </div>
 
       {/* Save Button */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-lg border border-gray-200/50 p-4 sm:p-6 relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+      <div className="glass-strong p-4 sm:p-6 relative overflow-hidden group">
         {/* Modern zigzag pattern decoration */}
         <div className="absolute top-0 right-0 w-40 h-40 opacity-5">
           <div className="absolute top-0 right-0 w-20 h-4 bg-gradient-to-r from-blue-500 to-indigo-600 transform rotate-12"></div>
