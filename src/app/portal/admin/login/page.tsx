@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -11,6 +12,21 @@ export default function AdminLoginPage() {
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const [companyName, setCompanyName] = useState('Admin Portal');
+  const [companyLogo, setCompanyLogo] = useState('');
+
+  // Fetch company settings for branding
+  useEffect(() => {
+    fetch('/api/settings')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.data?.general) {
+          if (data.data.general.companyName) setCompanyName(data.data.general.companyName);
+          if (data.data.general.companyLogo) setCompanyLogo(data.data.general.companyLogo);
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   // If already logged in, redirect straight to admin
   useEffect(() => {
@@ -83,13 +99,19 @@ export default function AdminLoginPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-2xl"
-              style={{ background: 'linear-gradient(135deg,#4f46e5,#6366f1)' }}>
-              🛡️
-            </div>
+            {companyLogo ? (
+              <div className="w-12 h-12 rounded-2xl overflow-hidden shadow-2xl border border-[rgba(255,255,255,0.1)]">
+                <Image src={companyLogo} alt={companyName} width={48} height={48} className="w-full h-full object-cover" />
+              </div>
+            ) : (
+              <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-2xl"
+                style={{ background: 'linear-gradient(135deg,#4f46e5,#6366f1)' }}>
+                🛡️
+              </div>
+            )}
             <div className="text-left">
-              <div className="text-[10px] text-white/40 uppercase tracking-[0.2em] font-bold">Innovatrix</div>
-              <div className="text-white font-black text-lg leading-none">Admin Portal</div>
+              <div className="text-[10px] text-white/40 uppercase tracking-[0.2em] font-bold">Workspace</div>
+              <div className="text-white font-black text-lg leading-none">{companyName}</div>
             </div>
           </div>
           <p className="text-white/40 text-sm">Restricted access — Admins only</p>
@@ -121,7 +143,7 @@ export default function AdminLoginPage() {
                   autoComplete="username"
                   value={email}
                   onChange={e => { setEmail(e.target.value); setError(''); }}
-                  placeholder="admin@innovatrix.com"
+                  placeholder="admin@example.com"
                   className="w-full pl-11 pr-4 py-3.5 rounded-2xl text-white placeholder-white/20 text-sm font-medium outline-none transition-all duration-200 focus:ring-2 focus:ring-indigo-500/50"
                   style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}
                 />
@@ -203,7 +225,7 @@ export default function AdminLoginPage() {
 
         {/* Footer */}
         <p className="text-center text-white/20 text-xs mt-6">
-          🔒 Secured · Innovatrix Admin Portal · {new Date().getFullYear()}
+          🔒 Secured · {companyName} · {new Date().getFullYear()}
         </p>
       </div>
     </div>

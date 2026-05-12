@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { 
   HomeIcon, 
@@ -35,7 +36,8 @@ interface HRPortalLayoutProps {
 const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: HRPortalLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-  const [companyName, setCompanyName] = useState<string>('Innovatrix Smart Dashboard')
+  const [companyName, setCompanyName] = useState<string>('HR Dashboard')
+  const [companyLogo, setCompanyLogo] = useState<string>('')
   const [userProfile, setUserProfile] = useState<{ position?: string; department?: string } | null>(null)
   const [cursorMotion, setCursorMotion] = useState(true)
   const cursorRef = useRef<HTMLDivElement>(null)
@@ -56,22 +58,27 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
     return () => window.removeEventListener('mousemove', handleMove)
   }, [cursorMotion])
 
-  // Fetch company name from settings
+  // Fetch company name & logo from settings
   useEffect(() => {
-    const fetchCompanyName = async () => {
+    const fetchSettings = async () => {
       try {
         const response = await fetch('/api/settings');
         if (response.ok) {
           const data = await response.json();
-          if (data.success && data.data?.general?.companyName) {
-            setCompanyName(data.data.general.companyName);
+          if (data.success && data.data?.general) {
+            if (data.data.general.companyName) {
+              setCompanyName(data.data.general.companyName);
+            }
+            if (data.data.general.companyLogo) {
+              setCompanyLogo(data.data.general.companyLogo);
+            }
           }
         }
       } catch (error) {
-        console.error('Failed to fetch company name:', error);
+        console.error('Failed to fetch company settings:', error);
       }
     };
-    fetchCompanyName();
+    fetchSettings();
   }, []);
 
   // Fetch user profile for role/position
@@ -161,19 +168,25 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
         {/* Sidebar Brand */}
         <div className="px-4 pt-5 pb-4 border-b border-[var(--glass-border)]">
           <Link href={getHRPortalPath('dashboard')} className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0"
-              style={{
-                background: 'linear-gradient(135deg, rgba(52, 211, 153, 0.25), rgba(52, 211, 153, 0.08))',
-                border: '1px solid rgba(52, 211, 153, 0.2)',
-                boxShadow: '0 0 20px rgba(52, 211, 153, 0.1)',
-              }}
-            >
-              ⚡
-            </div>
+            {companyLogo ? (
+              <div className="w-9 h-9 rounded-xl overflow-hidden flex-shrink-0 border border-[rgba(255,255,255,0.1)]">
+                <Image src={companyLogo} alt={companyName} width={36} height={36} className="w-full h-full object-cover" />
+              </div>
+            ) : (
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(52, 211, 153, 0.25), rgba(52, 211, 153, 0.08))',
+                  border: '1px solid rgba(52, 211, 153, 0.2)',
+                  boxShadow: '0 0 20px rgba(52, 211, 153, 0.1)',
+                }}
+              >
+                ⚡
+              </div>
+            )}
             {!sidebarCollapsed && (
               <div className="leading-tight animate-fade-in">
-                <div className="text-[9px] text-[var(--text-muted)] font-semibold uppercase tracking-[0.15em]">Innovatrix</div>
-                <div className="text-[13px] font-bold text-[var(--text-primary)]">Smart HR</div>
+                <div className="text-[13px] font-bold text-[var(--text-primary)]">{companyName}</div>
+                <div className="text-[9px] text-[var(--text-muted)] font-semibold uppercase tracking-[0.15em]">Dashboard</div>
               </div>
             )}
           </Link>
@@ -229,15 +242,21 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
             {/* Mobile sidebar header */}
             <div className="px-5 pt-5 pb-3 border-b border-[var(--glass-border)] flex items-center justify-between">
               <Link href={getHRPortalPath('dashboard')} className="flex items-center gap-2.5" onClick={() => setSidebarOpen(false)}>
-                <div className="w-8 h-8 rounded-xl flex items-center justify-center text-base"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(52, 211, 153, 0.25), rgba(52, 211, 153, 0.08))',
-                    border: '1px solid rgba(52, 211, 153, 0.2)',
-                  }}
-                >⚡</div>
+                {companyLogo ? (
+                  <div className="w-8 h-8 rounded-xl overflow-hidden flex-shrink-0 border border-[rgba(255,255,255,0.1)]">
+                    <Image src={companyLogo} alt={companyName} width={32} height={32} className="w-full h-full object-cover" />
+                  </div>
+                ) : (
+                  <div className="w-8 h-8 rounded-xl flex items-center justify-center text-base"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(52, 211, 153, 0.25), rgba(52, 211, 153, 0.08))',
+                      border: '1px solid rgba(52, 211, 153, 0.2)',
+                    }}
+                  >⚡</div>
+                )}
                 <div className="leading-tight">
-                  <div className="text-[9px] text-[var(--text-muted)] font-semibold uppercase tracking-widest">Innovatrix</div>
-                  <div className="text-[12px] font-bold text-[var(--text-primary)]">Smart HR</div>
+                  <div className="text-[12px] font-bold text-[var(--text-primary)]">{companyName}</div>
+                  <div className="text-[9px] text-[var(--text-muted)] font-semibold uppercase tracking-widest">Dashboard</div>
                 </div>
               </Link>
               <button onClick={() => setSidebarOpen(false)} className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[rgba(255,255,255,0.06)] transition-all">

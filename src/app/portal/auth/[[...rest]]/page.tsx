@@ -1,9 +1,10 @@
 'use client'
 
 import { SignIn, SignUp } from '@clerk/nextjs'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
+import Image from 'next/image'
 
 /* ─── animated orb ─────────────────────────────────────────────── */
 function Orb({ className }: { className: string }) {
@@ -26,6 +27,20 @@ function Feature({ icon, text }: { icon: string; text: string }) {
 
 function HRPortalAuthPage() {
   const [showSignUp, setShowSignUp] = useState(false)
+  const [companyName, setCompanyName] = useState('HR Dashboard')
+  const [companyLogo, setCompanyLogo] = useState('')
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.data?.general) {
+          if (data.data.general.companyName) setCompanyName(data.data.general.companyName)
+          if (data.data.general.companyLogo) setCompanyLogo(data.data.general.companyLogo)
+        }
+      })
+      .catch(console.error)
+  }, [])
 
   return (
     <div className="min-h-screen flex" style={{ background: 'linear-gradient(135deg,#0f0c29,#302b63,#24243e)' }} suppressHydrationWarning>
@@ -43,10 +58,16 @@ function HRPortalAuthPage() {
         <div className="relative z-10">
           {/* Logo */}
           <div className="flex items-center gap-3 mb-16">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center text-2xl shadow-2xl">🚀</div>
+            {companyLogo ? (
+              <div className="w-12 h-12 rounded-2xl overflow-hidden shadow-2xl">
+                <Image src={companyLogo} alt={companyName} width={48} height={48} className="w-full h-full object-cover" />
+              </div>
+            ) : (
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center text-2xl shadow-2xl">🚀</div>
+            )}
             <div>
-              <div className="text-[10px] text-white/40 uppercase tracking-[0.2em] font-bold">Innovatrix</div>
-              <div className="text-white font-black text-lg leading-none tracking-tight">Smart Dashboard</div>
+              <div className="text-[10px] text-white/40 uppercase tracking-[0.2em] font-bold">Workspace</div>
+              <div className="text-white font-black text-lg leading-none tracking-tight">{companyName}</div>
             </div>
           </div>
 
@@ -72,7 +93,7 @@ function HRPortalAuthPage() {
           </div>
         </div>
 
-        <p className="relative z-10 text-white/20 text-xs">© 2026 Innovatrix · All rights reserved</p>
+        <p className="relative z-10 text-white/20 text-xs">© {new Date().getFullYear()} {companyName} · All rights reserved</p>
       </div>
 
       {/* ── RIGHT PANEL — Clerk ───────────────────────────────────── */}
@@ -81,14 +102,20 @@ function HRPortalAuthPage() {
           <div className="mb-8 text-center">
             {/* Mobile brand */}
             <div className="flex items-center justify-center gap-2.5 mb-6 lg:hidden">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center text-xl">🚀</div>
-              <div className="text-white font-black text-sm">Innovatrix Smart Dashboard</div>
+              {companyLogo ? (
+                <div className="w-9 h-9 rounded-xl overflow-hidden">
+                  <Image src={companyLogo} alt={companyName} width={36} height={36} className="w-full h-full object-cover" />
+                </div>
+              ) : (
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center text-xl">🚀</div>
+              )}
+              <div className="text-white font-black text-sm">{companyName}</div>
             </div>
             <h2 className="text-2xl font-black text-white mb-1">
               {showSignUp ? 'Create account' : 'Welcome back'}
             </h2>
             <p className="text-white/50 text-sm">
-              {showSignUp ? 'Join Innovatrix Smart Dashboard' : 'Sign in to your workspace'}
+              {showSignUp ? `Join ${companyName}` : 'Sign in to your workspace'}
             </p>
           </div>
 

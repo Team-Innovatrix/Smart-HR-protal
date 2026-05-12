@@ -1,7 +1,9 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { Bars3Icon, ArrowRightOnRectangleIcon, SparklesIcon } from '@heroicons/react/24/outline';
 
 interface AdminHeaderProps {
@@ -11,6 +13,31 @@ interface AdminHeaderProps {
 
 export default function AdminHeader({ onToggleSidebar }: AdminHeaderProps) {
   const router = useRouter();
+  const [companyName, setCompanyName] = useState<string>('Admin Portal');
+  const [companyLogo, setCompanyLogo] = useState<string>('');
+
+  // Fetch company settings for dynamic branding
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch('/api/settings');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.data?.general) {
+            if (data.data.general.companyName) {
+              setCompanyName(data.data.general.companyName);
+            }
+            if (data.data.general.companyLogo) {
+              setCompanyLogo(data.data.general.companyLogo);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch company settings:', error);
+      }
+    };
+    fetchSettings();
+  }, []);
 
   const handleLogout = async () => {
     await fetch('/api/admin/auth/logout', { method: 'POST' });
@@ -38,19 +65,25 @@ export default function AdminHeader({ onToggleSidebar }: AdminHeaderProps) {
             </button>
           )}
 
-          {/* Logo + Name */}
+          {/* Logo + Name — Dynamic from Settings */}
           <Link href="/portal/admin" className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center text-sm transition-transform duration-200 group-hover:scale-105"
-              style={{
-                background: 'linear-gradient(135deg, rgba(52, 211, 153, 0.25), rgba(52, 211, 153, 0.08))',
-                border: '1px solid rgba(52, 211, 153, 0.2)',
-                boxShadow: '0 0 15px rgba(52, 211, 153, 0.08)',
-              }}
-            >
-              ⚡
-            </div>
+            {companyLogo ? (
+              <div className="w-8 h-8 rounded-xl overflow-hidden flex-shrink-0 transition-transform duration-200 group-hover:scale-105 border border-[rgba(255,255,255,0.1)]">
+                <Image src={companyLogo} alt={companyName} width={32} height={32} className="w-full h-full object-cover" />
+              </div>
+            ) : (
+              <div className="w-8 h-8 rounded-xl flex items-center justify-center text-sm transition-transform duration-200 group-hover:scale-105"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(52, 211, 153, 0.25), rgba(52, 211, 153, 0.08))',
+                  border: '1px solid rgba(52, 211, 153, 0.2)',
+                  boxShadow: '0 0 15px rgba(52, 211, 153, 0.08)',
+                }}
+              >
+                ⚡
+              </div>
+            )}
             <div>
-              <div className="text-[9px] text-[var(--text-muted)] font-semibold tracking-[0.15em] uppercase leading-none mb-0.5">Innovatrix</div>
+              <div className="text-[9px] text-[var(--text-muted)] font-semibold tracking-[0.15em] uppercase leading-none mb-0.5">{companyName}</div>
               <h1 className="text-[13px] font-bold text-[var(--text-primary)] leading-none">Admin Portal</h1>
             </div>
           </Link>

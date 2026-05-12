@@ -10,15 +10,7 @@ import SystemSettings from '@/models/SystemSettings';
  */
 export async function GET() {
   try {
-    // Check if user is authenticated
-    const { userId } = await auth();
-    
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    // We no longer require userId for the public GET route so login pages can fetch the brand name
 
     // Connect to database
     await connectDB();
