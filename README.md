@@ -1,121 +1,101 @@
-# Innovatrix Smart HR Portal
+# Smart HR Portal
 
-![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat&logo=next.js)
-![React](https://img.shields.io/badge/React-18-blue?style=flat&logo=react)
-![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3-38bdf8?style=flat&logo=tailwind-css)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?style=flat&logo=typescript)
+A modern, high-performance HR Management System built with Next.js, featuring a stunning dark-mode glassmorphism UI, timezone-aware analytics, and a fully isolated secure Admin Portal.
 
-A modern, enterprise-grade Next.js application offering AI-powered, flexible team scaling solutions. The Innovatrix Smart HR Portal features a clean, native macOS System UI design, providing an intuitive, seamless experience for both employees and administrators.
+## 🚀 Key Features
 
-## 🚀 Features
+### 🎨 Premium Glassmorphism UI
+- **Dark Theme by Default**: A carefully crafted dark aesthetic using tailored `ambient-bg` and `mesh-overlay` tokens.
+- **Glassmorphic Components**: UI elements use `glass` and `glass-strong` tokens for beautiful transparency and blur effects.
+- **Dynamic UX**: Features a responsive hover-to-open sidebar (with pin functionality) to maximize screen real estate, and a custom animated cursor.
 
-- **macOS System UI**: Completely custom, flat UI system built to mimic native Apple software with sleek system fonts, frosted glass elements, and intuitive spacing.
-- **Dual Portals**: Dedicated, secure routing for the Employee Dashboard and the Admin Command Centre.
-- **Real-Time Attendance**: Live clock-in/out tracking with precise time capture.
-- **Leave Management**: Advanced tracking for leave balances, approvals, and history.
-- **AI-Powered Analytics**: Predictive ML-powered forecasting for workforce trends and risk intelligence (BETA).
-- **Enterprise Security**: Clerk authentication integration with strict role-based access control (RBAC).
-- **Responsive**: Mobile-first architecture that seamlessly adapts to any device screen size.
-- **Fast Performance**: Built on Next.js 14 App Router, optimized for maximum speed and minimal load times.
+### 👥 Employee Portal
+- **Dashboard**: Overview of recent activity, upcoming holidays, and quick stats.
+- **Attendance Management**: Track check-ins/check-outs, calculate working hours, and view attendance history.
+- **Leave Management**: Apply for leaves (sick, casual, annual, maternity, paternity), view leave balances, and track approval status with a visual team calendar.
+- **Document Hub**: Securely access and manage HR and company documents.
+- **Timezone-Aware**: All dates, times, and calendars are automatically synchronized to the user's local timezone ensuring no cross-border confusion.
 
-## 📱 Core Modules
+### 🛡️ Secure Admin Portal
+- **Isolated Authentication**: The Admin Portal uses a completely separate, secure login system bypassing standard employee auth.
+- **HR & Team Oversight**: Full control over employee leaves, attendance overrides, and team configurations.
+- **Advanced Routing Guards**: Middleware prevents unauthorized employees from accessing admin routes.
 
-- **Home** (`/`) - Landing page outlining service offerings, company values, and client case studies.
-- **Employee Portal** (`/portal/dashboard`) - Personal dashboard for attendance, leaves, and quick tasks.
-- **Admin Command Centre** (`/portal/admin`) - Unified dashboard for managing teams, approving leaves, and viewing enterprise analytics.
-- **Authentication** (`/portal/auth`, `/portal/admin/login`) - Secure sign-in mechanisms utilizing Clerk and MongoDB session validation.
+## 🛠️ Technology Stack
 
-## 🛠️ Tech Stack
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router & Turbopack)
+- **UI & Styling**: [Tailwind CSS v4](https://tailwindcss.com/) with custom Glassmorphism tokens
+- **Authentication**: [Clerk](https://clerk.dev/)
+- **Database**: [MongoDB](https://www.mongodb.com/) & Mongoose
+- **Date/Time**: `date-fns` and `date-fns-tz` for precise timezone handling
+- **Charts**: `recharts` for leave and attendance analytics
 
-- **Framework**: Next.js 14 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS (Custom macOS Theme)
-- **Database**: MongoDB / Mongoose
-- **Authentication**: Clerk (Employees) + Custom JWT/Cookies (Admins)
-- **Icons**: Heroicons
-- **Deployment**: Vercel (Recommended)
-
-## 🚀 Getting Started
+## 📦 Getting Started
 
 ### Prerequisites
-
-- Node.js 18+ 
-- npm or yarn
-- MongoDB connection string
-- Clerk API keys
+- Node.js (v20 or higher recommended)
+- MongoDB URI
+- Clerk API Keys
 
 ### Installation
 
 1. Clone the repository:
-```bash
-git clone https://github.com/Team-Innovatrix/Smart-HR-protal.git
-cd Smart-HR-protal
-```
+   ```bash
+   git clone https://github.com/Team-Innovatrix/Smart-HR-protal.git
+   cd HR-main
+   ```
 
 2. Install dependencies:
-```bash
-npm install
-```
+   ```bash
+   npm install
+   ```
 
-3. Set up environment variables:
-Create a `.env.local` file in the root directory and add the necessary environment variables:
-```env
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_key
-CLERK_SECRET_KEY=your_clerk_secret
-MONGODB_URI=your_mongodb_uri
-```
+3. Set up Environment Variables:
+   Create a `.env.local` file in the root directory and add the following:
+   ```env
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_pub_key
+   CLERK_SECRET_KEY=your_clerk_secret_key
+   MONGODB_URI=your_mongodb_connection_string
+   ```
 
 4. Run the development server:
-```bash
-npm run dev
-```
-
-5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) to view the application.
 
 ## 📁 Project Structure
 
-```text
-src/
-├── app/                    # Next.js App Router
-│   ├── api/                # API Endpoints (Admin, User, Auth, etc.)
-│   ├── portal/             # Application Portals
-│   │   ├── admin/          # Admin Dashboard & Command Centre
-│   │   ├── auth/           # Clerk Auth Pages
-│   │   └── dashboard/      # Employee Dashboard
-│   ├── about/              # Main Website Pages
-│   ├── services/           # Services Pages
-│   ├── globals.css         # Custom macOS Design Tokens & Styles
-│   └── layout.tsx          # Root layout
-├── components/             # Reusable UI components
-│   ├── admin/              # Admin-specific components (Header, Sidebar, Auth)
-│   └── hr/                 # Employee-specific components
-├── data/                   # Static data and configurations
-├── lib/                    # Utility functions & Database Connection setup
-├── models/                 # MongoDB Mongoose schemas and models
-└── proxy.ts                # Application Middleware & Route Protection
-```
+- `/src/app` - Next.js App Router pages (Portal, Admin, Auth)
+- `/src/components` - Reusable UI components organized by domain (Global, HR, Admin)
+- `/src/lib` - Core utilities, hooks (e.g., `useTimezone`), and service connections
+- `/src/scripts` - Database seeding and maintenance scripts
+- `/public` - Static assets and global CSS
 
-## 🔒 Security
+## 🤝 Contributing
 
-- Strict Route Guards (`AdminAuthGuard`)
-- Content Security Policy headers
-- HTTP-only Secure Cookies for Admin sessions
-- Next.js Server Actions & API Route validation
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-## 🔄 Updates & Maintenance
+## 📄 License & Legal
 
-The Innovatrix HR Portal is designed to be easily maintainable:
-- Component-based architecture
-- Centralized CSS Variables for theming (`globals.css`)
-- Reusable UI components
+**INNOVATRIX PROPRIETARY SOFTWARE LICENSE**
 
----
+Copyright (c) 2025-2026 **Team Innovatrix**. All Rights Reserved.
 
-## 👥 Group Members
+This software and all associated source code, documentation, and intellectual property are the exclusive property of Team Innovatrix:
+1. **Mohit Mohatkar** — Project Lead & Primary Owner
+2. **Rudra Bambal** — Core Developer
+3. **Vipav Bure** — Core Developer
+4. **Kartikey Kalbande** — Core Developer
 
-This project was built by Team Innovatrix:
+### Key Terms:
+- **No Copying or Reproduction**: Unauthorized copying, duplication, or replication is strictly prohibited.
+- **No Distribution**: You may not share or publish this software without explicit permission.
+- **No Modification**: Creating derivative works or reverse-engineering is not allowed.
+- **No Commercial Use**: Cannot be used, sold, or offered as a service without a commercial agreement.
 
-1. **Mohit Mohatkar**
-2. **Rudra Bambal**
-3. **Vipav Bure**
-4. **Kartikey Kalbande**
+For full terms, conditions, and legal enforcement details, please see the [LICENSE](LICENSE) file in the root directory.
