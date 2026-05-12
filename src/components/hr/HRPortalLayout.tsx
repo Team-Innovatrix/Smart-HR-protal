@@ -136,7 +136,7 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
   if (userRole === 'admin' || userRole === 'owner') {
     navigation.push({
       name: 'Admin Portal',
-      href: '/portal/admin/dashboard',
+      href: '/portal/admin',
       icon: SparklesIcon,
       current: currentPage === 'admin',
       description: 'Admin Control Panel'
