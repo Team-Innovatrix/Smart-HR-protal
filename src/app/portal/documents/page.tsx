@@ -24,8 +24,10 @@ export default function DocumentsPage() {
   if (!isLoaded || !user || pageLoading) {
     return (
       <HRPortalLayout currentPage="documents" showSidebar={false}>
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
-          <div className="text-center">
+        <div className="min-h-screen flex items-center justify-center relative">
+          <div className="ambient-bg"></div>
+          <div className="mesh-overlay"></div>
+          <div className="text-center relative z-10">
             <div className="relative">
               <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600 mx-auto mb-6"></div>
               <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-blue-400 animate-pulse"></div>
@@ -40,8 +42,10 @@ export default function DocumentsPage() {
 
   return (
     <HRPortalLayout currentPage="documents">
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-4 sm:p-6">
-        <div className="max-w-7xl mx-auto">
+      <div className="min-h-screen p-4 sm:p-6 relative">
+        <div className="ambient-bg"></div>
+        <div className="mesh-overlay"></div>
+        <div className="max-w-7xl mx-auto relative z-10">
           <DocumentManagement />
         </div>
       </div>

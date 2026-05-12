@@ -159,7 +159,7 @@ const DocumentManagement: React.FC = () => {
   return (
     <div className="space-y-8">
       {/* Search and Filters */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6 relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+      <div className="glass-strong p-6 relative overflow-hidden group">
         {/* Modern geometric pattern decoration */}
         <div className="absolute top-0 right-0 w-40 h-40 opacity-5">
           <div className="absolute top-4 right-4 w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg rotate-45"></div>
@@ -211,7 +211,7 @@ const DocumentManagement: React.FC = () => {
       </div>
 
       {/* Documents Grid */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8 relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+      <div className="glass-strong p-8 relative overflow-hidden group">
         {/* Modern diagonal pattern decoration */}
         <div className="absolute top-0 right-0 w-40 h-40 opacity-5">
           <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-green-500 to-emerald-600 transform rotate-12 rounded-lg"></div>
@@ -224,14 +224,14 @@ const DocumentManagement: React.FC = () => {
             {filteredDocuments.map((doc) => (
               <div
                 key={doc.id}
-                className="bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200/50 p-6 hover:shadow-lg transition-all duration-200 cursor-pointer group hover:bg-white/90"
+                className="glass p-6 hover:shadow-lg transition-all duration-200 cursor-pointer group hover:bg-white/10"
                 onClick={() => {
                   setSelectedDocument(doc);
                   setShowDocumentDetails(true);
                 }}
               >
                 <div className="flex items-center justify-between mb-4">
-                  <div className="p-3 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200/50">
+                  <div className="p-3 glass rounded-xl border border-blue-500/20">
                     {getFileIcon(doc.type)}
                   </div>
                   <div className="flex items-center gap-1">
@@ -286,7 +286,7 @@ const DocumentManagement: React.FC = () => {
 
       {/* No Results */}
       {filteredDocuments.length === 0 && (
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-12 text-center relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+        <div className="glass-strong p-12 text-center relative overflow-hidden group">
           {/* Modern triangular pattern decoration */}
           <div className="absolute top-0 right-0 w-40 h-40 opacity-5">
             <div className="absolute top-0 right-0 w-0 h-0 border-l-[20px] border-l-transparent border-b-[20px] border-b-blue-500"></div>
@@ -309,7 +309,7 @@ const DocumentManagement: React.FC = () => {
       {/* Upload Modal */}
       {showUploadModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white/95 backdrop-blur-sm rounded-2xl max-w-md w-full shadow-2xl border border-gray-200/50">
+          <div className="glass-strong max-w-md w-full">
             <div className="p-8">
               <div className="flex items-center gap-3 mb-6">
                 <div className="h-8 w-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center shadow-lg">
@@ -363,7 +363,7 @@ const DocumentManagement: React.FC = () => {
                     placeholder="Enter tags separated by commas"
                   />
                 </div>
-                <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center bg-gradient-to-r from-gray-50 to-blue-50 hover:from-blue-50 hover:to-indigo-50 transition-all duration-200">
+                <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center glass hover:bg-white/10 transition-all duration-200">
                   <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
                     <PlusIcon className="w-6 h-6 text-white" />
                   </div>
@@ -393,7 +393,7 @@ const DocumentManagement: React.FC = () => {
       {/* Document Details Modal */}
       {showDocumentDetails && selectedDocument && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white/95 backdrop-blur-sm rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200/50">
+          <div className="glass-strong max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-8">
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-3">
@@ -414,7 +414,7 @@ const DocumentManagement: React.FC = () => {
               </div>
 
               <div className="grid md:grid-cols-2 gap-8">
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200/50">
+                <div className="glass rounded-xl p-6 border border-blue-500/20">
                   <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
                     <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
                       <DocumentTextIcon className="w-3 h-3 text-white" />
@@ -441,7 +441,7 @@ const DocumentManagement: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200/50">
+                <div className="glass rounded-xl p-6 border border-green-500/20">
                   <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
                     <div className="w-6 h-6 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
                       <ClockIcon className="w-3 h-3 text-white" />
@@ -463,7 +463,7 @@ const DocumentManagement: React.FC = () => {
                 </div>
 
                 {selectedDocument.description && (
-                  <div className="md:col-span-2 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-200/50">
+                  <div className="md:col-span-2 glass rounded-xl p-6 border border-purple-500/20">
                     <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
                       <div className="w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center">
                         <InformationCircleIcon className="w-3 h-3 text-white" />
@@ -475,7 +475,7 @@ const DocumentManagement: React.FC = () => {
                 )}
 
                 {selectedDocument.tags.length > 0 && (
-                  <div className="md:col-span-2 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-xl p-6 border border-orange-200/50">
+                  <div className="md:col-span-2 glass rounded-xl p-6 border border-orange-500/20">
                     <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
                       <div className="w-6 h-6 bg-gradient-to-br from-orange-500 to-yellow-600 rounded-lg flex items-center justify-center">
                         <ChartBarIcon className="w-3 h-3 text-white" />
