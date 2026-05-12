@@ -18,15 +18,6 @@ A modern, enterprise-grade Next.js application offering AI-powered, flexible tea
 - **Responsive**: Mobile-first architecture that seamlessly adapts to any device screen size.
 - **Fast Performance**: Built on Next.js 14 App Router, optimized for maximum speed and minimal load times.
 
-## 👥 Meet the Team
-
-This project was proudly built by the following developers:
-
-1. **Mohit Mohatkar**
-2. **Rudra Bambal**
-3. **Vipav Bure**
-4. **Kartikey Kalbande**
-
 ## 📱 Core Modules
 
 - **Home** (`/`) - Landing page outlining service offerings, company values, and client case studies.
@@ -81,22 +72,27 @@ npm run dev
 
 5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## 📁 Project Architecture
+## 📁 Project Structure
 
 ```text
 src/
 ├── app/                    # Next.js App Router
-│   ├── api/                # Next.js Serverless API Routes
-│   ├── portal/             # Employee & Admin Portals
-│   │   ├── admin/          # Admin Dashboard & Auth
+│   ├── api/                # API Endpoints (Admin, User, Auth, etc.)
+│   ├── portal/             # Application Portals
+│   │   ├── admin/          # Admin Dashboard & Command Centre
 │   │   ├── auth/           # Clerk Auth Pages
 │   │   └── dashboard/      # Employee Dashboard
-│   ├── globals.css         # Custom macOS Design Tokens
+│   ├── about/              # Main Website Pages
+│   ├── services/           # Services Pages
+│   ├── globals.css         # Custom macOS Design Tokens & Styles
 │   └── layout.tsx          # Root layout
 ├── components/             # Reusable UI components
-│   ├── admin/              # Admin-specific components
+│   ├── admin/              # Admin-specific components (Header, Sidebar, Auth)
 │   └── hr/                 # Employee-specific components
-├── lib/                    # Authentication logic & Database models
+├── data/                   # Static data and configurations
+├── lib/                    # Utility functions & Database Connection setup
+├── models/                 # MongoDB Mongoose schemas and models
+└── proxy.ts                # Application Middleware & Route Protection
 ```
 
 ## 🔒 Security
@@ -114,4 +110,12 @@ The Innovatrix HR Portal is designed to be easily maintainable:
 - Reusable UI components
 
 ---
-*Built with ❤️ by Team Innovatrix*
+
+## 👥 Group Members
+
+This project was built by Team Innovatrix:
+
+1. **Mohit Mohatkar**
+2. **Rudra Bambal**
+3. **Vipav Bure**
+4. **Kartikey Kalbande**
