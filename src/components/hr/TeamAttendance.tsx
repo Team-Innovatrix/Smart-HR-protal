@@ -334,7 +334,7 @@ const TeamAttendance = ({ initialViewMode = 'today', initialMonth }: TeamAttenda
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+    <div className="card">
       <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <UsersIcon className="h-6 w-6 text-blue-600" />
@@ -380,8 +380,8 @@ const TeamAttendance = ({ initialViewMode = 'today', initialMonth }: TeamAttenda
         ) : (
           <div className="space-y-6">
             {groupedByUser.map(({ member, logs }) => (
-              <div key={(member?.clerkUserId) || logs[0]._id} className="border border-gray-200 rounded-lg">
-                <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+              <div key={(member?.clerkUserId) || logs[0]._id} className="card-glass border border-gray-200 rounded-lg">
+                <div className="px-4 py-3 glass border-b border-gray-200 flex items-center justify-between">
                   <div>
                     <div className="text-sm font-medium text-gray-900">{member ? `${member.firstName || ''} ${member.lastName || ''}`.trim() : 'Unknown Member'}</div>
                     <div className="text-xs text-gray-500">{member?.position || ''} {member?.department ? `• ${member.department}` : ''}</div>

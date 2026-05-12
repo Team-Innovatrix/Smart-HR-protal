@@ -272,7 +272,7 @@ export default function MyAttendance({
   return (
     <>
       {/* Current Time and Clock In/Out Section */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-4 sm:mb-8">
+      <div className="card p-4 sm:p-6 mb-4 sm:mb-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {/* Current Time and Date */}
           <div className="text-center lg:text-left">
@@ -338,7 +338,7 @@ export default function MyAttendance({
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Add any notes about your attendance..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                  className="form-input resize-none"
                   rows={3}
                 />
               </div>
@@ -374,7 +374,7 @@ export default function MyAttendance({
           {/* Current Session Info and Today's Summary */}
           <div className="text-center lg:text-left space-y-4">
             {hasOpenSession && currentSession && (
-              <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="p-3 glass rounded-lg border border-blue-500/30">
                 <div className="flex items-center text-blue-700">
                   <PlayIcon className="h-4 w-4 mr-2" />
                   <span className="text-sm font-medium">Currently Working</span>
@@ -388,7 +388,7 @@ export default function MyAttendance({
 
             {/* Main Branch Summary */}
             {todayAttendance && (
-              <div className="p-3 bg-gray-50 rounded-lg">
+              <div className="p-3 glass rounded-lg">
                 <div className="text-sm text-gray-600 mb-2">Today&apos;s Summary:</div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-1 text-xs text-gray-500">
@@ -420,7 +420,7 @@ export default function MyAttendance({
       </div>
 
       {/* Attendance History */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+      <div className="card p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6">
           <h2 className={responsiveTextClasses.title + " mb-3 sm:mb-0"}>Attendance History</h2>
           
@@ -431,7 +431,7 @@ export default function MyAttendance({
               type="month"
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
-              className="px-2 py-1 sm:px-3 sm:py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="form-input py-1 px-2 text-sm sm:px-3 sm:py-2"
             />
           </div>
         </div>
@@ -450,7 +450,7 @@ export default function MyAttendance({
         ) : (
           <div className="space-y-3 sm:space-y-4">
             {attendanceHistory.map((record) => (
-              <div key={record._id} className="border border-gray-200 rounded-lg p-3 sm:p-4">
+              <div key={record._id} className="card-glass p-3 sm:p-4">
                 {/* Date Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 pb-2 border-b border-gray-100 gap-2 sm:gap-0">
                   <div className="flex items-center space-x-2 sm:space-x-3">
@@ -505,7 +505,7 @@ export default function MyAttendance({
                 </div>
 
                 {/* Main Branch Summary */}
-                <div className="mb-3 p-3 sm:p-4 bg-white rounded-lg border border-gray-200">
+                <div className="mb-3 p-3 sm:p-4 glass rounded-lg">
                   <div className="text-xs sm:text-sm font-medium text-gray-700 mb-2 sm:mb-3">Daily Summary:</div>
                   
                   <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-xs sm:text-sm">
@@ -536,7 +536,7 @@ export default function MyAttendance({
                 {expandedRecords.has(record._id) && (
                   <div className="space-y-2">
                     {record.sessions.map((session, index) => (
-                      <div key={session._id || index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div key={session._id || index} className="flex items-center justify-between p-3 glass rounded-lg">
                         <div className="flex items-center space-x-3">
                           <div className="flex items-center space-x-2">
                             <ClockIcon className="h-4 w-4 text-blue-500" />

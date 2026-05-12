@@ -530,10 +530,12 @@ export default function AttendancePage() {
   return (
     <RegularizationRequestManagerProvider>
       <HRPortalLayout currentPage="attendance">
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-4 sm:p-6">
-          <div className="max-w-7xl mx-auto space-y-4 sm:space-y-8">
+        <div className="min-h-screen p-4 sm:p-6 relative">
+          <div className="ambient-bg"></div>
+          <div className="mesh-overlay"></div>
+          <div className="max-w-7xl mx-auto space-y-4 sm:space-y-8 relative z-10">
             {/* Header */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-lg border border-gray-200/50 p-4 sm:p-6 relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+            <div className="glass-strong p-4 sm:p-6 relative overflow-hidden group">
               {/* Modern wave pattern decoration - hidden on mobile */}
               <div className="absolute top-0 right-0 w-40 h-40 opacity-5 hidden sm:block">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full"></div>
