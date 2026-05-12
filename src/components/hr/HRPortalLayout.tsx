@@ -323,19 +323,30 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
               <Bars3Icon className="h-5 w-5" />
             </button>
 
-            {/* Search bar */}
-            <div className="hidden md:flex items-center flex-1 max-w-md">
-              <div className="relative w-full">
-                <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
-                <input
-                  type="text"
-                  placeholder="Search anything..."
-                  className="w-full pl-9 pr-4 py-2 text-[13px] rounded-xl bg-[rgba(255,255,255,0.04)] border border-[var(--glass-border)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)] focus:shadow-[0_0_0_3px_rgba(52,211,153,0.1)] transition-all duration-300"
-                />
-              </div>
+            {/* Brand / Logo (replaces search bar) */}
+            <div className="flex items-center flex-1">
+              <Link href={getHRPortalPath('dashboard')} className="flex items-center gap-3 transition-opacity hover:opacity-80">
+                {companyLogo ? (
+                  <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 border border-[rgba(255,255,255,0.1)]">
+                    <Image src={companyLogo} alt={companyName} width={32} height={32} className="w-full h-full object-cover" />
+                  </div>
+                ) : (
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center text-sm flex-shrink-0"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(52, 211, 153, 0.25), rgba(52, 211, 153, 0.08))',
+                      border: '1px solid rgba(52, 211, 153, 0.2)',
+                      boxShadow: '0 0 15px rgba(52, 211, 153, 0.1)',
+                    }}
+                  >
+                    ⚡
+                  </div>
+                )}
+                <div className="leading-tight hidden sm:block">
+                  <div className="text-[14px] font-bold text-[var(--text-primary)] tracking-wide">{companyName}</div>
+                  <div className="text-[10px] text-[var(--accent)] font-semibold uppercase tracking-[0.2em] opacity-80">Portal</div>
+                </div>
+              </Link>
             </div>
-
-            <div className="flex-1 md:hidden" />
 
             {/* Right actions */}
             <div className="flex items-center gap-2">
