@@ -4,6 +4,12 @@ A modern, high-performance HR Management System built with Next.js, featuring a 
 
 ## 🚀 Key Features
 
+### 🌟 Core Speciality: AI-Powered Predictive HR Analytics
+What truly sets the Smart HR Portal apart from traditional systems is our integration of advanced predictive modeling:
+- **Holiday Prediction**: Intelligent algorithms that forecast peak holiday seasons and auto-suggest optimal team scheduling to prevent productivity dips.
+- **Risk Analysis**: Proactive identification of employee flight risks and burnout patterns based on attendance anomalies and leave frequency.
+- **Predictive Analysis**: Deep data insights that help HR managers make data-driven decisions regarding resource allocation and team well-being.
+
 ### 🎨 Premium Glassmorphism UI
 - **Dark Theme by Default**: A carefully crafted dark aesthetic using tailored `ambient-bg` and `mesh-overlay` tokens.
 - **Glassmorphic Components**: UI elements use `glass` and `glass-strong` tokens for beautiful transparency and blur effects.
