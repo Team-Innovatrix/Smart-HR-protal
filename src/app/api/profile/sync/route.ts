@@ -3,32 +3,9 @@ export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import { authenticateRequest, createUnauthorizedResponse } from '../../../../lib/auth'
 import { ProfileSyncService } from '../../../../lib/profileSyncService'
-import { DEV_BYPASS_ENABLED, DEV_USER } from '../../../../lib/devAuth'
 
 // Sync user profile from Clerk to MongoDB
 export async function POST(request: NextRequest) {
-  // In dev bypass mode (no Clerk key set), return a mock profile immediately
-  // without touching MongoDB or Clerk — avoids 500 errors in local dev.
-  if (DEV_BYPASS_ENABLED) {
-    return NextResponse.json({
-      success: true,
-      data: {
-        clerkUserId: DEV_USER.userId,
-        employeeId: 'EMP001',
-        firstName: DEV_USER.firstName,
-        lastName: DEV_USER.lastName,
-        email: DEV_USER.email,
-        department: 'Executive',
-        position: 'Chief Executive Officer',
-        joinDate: new Date().toISOString(),
-        organization: 'Innovatrix',
-        leaveBalance: { sick: 0, casual: 0, annual: 0, maternity: 0, paternity: 0 },
-        isActive: true,
-        managerName: null,
-      }
-    })
-  }
-
   try {
     // Authenticate the request
     try {

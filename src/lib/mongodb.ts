@@ -109,20 +109,6 @@ async function connectDB() {
     const duration = Date.now() - startTime;
     console.log(`✅ MongoDB connected (${duration}ms)`);
 
-    // Seed local memory DB if it's empty
-    if (process.env.USE_LOCAL_MEM_DB === 'true') {
-      try {
-        const count = await typedCached.conn.connection.db?.collection('userprofiles').countDocuments() || 0;
-        if (count === 0) {
-          console.log('🌱 Empty Memory DB Detected! Synthesizing HR mock data...');
-          const { seedDatabase } = await import('@/scripts/seedDatabase');
-          await seedDatabase();
-          console.log('✅ Local Database successfully seeded!');
-        }
-      } catch (err) {
-        console.error('Error during automatic seed database:', err);
-      }
-    }
 
     // Set up connection event listeners for production monitoring
     if (process.env.NODE_ENV === 'production') {

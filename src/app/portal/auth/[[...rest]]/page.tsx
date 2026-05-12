@@ -2,6 +2,8 @@
 
 import { SignIn, SignUp } from '@clerk/nextjs'
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
+import Link from 'next/link'
 
 /* ─── animated orb ─────────────────────────────────────────────── */
 function Orb({ className }: { className: string }) {
@@ -22,11 +24,11 @@ function Feature({ icon, text }: { icon: string; text: string }) {
   )
 }
 
-export default function HRPortalAuthPage() {
+function HRPortalAuthPage() {
   const [showSignUp, setShowSignUp] = useState(false)
 
   return (
-    <div className="min-h-screen flex" style={{ background: 'linear-gradient(135deg,#0f0c29,#302b63,#24243e)' }}>
+    <div className="min-h-screen flex" style={{ background: 'linear-gradient(135deg,#0f0c29,#302b63,#24243e)' }} suppressHydrationWarning>
 
       {/* ── LEFT PANEL ───────────────────────────────────────────── */}
       <div className="hidden lg:flex flex-col justify-between w-[55%] p-14 relative overflow-hidden">
@@ -106,8 +108,22 @@ export default function HRPortalAuthPage() {
               : <SignIn routing="hash" afterSignInUrl="/portal/dashboard" fallbackRedirectUrl="/portal/dashboard" />
             }
           </div>
+          {/* Admin Login tab */}
+          <div className="mt-6 flex justify-center">
+            <Link
+              href="/portal/admin/login"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 border border-white/10 hover:border-white/25 hover:bg-white/10"
+              style={{ color: 'rgba(255,255,255,0.35)' }}
+            >
+              <span>🛡️</span>
+              Admin Login
+            </Link>
+          </div>
         </div>
       </div>
     </div>
   )
 }
+
+// Wrap with dynamic to avoid SSR mismatches from browser extensions
+export default dynamic(() => Promise.resolve(HRPortalAuthPage), { ssr: false })

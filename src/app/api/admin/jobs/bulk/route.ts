@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { checkHRManagerAccess } from '@/lib/adminAuth'
+import { isAdminSessionValid } from '@/lib/adminCookieAuth';
 import { getCareersJobModel } from '@/models/careers/Job'
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(req: NextRequest) {
-  const admin = await checkHRManagerAccess(req)
-  if (!admin) return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 })
+  if (!isAdminSessionValid(req)) return NextResponse.json({ error: 'Access denied.' }, { status: 403 })
 
   try {
     const { action, ids } = await req.json() as { action: 'activate' | 'deactivate' | 'delete', ids: string[] }

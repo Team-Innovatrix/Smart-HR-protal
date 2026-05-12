@@ -2,15 +2,8 @@ import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-// Helper function to determine auth URL based on host
-function getAuthUrl(host: string): string {
-  const isPortalSubdomain = host === 'portal.inovatrix.io' || host.includes('portal.inovatrix')
-  return isPortalSubdomain ? '/auth' : '/portal/auth'
-}
-
 // Define protected routes that require authentication
 const isProtectedRoute = createRouteMatcher([
-  '/admin(.*)',
   '/portal/dashboard(.*)',
   '/portal/attendance(.*)',
   '/portal/leaves(.*)',
@@ -31,8 +24,6 @@ const isProtectedRoute = createRouteMatcher([
   '/settings(.*)',
   '/team(.*)',
   '/user(.*)',
-  '/admin(.*)',
-  '/portal/admin(.*)',
   '/notifications(.*)',
   // Protected API routes
   '/api/voice-commands(.*)',
@@ -51,40 +42,41 @@ const isPublicRoute = createRouteMatcher([
   '/blogs(.*)',
   '/case-studies',
   '/pricing',
-  '/hr', // HR landing page
-  '/api/health', // Health check API
-  '/api/webhooks(.*)', // Webhook APIs
-  // Subdomain public routes (when accessed via portal.inovatrix.io)
-  '/auth(.*)', // Auth routes for subdomain
-  // Portal root on subdomain should be public (it handles redirects)
-  '/portal$', // This will match subdomain root only
+  '/hr',
+  '/api/health',
+  '/api/webhooks(.*)',
+  '/portal/admin(.*)',   // Admin portal uses its own cookie auth — not Clerk
+  '/api/admin/auth/(.*)', // Admin auth APIs
+  '/auth(.*)',
+  '/portal$',
 ])
 
 // If Clerk publishable key is not configured, use a simple passthrough middleware
-// to avoid MIDDLEWARE_INVOCATION_FAILED on Vercel when key is not set
 const hasClerkKey = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 
 function passthroughMiddleware(_req: NextRequest) {
   return NextResponse.next()
 }
 
-const REQUIRED_ORG_ID = 'org_3Ct1snEHEPxFYUqZpmQRvYFwPUa';
+const REQUIRED_ORG_ID = process.env.REQUIRED_ORG_ID || 'org_3Ct1snEHEPxFYUqZpmQRvYFwPUa';
 
 export default hasClerkKey
   ? clerkMiddleware(async (auth, req: NextRequest) => {
+      // Public routes — always allow through, no auth check
+      if (isPublicRoute(req)) {
+        return NextResponse.next();
+      }
+
       if (isProtectedRoute(req)) {
         const authObj = await auth();
-        
+
         // 1. Force Sign In if not logged in
         if (!authObj.userId) {
           return authObj.redirectToSignIn();
         }
-        
+
         // 2. Enforce Organization Restriction
-        // If they are not actively in the organization, redirect them out
         if (authObj.orgId !== REQUIRED_ORG_ID) {
-          // You could redirect to a specific "Unauthorized" page. 
-          // For now, redirect to the home page.
           return NextResponse.redirect(new URL('/', req.url));
         }
       }

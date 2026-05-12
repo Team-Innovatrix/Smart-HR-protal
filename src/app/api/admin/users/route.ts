@@ -1,18 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { checkHRManagerAccess } from '@/lib/adminAuth';
+import { isAdminSessionValid } from '@/lib/adminCookieAuth';
 import connectDB from '@/lib/mongodb';
 import UserProfile, { IUserProfileModel } from '@/models/UserProfile';
 import mongoose from 'mongoose';
 
 export async function GET(req: NextRequest) {
   try {
-    // Check if user has HR Manager access
-    const adminUser = await checkHRManagerAccess(req);
-    if (!adminUser) {
-      return NextResponse.json(
-        { error: 'Access denied. HR Manager privileges required.' },
-        { status: 403 }
-      );
+    if (!isAdminSessionValid(req)) {
+      return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
     }
 
     // HR Managers have full access to user data - no need for specific permission check
@@ -138,13 +133,8 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    // Check if user has HR Manager access
-    const adminUser = await checkHRManagerAccess(req);
-    if (!adminUser) {
-      return NextResponse.json(
-        { error: 'Access denied. HR Manager privileges required.' },
-        { status: 403 }
-      );
+    if (!isAdminSessionValid(req)) {
+      return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
     }
 
     // HR Managers have full access to create users - no need for specific permission check

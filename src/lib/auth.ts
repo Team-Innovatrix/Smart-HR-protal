@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from './mongodb';
 import UserProfile from '../models/UserProfile';
 import Role from '../models/Role';
-import { DEV_BYPASS_ENABLED, DEV_USER } from './devAuth';
 
 export interface AuthenticatedUser {
   userId: string;
@@ -76,12 +75,6 @@ async function getUserRoleFromMongoDB(userId: string): Promise<{roleName: string
  * Returns the authenticated user or throws an error
  */
 export async function authenticateRequest(request: NextRequest): Promise<AuthenticatedUser> {
-  // DEV BYPASS: Return mock admin user when Clerk keys are not configured
-  if (DEV_BYPASS_ENABLED) {
-    console.log('🛠️  [DEV] Auth bypassed — using mock admin user');
-    return DEV_USER;
-  }
-
   try {
     // Add request logging for debugging
     const isProduction = process.env.NODE_ENV === 'production';
@@ -191,8 +184,6 @@ export async function authenticateRequest(request: NextRequest): Promise<Authent
  * Returns role name and maps to UserRole type
  */
 export async function getUserRole(): Promise<UserRole> {
-  if (DEV_BYPASS_ENABLED) return 'hr';
-
   try {
     const { userId } = await auth();
     if (!userId) return 'employee';
@@ -262,8 +253,6 @@ export async function verifyUserAccess(
   targetUserId: string,
   userRole?: UserRole
 ): Promise<boolean> {
-  if (DEV_BYPASS_ENABLED) return true;
-
   try {
     const { userId } = await auth();
     

@@ -20,7 +20,7 @@ import {
 import { VoiceRecorder } from '@/lib/voiceRecorder'
 import { VoiceCommandClient, VoiceCommandState } from '@/lib/voiceCommandClient'
 import { requestLocationPermission, showLocationPermissionMessage } from '@/lib/locationPermissionUtils'
-import VoiceCommandChatSimple from '../VoiceCommandChatSimple'
+import VoiceCommandChat from '../VoiceCommandChat'
 
 /* ─── Quick action definition ───────────────────────────────────── */
 interface QuickAction {
@@ -335,22 +335,8 @@ const MicIcon = () => {
       {showChat && (
         <div className="pointer-events-auto transition-all duration-300 animate-fade-in">
           <div className="voice-chat-container relative rounded-2xl shadow-2xl p-4 max-w-sm">
-            <VoiceCommandChatSimple
-              maxMessages={5}
+            <VoiceCommandChat
               className="text-xs"
-              refreshTrigger={chatRefreshTrigger}
-              showProcessingSteps={isBusy || commandState.success}
-              processingState={{
-                isRecording: commandState.isRecording,
-                isProcessing: commandState.isProcessing,
-                transcription: commandState.transcription,
-                intent: commandState.intent?.intent,
-                success: commandState.success,
-                error: commandState.error,
-                nodeProgress: commandState.nodeProgress || [],
-                currentNode: commandState.currentNode,
-                nodeStatus: commandState.nodeStatus,
-              }}
             />
           </div>
         </div>

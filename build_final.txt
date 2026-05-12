@@ -1,0 +1,224 @@
+﻿
+> hr-dashboard@0.1.0 build
+> next build
+
+npm : [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, 
+please update: `npm i baseline-browser-mapping@latest -D`
+At line:1 char:1
++ npm run build 2>&1 | Out-File -FilePath "build_final.txt" -Encoding u ...
++ ~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([baseline-brows...ping@latest -D`:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+   Γû▓ Next.js 16.0.8 (Turbopack)
+   - Environments: .env.local
+   - Experiments (use with caution):
+     Γ£ô optimizeCss
+
+   Creating an optimized production build ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please 
+update: `npm i baseline-browser-mapping@latest -D`
+Turbopack build encountered 2 warnings:
+./node_modules/mongodb-memory-server-core/lib
+Package mongodb can't be external
+The request mongodb matches serverExternalPackages (or the default list).
+The package resolves to a different version when requested from the project directory (6.21.0) compared to the package 
+requested from the importing module (5.9.2).
+Make sure to install the same version of the package in both locations.
+
+
+./node_modules/mongodb-memory-server-core/lib/util
+Package mongodb can't be external
+The request mongodb matches serverExternalPackages (or the default list).
+The package resolves to a different version when requested from the project directory (6.21.0) compared to the package 
+requested from the importing module (5.9.2).
+Make sure to install the same version of the package in both locations.
+
+
+ Γ£ô Compiled successfully in 9.7s
+   Running TypeScript ...
+   Collecting page data using 11 workers ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please 
+update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please 
+update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please 
+update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please 
+update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please 
+update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please 
+update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please 
+update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please 
+update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please 
+update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please 
+update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please 
+update: `npm i baseline-browser-mapping@latest -D`
+(node:14924) [MONGOOSE] Warning: Duplicate schema index on {"order":1} found. This is often due to declaring an index 
+using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20808) [MONGOOSE] Warning: Duplicate schema index on {"order":1} found. This is often due to declaring an index 
+using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10320) [MONGOOSE] Warning: Duplicate schema index on {"order":1} found. This is often due to declaring an index 
+using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+   Generating static pages using 11 workers (0/58) ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please 
+update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please 
+update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please 
+update: `npm i baseline-browser-mapping@latest -D`
+   Generating static pages using 11 workers (14/58) 
+   Generating static pages using 11 workers (28/58) 
+   Generating static pages using 11 workers (43/58) 
+(node:22008) [MONGOOSE] Warning: Duplicate schema index on {"order":1} found. This is often due to declaring an index 
+using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ Γ£ô Generating static pages using 11 workers (58/58) in 2.3s
+   Finalizing page optimization ...
+
+Route (app)
+Γöî ╞Æ /
+Γö£ ╞Æ /_not-found
+Γö£ ╞Æ /about
+Γö£ ╞Æ /api/admin
+Γö£ ╞Æ /api/admin/analytics
+Γö£ ╞Æ /api/admin/analytics/attendance
+Γö£ ╞Æ /api/admin/analytics/exits
+Γö£ ╞Æ /api/admin/analytics/hires
+Γö£ ╞Æ /api/admin/analytics/seniority
+Γö£ ╞Æ /api/admin/attendance
+Γö£ ╞Æ /api/admin/auth/check
+Γö£ ╞Æ /api/admin/auth/login
+Γö£ ╞Æ /api/admin/auth/logout
+Γö£ ╞Æ /api/admin/holidays
+Γö£ ╞Æ /api/admin/holidays/[holidayId]
+Γö£ ╞Æ /api/admin/jobs
+Γö£ ╞Æ /api/admin/jobs/[id]
+Γö£ ╞Æ /api/admin/jobs/bulk
+Γö£ ╞Æ /api/admin/leaves
+Γö£ ╞Æ /api/admin/leaves/bulk
+Γö£ ╞Æ /api/admin/orgstructure
+Γö£ ╞Æ /api/admin/orgstructure/departments
+Γö£ ╞Æ /api/admin/orgstructure/positions
+Γö£ ╞Æ /api/admin/payroll
+Γö£ ╞Æ /api/admin/permissions
+Γö£ ╞Æ /api/admin/roles
+Γö£ ╞Æ /api/admin/roles/[roleId]
+Γö£ ╞Æ /api/admin/settings
+Γö£ ╞Æ /api/admin/teams
+Γö£ ╞Æ /api/admin/teams/[teamId]
+Γö£ ╞Æ /api/admin/users
+Γö£ ╞Æ /api/admin/users/[userId]
+Γö£ ╞Æ /api/admin/users/add-clerk-users
+Γö£ ╞Æ /api/admin/users/bulk
+Γö£ ╞Æ /api/admin/users/clerk-users
+Γö£ ╞Æ /api/admin/users/list
+Γö£ ╞Æ /api/admin/users/search
+Γö£ ╞Æ /api/applications
+Γö£ ╞Æ /api/applications/[applicationId]
+Γö£ ╞Æ /api/attendance
+Γö£ ╞Æ /api/attendance/team
+Γö£ ╞Æ /api/auth/dev-login
+Γö£ ╞Æ /api/cache/manage
+Γö£ ╞Æ /api/cache/stats
+Γö£ ╞Æ /api/chat
+Γö£ ╞Æ /api/chat/contacts
+Γö£ ╞Æ /api/dev/reset-db
+Γö£ ╞Æ /api/education
+Γö£ ╞Æ /api/education/[id]
+Γö£ ╞Æ /api/experience
+Γö£ ╞Æ /api/experience/[id]
+Γö£ ╞Æ /api/health
+Γö£ ╞Æ /api/holidays
+Γö£ ╞Æ /api/image/[filename]
+Γö£ ╞Æ /api/image/cache/manage
+Γö£ ╞Æ /api/image/cache/stats
+Γö£ ╞Æ /api/jobs
+Γö£ ╞Æ /api/jobs/[jobId]
+Γö£ ╞Æ /api/leads
+Γö£ ╞Æ /api/leaves
+Γö£ ╞Æ /api/leaves/[leaveId]
+Γö£ ╞Æ /api/leaves/balance
+Γö£ ╞Æ /api/leaves/direct-reports
+Γö£ ╞Æ /api/leaves/stats
+Γö£ ╞Æ /api/leaves/team
+Γö£ ╞Æ /api/notifications
+Γö£ ╞Æ /api/profile
+Γö£ ╞Æ /api/profile/reportees
+Γö£ ╞Æ /api/profile/sync
+Γö£ ╞Æ /api/profile/team-membership
+Γö£ ╞Æ /api/regularization
+Γö£ ╞Æ /api/regularization/[requestId]
+Γö£ ╞Æ /api/regularization/admin
+Γö£ ╞Æ /api/regularization/manager
+Γö£ ╞Æ /api/regularization/my
+Γö£ ╞Æ /api/regularization/team
+Γö£ ╞Æ /api/settings
+Γö£ ╞Æ /api/teams
+Γö£ ╞Æ /api/teams/stats
+Γö£ ╞Æ /api/timezones
+Γö£ ╞Æ /api/upload/image
+Γö£ ╞Æ /api/user/settings
+Γö£ ╞Æ /api/user/timezone
+Γö£ ╞Æ /api/voice-commands
+Γö£ ╞Æ /api/voice-commands/langgraph/process
+Γö£ ╞Æ /api/voice-commands/langgraph/session/create
+Γö£ ╞Æ /api/voice-commands/langgraph/session/delete
+Γö£ ╞Æ /api/voice-commands/langgraph/session/get
+Γö£ ╞Æ /api/voice-commands/langgraph/session/update
+Γö£ ╞Æ /api/voice-sessions
+Γö£ ╞Æ /api/webhooks/clerk
+Γö£ ╞Æ /apply/[jobId]
+Γö£ ╞Æ /blogs
+Γö£ ╞Æ /blogs/[slug]
+Γö£ ╞Æ /careers
+Γö£ ╞Æ /case-studies
+Γö£ ╞Æ /contact
+Γö£ ╞Æ /employee-dashboard
+Γö£ ╞Æ /hr
+Γö£ ╞Æ /portal
+Γö£ ╞Æ /portal/admin
+Γö£ ╞Æ /portal/admin/access-denied
+Γö£ ╞Æ /portal/admin/analytics
+Γö£ ╞Æ /portal/admin/applications
+Γö£ ╞Æ /portal/admin/attendance
+Γö£ ╞Æ /portal/admin/jobs
+Γö£ ╞Æ /portal/admin/jobs/[id]
+Γö£ ╞Æ /portal/admin/jobs/new
+Γö£ ╞Æ /portal/admin/leads
+Γö£ ╞Æ /portal/admin/leaves
+Γö£ ╞Æ /portal/admin/login
+Γö£ ╞Æ /portal/admin/predictive
+Γö£ ╞Æ /portal/admin/risk
+Γö£ ╞Æ /portal/admin/settings
+Γö£ ╞Æ /portal/admin/teams
+Γö£ ╞Æ /portal/admin/users
+Γö£ ╞Æ /portal/admin/users/onboarding
+Γö£ ╞Æ /portal/attendance
+Γö£ ╞Æ /portal/auth/[[...rest]]
+Γö£ ╞Æ /portal/chat
+Γö£ ╞Æ /portal/dashboard
+Γö£ ╞Æ /portal/documents
+Γö£ ╞Æ /portal/jobs
+Γö£ ╞Æ /portal/leaves
+Γö£ ╞Æ /portal/notifications
+Γö£ ╞Æ /portal/profile
+Γö£ ╞Æ /portal/settings
+Γö£ ╞Æ /portal/team
+Γö£ ╞Æ /portal/voice-chat
+Γöö ╞Æ /services
+
+
+╞Æ Proxy (Middleware)
+
+╞Æ  (Dynamic)  server-rendered on demand
+

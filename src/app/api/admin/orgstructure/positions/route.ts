@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import OrgStructure from '@/models/OrgStructure';
-import { checkHRManagerAccess } from '@/lib/adminAuth';
+import { isAdminSessionValid } from '@/lib/adminCookieAuth';
 
 export async function GET(req: NextRequest) {
   // Common fallback positions to use when no OrgStructure exists in DB
@@ -33,13 +33,7 @@ export async function GET(req: NextRequest) {
 
   try {
     // Check if user has HR Manager access
-    const adminUser = await checkHRManagerAccess(req);
-    if (!adminUser) {
-      return NextResponse.json(
-        { error: 'Access denied. HR Manager privileges required.' },
-        { status: 403 }
-      );
-    }
+    if (!isAdminSessionValid(req)) { return NextResponse.json({ error: 'Access denied.' }, { status: 403 }); }
 
     // Connect to database
     await connectDB();
@@ -95,13 +89,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     // Check if user has HR Manager access
-    const adminUser = await checkHRManagerAccess(req);
-    if (!adminUser) {
-      return NextResponse.json(
-        { error: 'Access denied. HR Manager privileges required.' },
-        { status: 403 }
-      );
-    }
+    if (!isAdminSessionValid(req)) { return NextResponse.json({ error: 'Access denied.' }, { status: 403 }); }
 
     // Connect to database
     await connectDB();

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { checkHRManagerAccess } from '@/lib/adminAuth'
+import { isAdminSessionValid } from '@/lib/adminCookieAuth';
 import { getCareersJobModel } from '@/models/careers/Job'
 import { jobUpdateSchema } from '@/lib/validation/job'
 import { SettingsService } from '@/lib/settingsService'
@@ -21,8 +21,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const admin = await checkHRManagerAccess(req)
-  if (!admin) return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 })
+  if (!isAdminSessionValid(req)) return NextResponse.json({ error: 'Access denied.' }, { status: 403 })
 
   try {
     const payload = await req.json()
@@ -72,8 +71,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const admin = await checkHRManagerAccess(req)
-  if (!admin) return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 })
+  if (!isAdminSessionValid(req)) return NextResponse.json({ error: 'Access denied.' }, { status: 403 })
   const Job = await getCareersJobModel()
   try {
     await Job.findByIdAndDelete(id)

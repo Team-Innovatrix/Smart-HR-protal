@@ -1,17 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import SystemSettings from '@/models/SystemSettings';
-import { checkHRManagerAccess } from '@/lib/adminAuth';
+import { isAdminSessionValid } from '@/lib/adminCookieAuth';
 
 export async function PUT(
   request: NextRequest,
   context: any
 ) {
   try {
-    // Check if user is admin
-    const adminUser = await checkHRManagerAccess(request);
-    if (!adminUser) {
-      return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+    if (!isAdminSessionValid(request)) {
+      return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
     }
 
     await connectDB();
@@ -94,7 +92,7 @@ export async function PUT(
 
     // Update the holidays object
     settings.holidays.set(yearKey, yearHolidays);
-    settings.updatedBy = adminUser.clerkUserId;
+    settings.updatedBy = 'admin@innovatrix.com';
     settings.updatedAt = new Date();
 
     // Mark the holidays field as modified
@@ -132,10 +130,8 @@ export async function DELETE(
   context: any
 ) {
   try {
-    // Check if user is admin
-    const adminUser = await checkHRManagerAccess(request);
-    if (!adminUser) {
-      return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+    if (!isAdminSessionValid(request)) {
+      return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
     }
 
     await connectDB();
@@ -175,7 +171,7 @@ export async function DELETE(
 
     // Update the holidays Map
     settings.holidays.set(yearKey, yearHolidays);
-    settings.updatedBy = adminUser.clerkUserId;
+    settings.updatedBy = 'admin@innovatrix.com';
     settings.updatedAt = new Date();
 
     // Mark the holidays field as modified

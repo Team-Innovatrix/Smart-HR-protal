@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { checkHRManagerAccess } from '@/lib/adminAuth';
+import { isAdminSessionValid } from '@/lib/adminCookieAuth';
 import connectDB from '@/lib/mongodb';
 import Attendance from '@/models/Attendance';
 import UserProfile from '@/models/UserProfile';
@@ -10,13 +10,7 @@ import { calculateMonthlyAttendanceStats } from '@/lib/attendanceUtils';
 export async function GET(req: NextRequest) {
   try {
     // Check if user has HR Manager access
-    const adminUser = await checkHRManagerAccess(req);
-    if (!adminUser) {
-      return NextResponse.json(
-        { error: 'Access denied. HR Manager privileges required.' },
-        { status: 403 }
-      );
-    }
+    if (!isAdminSessionValid(req)) { return NextResponse.json({ error: 'Access denied.' }, { status: 403 }); }
 
     // HR Managers have full access to attendance data - no need for specific permission check
     // if (!hasPermission(adminUser.permissions, 'attendance:read')) {
@@ -339,13 +333,7 @@ export async function GET(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
   try {
     // Check if user has HR Manager access
-    const adminUser = await checkHRManagerAccess(req);
-    if (!adminUser) {
-      return NextResponse.json(
-        { error: 'Access denied. HR Manager privileges required.' },
-        { status: 403 }
-      );
-    }
+    if (!isAdminSessionValid(req)) { return NextResponse.json({ error: 'Access denied.' }, { status: 403 }); }
 
     // HR Managers have full access to modify attendance - no need for specific permission check
     // if (!hasPermission(adminUser.permissions, 'attendance:write')) {
@@ -373,7 +361,7 @@ export async function PATCH(req: NextRequest) {
       attendanceId,
       {
         ...updates,
-        adminModifiedBy: adminUser.clerkUserId,
+        adminModifiedBy: 'admin@innovatrix.com',
         adminModifiedAt: new Date()
       },
       { new: true }

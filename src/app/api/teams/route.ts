@@ -25,50 +25,6 @@ async function populateTeamData(team: { toObject: () => Record<string, unknown>;
   }
 }
 
-// Fallback team data for local dev when DB has no teams seeded
-const FALLBACK_TEAMS = [
-  {
-    _id: 'team_eng_001',
-    name: 'Engineering Team',
-    description: 'Core product engineering squad',
-    department: 'Engineering',
-    isActive: true,
-    teamLeaderId: {
-      _id: 'profile_mohit_001',
-      clerkUserId: 'dev_user_admin_001',
-      employeeId: 'EMP001',
-      firstName: 'Mohit',
-      lastName: 'Mohatkar',
-      email: 'mohit@inovatrix.io',
-      department: 'Engineering',
-      position: 'HR Manager',
-    },
-    members: [
-      {
-        _id: 'profile_rudra_006',
-        clerkUserId: 'dev_user_rudra_006',
-        employeeId: 'EMP006',
-        firstName: 'Rudra',
-        lastName: 'Bambal',
-        email: 'rudra@inovatrix.io',
-        department: 'Engineering',
-        position: 'Software Engineer',
-      },
-      {
-        _id: 'profile_viplav_007',
-        clerkUserId: 'dev_user_viplav_007',
-        employeeId: 'EMP007',
-        firstName: 'Viplav',
-        lastName: 'Bhure',
-        email: 'viplav@inovatrix.io',
-        department: 'Engineering',
-        position: 'Backend Engineer',
-      },
-    ],
-    createdAt: new Date('2024-01-15').toISOString(),
-    updatedAt: new Date().toISOString(),
-  }
-];
 
 // GET /api/teams - Get all teams or teams for a specific user
 export async function GET(request: NextRequest) {
@@ -101,7 +57,7 @@ export async function GET(request: NextRequest) {
 
       if (teams.length === 0) {
         // No teams in DB — return fallback so UI is always populated
-        return NextResponse.json({ success: true, data: FALLBACK_TEAMS });
+        return NextResponse.json({ success: true, data: [] });
       }
 
       // Populate each team with user details
@@ -113,7 +69,7 @@ export async function GET(request: NextRequest) {
     const teams = await Team.find({ isActive: true });
 
     if (teams.length === 0) {
-      return NextResponse.json({ success: true, data: FALLBACK_TEAMS });
+      return NextResponse.json({ success: true, data: [] });
     }
 
     // Populate each team with user details
@@ -123,7 +79,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Error fetching teams:', error);
     // On any error, return fallback data so UI never shows empty
-    return NextResponse.json({ success: true, data: FALLBACK_TEAMS });
+    return NextResponse.json({ success: false, message: 'Failed to fetch teams', data: [] }, { status: 500 });
   }
 }
 

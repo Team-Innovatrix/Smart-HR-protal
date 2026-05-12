@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/lib/devAuthWrapper';
 import connectDB from '@/lib/mongodb';
 import SystemSettings from '@/models/SystemSettings';
-import { DEV_BYPASS_ENABLED, DEV_USER } from '@/lib/devAuth';
 
 /**
  * Read-only public settings endpoint
@@ -12,13 +11,7 @@ import { DEV_BYPASS_ENABLED, DEV_USER } from '@/lib/devAuth';
 export async function GET() {
   try {
     // Check if user is authenticated
-    let userId = null;
-    if (DEV_BYPASS_ENABLED) {
-      userId = DEV_USER.userId;
-    } else {
-      const authResult = await auth();
-      userId = authResult.userId;
-    }
+    const { userId } = await auth();
     
     if (!userId) {
       return NextResponse.json(

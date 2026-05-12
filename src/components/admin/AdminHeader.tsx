@@ -1,30 +1,31 @@
 'use client';
 
 import Link from 'next/link';
-import { Bars3Icon } from '@heroicons/react/24/outline';
+import { useRouter } from 'next/navigation';
+import { Bars3Icon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
 
 interface AdminHeaderProps {
   onToggleSidebar?: () => void;
   isSidebarCollapsed?: boolean;
 }
 
-export default function AdminHeader({ onToggleSidebar, isSidebarCollapsed }: AdminHeaderProps) {
-  const companyName = 'Innovatrix Smart Dashboard';
-  const companyLogo = '/innovatrix-logo.png';
+export default function AdminHeader({ onToggleSidebar }: AdminHeaderProps) {
+  const router = useRouter();
 
+  const handleLogout = async () => {
+    await fetch('/api/admin/auth/logout', { method: 'POST' });
+    router.push('/portal/admin/login');
+  };
 
   return (
-    <header className="sticky top-0 z-50" style={{
-      background: 'linear-gradient(90deg, #312e81 0%, #4338ca 30%, #6366f1 65%, #818cf8 100%)',
-      boxShadow: '0 2px 16px rgba(99, 102, 241, 0.3)',
-    }}>
+    <header className="sticky top-0 z-50 bg-[var(--mac-window-bg-solid)] border-b border-[var(--mac-border)] shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
       <div className="max-w-full px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center h-16 gap-3">
+        <div className="flex items-center h-14 gap-3">
           {/* Sidebar Toggle */}
           {onToggleSidebar && (
             <button
               onClick={onToggleSidebar}
-              className="lg:hidden p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200"
+              className="lg:hidden p-1.5 text-[var(--mac-text-secondary)] hover:text-[var(--mac-text-primary)] hover:bg-[var(--mac-border)] rounded-md transition-colors"
               aria-label="Toggle sidebar"
             >
               <Bars3Icon className="w-5 h-5" />
@@ -32,33 +33,37 @@ export default function AdminHeader({ onToggleSidebar, isSidebarCollapsed }: Adm
           )}
 
           {/* Logo + Name */}
-          <Link href="/portal/admin" className="flex items-center gap-3 group">
-            <div className="relative">
-              <div className="w-10 h-10 rounded-xl bg-white/15 backdrop-blur-sm border border-white/25 flex items-center justify-center shadow-lg text-2xl
-                            group-hover:scale-105 transition-transform duration-200">
-                ⚡
-              </div>
-              <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-teal-400 rounded-full border-2 border-indigo-600 animate-pulse" />
+          <Link href="/portal/admin" className="flex items-center gap-2 group">
+            <div className="w-8 h-8 rounded-lg bg-[var(--mac-accent)] flex items-center justify-center text-white text-sm shadow-sm transition-transform duration-200 group-hover:scale-105">
+              ⚡
             </div>
             <div>
-              <div className="text-[9px] text-indigo-200 font-semibold tracking-widest uppercase">Innovatrix</div>
-              <h1 className="text-sm font-black text-white leading-tight tracking-tight">Smart Dashboard</h1>
+              <div className="text-[9px] text-[var(--mac-text-secondary)] font-semibold tracking-widest uppercase leading-none mb-0.5">Innovatrix</div>
+              <h1 className="text-[13px] font-bold text-[var(--mac-text-primary)] leading-none">Admin Portal</h1>
             </div>
           </Link>
 
           {/* Spacer */}
           <div className="flex-1" />
 
-          {/* Right side badge */}
-          <div className="hidden sm:flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5">
-            <span className="w-2 h-2 bg-teal-400 rounded-full animate-pulse" />
-            <span className="text-white/90 text-xs font-medium">Live</span>
+          {/* Right side — Live badge + Logout */}
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-1.5 border border-[var(--mac-border)] bg-[var(--mac-bg)] rounded-md px-2 py-0.5">
+              <span className="w-1.5 h-1.5 bg-[#34c759] rounded-full animate-pulse" />
+              <span className="text-[var(--mac-text-secondary)] text-[11px] font-medium">Live</span>
+            </div>
+
+            <button
+              onClick={handleLogout}
+              title="Sign out of Admin Portal"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[var(--mac-bg)] hover:bg-[#ff3b3015] border border-[var(--mac-border)] hover:border-[#ff3b3030] text-[var(--mac-text-secondary)] hover:text-[#ff3b30] text-[12px] font-medium transition-all duration-150"
+            >
+              <ArrowRightOnRectangleIcon className="w-4 h-4" />
+              <span className="hidden sm:inline">Sign Out</span>
+            </button>
           </div>
         </div>
       </div>
-
-      {/* Bottom shimmer line */}
-      <div className="h-px w-full" style={{background:'linear-gradient(90deg, transparent, rgba(45,212,191,0.5), transparent)'}} />
     </header>
   );
 }

@@ -1,15 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import SystemSettings from '@/models/SystemSettings';
-import { checkHRManagerAccess } from '@/lib/adminAuth';
+import { isAdminSessionValid } from '@/lib/adminCookieAuth';
 
 export async function GET(request: NextRequest) {
   try {
     // Check if user is admin
-    const adminUser = await checkHRManagerAccess(request);
-    if (!adminUser) {
-      return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
-    }
+    if (!isAdminSessionValid(request)) { return NextResponse.json({ error: 'Access denied.' }, { status: 403 }); }
 
     await connectDB();
 
@@ -23,7 +20,7 @@ export async function GET(request: NextRequest) {
     if (!settings) {
       // Create default settings if none exist
       settings = new SystemSettings({
-        updatedBy: adminUser.clerkUserId,
+        updatedBy: 'admin@innovatrix.com',
         holidays: new Map()
       });
       await settings.save();
@@ -87,10 +84,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // Check if user is admin
-    const adminUser = await checkHRManagerAccess(request);
-    if (!adminUser) {
-      return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
-    }
+    if (!isAdminSessionValid(request)) { return NextResponse.json({ error: 'Access denied.' }, { status: 403 }); }
 
     await connectDB();
 
@@ -127,7 +121,7 @@ export async function POST(request: NextRequest) {
     let settings = await SystemSettings.findOne();
     if (!settings) {
       settings = new SystemSettings({
-        updatedBy: adminUser.clerkUserId,
+        updatedBy: 'admin@innovatrix.com',
         holidays: new Map()
       });
     }
@@ -160,7 +154,7 @@ export async function POST(request: NextRequest) {
 
     // Update the holidays Map
     settings.holidays.set(yearKey, yearHolidays);
-    settings.updatedBy = adminUser.clerkUserId;
+    settings.updatedBy = 'admin@innovatrix.com';
     settings.updatedAt = new Date();
 
     // Mark the holidays field as modified

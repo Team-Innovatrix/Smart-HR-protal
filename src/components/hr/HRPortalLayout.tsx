@@ -11,7 +11,6 @@ import {
   UsersIcon,
   DocumentTextIcon,
   Cog6ToothIcon,
-  ShieldCheckIcon,
   Bars3Icon,
   XMarkIcon,
   BellIcon,
@@ -83,7 +82,7 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
   // Show loading state while checking authentication
   if (!isLoaded || !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #f8fafc, #eef2ff, #f0fdfa)' }}>
+      <div className="min-h-screen flex items-center justify-center" suppressHydrationWarning>
         <div className="text-center">
           <div className="relative">
             <div className="animate-spin rounded-full h-16 w-16 border-4 border-indigo-200 border-t-indigo-600 mx-auto mb-6"></div>
@@ -118,19 +117,9 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
     userProfile?.position === 'CEO' ||
     userProfile?.department?.toLowerCase() === 'hr' ||
     userProfile?.department?.toLowerCase() === 'human resources' ||
-    userProfile?.position?.toLowerCase().includes('hr') ||
-    // dev_user_admin_001 is always admin
-    user?.id === 'dev_user_admin_001'
+    userProfile?.position?.toLowerCase().includes('hr')
 
-  const navigation = isAdmin 
-    ? [...baseNavigation, { 
-        name: 'Admin Portal', 
-        href: '/portal/admin', 
-        icon: ShieldCheckIcon, 
-        current: false, 
-        description: '👑 Command Centre' 
-      }]
-    : baseNavigation
+  const navigation = baseNavigation
 
   const isCurrentPage = (href: string) => {
     if (href === getHRPortalPath('dashboard') && currentPage === 'dashboard') return true
@@ -144,14 +133,14 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
 
   if (!showSidebar) {
     return (
-      <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #f8fafc, #eef2ff, #f0fdfa)' }}>
+      <div className="min-h-screen" suppressHydrationWarning>
         {children}
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #f8fafc, #eef2ff, #f0fdfa)' }}>
+    <div className="min-h-screen" suppressHydrationWarning>
         {/* Sidebar overlay */}
         {sidebarOpen && (
           <div 
@@ -161,7 +150,7 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
         )}
 
       {/* Sidebar (moved to right, hidden by default) */}
-      <div className={`fixed inset-y-0 right-0 z-[60] w-72 bg-white/95 backdrop-blur-xl shadow-2xl border-l border-gray-200/50 transform transition-all duration-300 ease-in-out flex flex-col ${
+      <div className={`fixed inset-y-0 right-0 z-[60] w-72 glass-panel border-l transform transition-all duration-300 ease-in-out flex flex-col ${
         sidebarOpen ? 'translate-x-0' : 'translate-x-full'
       }`}>
         {/* Sidebar Brand Header */}
@@ -171,8 +160,8 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
               🚀
             </div>
             <div className="leading-tight">
-              <div className="text-[9px] text-gray-400 font-semibold uppercase tracking-widest">Innovatrix</div>
-              <div className="text-xs font-bold text-gray-900">Smart Dashboard</div>
+              <div className="text-[9px] text-[var(--text-muted)] font-semibold uppercase tracking-widest">Innovatrix</div>
+              <div className="text-xs font-bold text-[var(--text-primary)]">Smart Dashboard</div>
             </div>
           </Link>
           <button
@@ -184,7 +173,7 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
         </div>
 
         {/* User Info Header */}
-        <div className="px-8 py-5 border-b border-gray-200/50 bg-white">
+        <div className="px-8 py-5 border-b border-[var(--glass-border)] bg-[rgba(255,255,255,0.02)]">
           <div className="flex items-center">
             <div className="h-12 w-12 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-2xl flex items-center justify-center shadow-lg">
               <span className="text-white text-lg font-semibold">
@@ -192,10 +181,10 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
               </span>
             </div>
             <div className="ml-4">
-              <p className="text-base font-semibold text-gray-900">
+              <p className="text-base font-semibold text-[var(--text-primary)]">
                 {user?.firstName} {user?.lastName}
               </p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-[var(--text-secondary)]">
                 {user?.emailAddresses[0]?.emailAddress}
               </p>
               <div className="flex items-center mt-1">
@@ -218,18 +207,18 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
                   href={item.href}
                   className={`group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${
                      isCurrentPage(item.href)
-                      ? 'bg-gradient-to-r from-indigo-500 to-violet-600 text-white shadow-lg shadow-indigo-500/25'
-                      : 'text-gray-700 hover:text-indigo-600 hover:bg-indigo-50/60 hover:shadow-md'
+                      ? 'nav-item-active'
+                      : 'nav-item-inactive'
                   }`}
                   onClick={() => setSidebarOpen(false)}
                 >
                   <Icon className={`mr-3 h-5 w-5 transition-all duration-200 ${
-                    isCurrentPage(item.href) ? 'text-white' : 'text-gray-400 group-hover:text-indigo-600'
+                    isCurrentPage(item.href) ? 'text-[var(--accent-blue)]' : 'text-[var(--text-muted)] group-hover:text-[var(--accent-blue)]'
                   }`} />
                   <div className="flex-1">
                     <div className="font-semibold">{item.name}</div>
                     <div className={`text-xs mt-0.5 transition-all duration-200 ${
-                      isCurrentPage(item.href) ? 'text-blue-100' : 'text-gray-500 group-hover:text-blue-500'
+                      isCurrentPage(item.href) ? 'text-[var(--text-secondary)]' : 'text-[var(--text-muted)] group-hover:text-[var(--text-secondary)]'
                     }`}>
                       {item.description}
                     </div>
@@ -253,7 +242,7 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
       {/* Main Content */}
       <div>
         {/* Top Header */}
-        <div className="bg-white/80 backdrop-blur-xl shadow-sm border-b border-gray-200/50 sticky top-0 z-30">
+        <div className="glass-panel sticky top-0 z-30 border-b border-[var(--glass-border)]">
           <div className="flex items-center justify-between px-6 py-4">
             {/* Left: Brand */}
             <div className="flex items-center">
@@ -262,8 +251,8 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
                   ⚡
                 </div>
                 <div className="leading-tight">
-                  <div className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">Innovatrix</div>
-                  <div className="text-sm font-bold text-gray-900">Smart Dashboard</div>
+                  <div className="text-[10px] text-[var(--text-muted)] font-medium uppercase tracking-wider">Innovatrix</div>
+                  <div className="text-sm font-bold text-[var(--text-primary)]">Smart Dashboard</div>
                 </div>
               </Link>
             </div>
@@ -277,8 +266,8 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
               {/* User menu */}
               <div className="flex items-center space-x-3">
                 <div className="text-right hidden sm:block">
-                  <p className="text-sm font-bold text-gray-900">{user?.firstName} {user?.lastName}</p>
-                   <p className="text-xs font-semibold" style={{ color: '#6366f1' }}>
+                  <p className="text-sm font-bold text-[var(--text-primary)]">{user?.firstName} {user?.lastName}</p>
+                   <p className="text-xs font-semibold text-[var(--accent-blue)]">
                      {userProfile?.position || (user?.publicMetadata?.role as string) || 'Employee'}
                   </p>
                 </div>

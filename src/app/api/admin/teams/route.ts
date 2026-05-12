@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { checkHRManagerAccess } from '@/lib/adminAuth';
+import { isAdminSessionValid } from '@/lib/adminCookieAuth';
 import connectDB from '@/lib/mongodb';
 import Team from '@/models/Team';
 // import UserProfile from '@/models/UserProfile'; // Unused import removed
@@ -11,44 +11,24 @@ export async function HEAD() {
 
 export async function GET(req: NextRequest) {
   try {
-    console.log('🔍 Teams API: Starting request');
-    
-    // Check if user has HR Manager access
-    const adminUser = await checkHRManagerAccess(req);
-    if (!adminUser) {
-      console.log('❌ Teams API: Access denied - not HR Manager');
-      return NextResponse.json(
-        { error: 'Access denied. HR Manager privileges required.' },
-        { status: 403 }
-      );
+    if (!isAdminSessionValid(req)) {
+      return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
     }
-    
-    console.log('✅ Teams API: HR Manager access confirmed');
 
-    // Connect to database
     await connectDB();
-    console.log('✅ Teams API: Database connected');
 
-    // Get query parameters
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '20');
     const department = searchParams.get('department') || '';
 
-    console.log('🔍 Teams API: Query params:', { page, limit, department });
-
-    // Build query
     const query: Record<string, unknown> = {};
     if (department) {
       query.department = department;
     }
 
-    // Calculate pagination
     const skip = (page - 1) * limit;
 
-    console.log('🔍 Teams API: Executing database queries...');
-
-    // Get teams with pagination - don't populate since these are Clerk user IDs
     const [teams, total] = await Promise.all([
       Team.find(query)
         .sort({ createdAt: -1 })
@@ -56,8 +36,6 @@ export async function GET(req: NextRequest) {
         .limit(limit),
       Team.countDocuments(query)
     ]);
-
-    console.log('✅ Teams API: Database queries completed', { teamsCount: teams.length, total });
 
     // Get overview statistics
     const overview = await Team.aggregate([
@@ -112,12 +90,6 @@ export async function GET(req: NextRequest) {
       }
     };
 
-    console.log('✅ Teams API: Response prepared', { 
-      totalTeams: overviewData.totalTeams, 
-      totalMembers: overviewData.totalMembers,
-      departments: departments.length 
-    });
-
     return NextResponse.json(responseData);
   } catch (error) {
     console.error('❌ Teams API: Error occurred:', error);
@@ -131,13 +103,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     // Check if user has HR Manager access
-    const adminUser = await checkHRManagerAccess(req);
-    if (!adminUser) {
-      return NextResponse.json(
-        { error: 'Access denied. HR Manager privileges required.' },
-        { status: 403 }
-      );
-    }
+    if (!isAdminSessionValid(req)) { return NextResponse.json({ error: 'Access denied.' }, { status: 403 }); }
 
     // Connect to database
     await connectDB();

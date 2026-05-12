@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { checkHRManagerAccess } from '@/lib/adminAuth';
+import { isAdminSessionValid, ADMIN_IDENTITY } from '@/lib/adminCookieAuth';
 import connectDB from '@/lib/mongodb';
 import UserProfile from '@/models/UserProfile';
 import Leave from '@/models/Leave';
@@ -9,14 +9,13 @@ import { createTodayStringQuery } from '@/lib/dateQueryUtils';
 
 export async function GET(req: NextRequest) {
   try {
-    // Check if user has HR Manager access
-    const adminUser = await checkHRManagerAccess(req);
-    if (!adminUser) {
+    if (!isAdminSessionValid(req)) {
       return NextResponse.json(
-        { error: 'Access denied. HR Manager privileges required.' },
+        { error: 'Access denied. Admin session required.' },
         { status: 403 }
       );
     }
+    const adminUser = ADMIN_IDENTITY;
 
     // Connect to database
     await connectDB();
@@ -80,7 +79,7 @@ export async function GET(req: NextRequest) {
         recentLeaves,
         todayAttendanceStats,
         adminUser: {
-          name: `${adminUser.firstName} ${adminUser.lastName}`,
+          name: `Innovatrix Admin`,
           employeeId: adminUser.employeeId,
           department: adminUser.department,
           permissions: adminUser.permissions

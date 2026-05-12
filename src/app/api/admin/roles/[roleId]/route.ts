@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { checkHRManagerAccess } from '@/lib/adminAuth';
+import { isAdminSessionValid } from '@/lib/adminCookieAuth';
 import connectDB from '@/lib/mongodb';
 import Role from '@/models/Role';
 import UserProfile from '@/models/UserProfile';
@@ -10,13 +10,8 @@ export async function GET(
   { params }: { params: Promise<{ roleId: string }> }
 ) {
   try {
-    // Check if user has HR Manager access
-    const adminUser = await checkHRManagerAccess(req);
-    if (!adminUser) {
-      return NextResponse.json(
-        { error: 'Access denied. HR Manager privileges required.' },
-        { status: 403 }
-      );
+    if (!isAdminSessionValid(req)) {
+      return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
     }
 
     // Connect to database
@@ -61,13 +56,8 @@ export async function PUT(
   { params }: { params: Promise<{ roleId: string }> }
 ) {
   try {
-    // Check if user has HR Manager access
-    const adminUser = await checkHRManagerAccess(req);
-    if (!adminUser) {
-      return NextResponse.json(
-        { error: 'Access denied. HR Manager privileges required.' },
-        { status: 403 }
-      );
+    if (!isAdminSessionValid(req)) {
+      return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
     }
 
     // Connect to database
@@ -149,13 +139,8 @@ export async function DELETE(
   { params }: { params: Promise<{ roleId: string }> }
 ) {
   try {
-    // Check if user has HR Manager access
-    const adminUser = await checkHRManagerAccess(req);
-    if (!adminUser) {
-      return NextResponse.json(
-        { error: 'Access denied. HR Manager privileges required.' },
-        { status: 403 }
-      );
+    if (!isAdminSessionValid(req)) {
+      return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
     }
 
     // Connect to database

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { checkHRManagerAccess } from '@/lib/adminAuth';
+import { isAdminSessionValid } from '@/lib/adminCookieAuth';
 import connectDB from '@/lib/mongodb';
 import UserProfile from '@/models/UserProfile';
 import mongoose from 'mongoose';
@@ -10,13 +10,8 @@ export async function GET(
   { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
-    // Check if user has HR Manager access
-    const adminUser = await checkHRManagerAccess(req);
-    if (!adminUser) {
-      return NextResponse.json(
-        { error: 'Access denied. HR Manager privileges required.' },
-        { status: 403 }
-      );
+    if (!isAdminSessionValid(req)) {
+      return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
     }
 
     // Connect to database
@@ -98,13 +93,8 @@ export async function PUT(
   { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
-    // Check if user has HR Manager access
-    const adminUser = await checkHRManagerAccess(req);
-    if (!adminUser) {
-      return NextResponse.json(
-        { error: 'Access denied. HR Manager privileges required.' },
-        { status: 403 }
-      );
+    if (!isAdminSessionValid(req)) {
+      return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
     }
 
     // Connect to database
@@ -145,7 +135,7 @@ export async function PUT(
 
     // Security check: HR cannot edit the CEO unless they are the CEO
     const isTargetCEO = user.position === 'CEO' || user.position === 'Chief Executive Officer';
-    const isSelf = adminUser.clerkUserId === user.clerkUserId;
+    const isSelf = 'admin@innovatrix.com' === user.clerkUserId;
     if (isTargetCEO && !isSelf) {
       return NextResponse.json(
         { error: 'Access denied. You cannot modify the Chief Executive Officer.' },
@@ -371,13 +361,8 @@ export async function DELETE(
   { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
-    // Check if user has HR Manager access
-    const adminUser = await checkHRManagerAccess(req);
-    if (!adminUser) {
-      return NextResponse.json(
-        { error: 'Access denied. HR Manager privileges required.' },
-        { status: 403 }
-      );
+    if (!isAdminSessionValid(req)) {
+      return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
     }
 
     // Connect to database

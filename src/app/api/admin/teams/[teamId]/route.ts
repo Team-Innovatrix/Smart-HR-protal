@@ -1,17 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { checkHRManagerAccess } from '@/lib/adminAuth';
+import { isAdminSessionValid } from '@/lib/adminCookieAuth';
 import connectDB from '@/lib/mongodb';
 import Team from '@/models/Team';
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ teamId: string }> }) {
   try {
-    // Check if user has HR Manager access
-    const adminUser = await checkHRManagerAccess(req);
-    if (!adminUser) {
-      return NextResponse.json(
-        { error: 'Access denied. HR Manager privileges required.' },
-        { status: 403 }
-      );
+    if (!isAdminSessionValid(req)) {
+      return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
     }
 
     // Connect to database
@@ -81,13 +76,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ team
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ teamId: string }> }) {
   try {
-    // Check if user has HR Manager access
-    const adminUser = await checkHRManagerAccess(req);
-    if (!adminUser) {
-      return NextResponse.json(
-        { error: 'Access denied. HR Manager privileges required.' },
-        { status: 403 }
-      );
+    if (!isAdminSessionValid(req)) {
+      return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
     }
 
     // Connect to database
@@ -122,13 +112,8 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ t
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ teamId: string }> }) {
   try {
-    // Check if user has HR Manager access
-    const adminUser = await checkHRManagerAccess(req);
-    if (!adminUser) {
-      return NextResponse.json(
-        { error: 'Access denied. HR Manager privileges required.' },
-        { status: 403 }
-      );
+    if (!isAdminSessionValid(req)) {
+      return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
     }
 
     // Connect to database

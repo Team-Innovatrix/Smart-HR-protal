@@ -4,7 +4,6 @@ import { NextResponse } from 'next/server';
 import UserProfile from '@/models/UserProfile';
 import Role from '@/models/Role';
 import connectDB from './mongodb';
-import { DEV_BYPASS_ENABLED, DEV_USER } from './devAuth';
 
 export interface AdminUser {
   clerkUserId: string;
@@ -54,45 +53,14 @@ function getDefaultEmployeePermissions(): string[] {
  */
 export async function checkHRManagerAccess(req: NextRequest): Promise<AdminUser | null> {
   try {
-    if (DEV_BYPASS_ENABLED) {
-      return {
-        clerkUserId: DEV_USER.userId,
-        employeeId: 'EMP000',
-        firstName: DEV_USER.firstName,
-        lastName: DEV_USER.lastName,
-        email: DEV_USER.email,
-        department: 'HR',
-        position: 'HR Manager',
-        isHRManager: true,
-        permissions: ['admin:all', '*']
-      };
-    }
-
     // Get Clerk user ID
     const { userId } = await auth();
     if (!userId) {
       return null;
     }
 
-    // Let's also get the current user to verify by email instead of hardcoded clerk user ID
-    // which might change across different environments
     const clerkUser = await currentUser();
     const email = clerkUser?.emailAddresses[0]?.emailAddress;
-
-    // FAILSAFE: Always grant Mohit full admin access to prevent lockout during DB wipes
-    if (userId === 'user_3Ct0FoCvLcRHnOXgp8fiwr62Dj1' || email === 'mohit@innovatrix.io') {
-      return {
-        clerkUserId: userId,
-        employeeId: 'EMP001',
-        firstName: 'Mohit',
-        lastName: 'Mohatkar',
-        email: 'mohit@innovatrix.io',
-        department: 'Executive',
-        position: 'CEO',
-        isHRManager: true,
-        permissions: ['*']
-      } as AdminUser;
-    }
 
     // Connect to database
     await connectDB();

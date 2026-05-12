@@ -1,5 +1,5 @@
-﻿import { NextRequest, NextResponse } from 'next/server'
-import { checkHRManagerAccess } from '@/lib/adminAuth'
+import { NextRequest, NextResponse } from 'next/server'
+import { isAdminSessionValid } from '@/lib/adminCookieAuth';
 import { getCareersJobModel } from '@/models/careers/Job'
 import { jobCreateSchema } from '@/lib/validation/job'
 import { SettingsService } from '@/lib/settingsService'
@@ -7,8 +7,7 @@ import { SettingsService } from '@/lib/settingsService'
 export const dynamic = 'force-dynamic'
 
 export async function GET(req: NextRequest) {
-  const admin = await checkHRManagerAccess(req)
-  if (!admin) return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 })
+  if (!isAdminSessionValid(req)) return NextResponse.json({ error: 'Access denied.' }, { status: 403 })
 
   const { searchParams } = new URL(req.url)
   const page = Math.max(parseInt(searchParams.get('page') || '1', 10) || 1, 1)
@@ -50,8 +49,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const admin = await checkHRManagerAccess(req)
-  if (!admin) return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 })
+  if (!isAdminSessionValid(req)) return NextResponse.json({ error: 'Access denied.' }, { status: 403 })
 
   try {
     const payload = await req.json()

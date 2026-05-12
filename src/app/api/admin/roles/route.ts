@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { checkHRManagerAccess } from '@/lib/adminAuth';
+import { isAdminSessionValid } from '@/lib/adminCookieAuth';
 import connectDB from '@/lib/mongodb';
 import Role from '@/models/Role';
 import UserProfile from '@/models/UserProfile';
@@ -8,13 +8,7 @@ import UserProfile from '@/models/UserProfile';
 export async function GET(req: NextRequest) {
   try {
     // Check if user has HR Manager access
-    const adminUser = await checkHRManagerAccess(req);
-    if (!adminUser) {
-      return NextResponse.json(
-        { error: 'Access denied. HR Manager privileges required.' },
-        { status: 403 }
-      );
-    }
+    if (!isAdminSessionValid(req)) { return NextResponse.json({ error: 'Access denied.' }, { status: 403 }); }
 
     // Connect to database
     await connectDB();
@@ -60,13 +54,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     // Check if user has HR Manager access
-    const adminUser = await checkHRManagerAccess(req);
-    if (!adminUser) {
-      return NextResponse.json(
-        { error: 'Access denied. HR Manager privileges required.' },
-        { status: 403 }
-      );
-    }
+    if (!isAdminSessionValid(req)) { return NextResponse.json({ error: 'Access denied.' }, { status: 403 }); }
 
     // Connect to database
     await connectDB();
@@ -103,7 +91,7 @@ export async function POST(req: NextRequest) {
       permissions: permissions ? permissions.filter((p: string) => p && p.trim()) : [],
       isSystem: false,
       isActive: true,
-      createdBy: adminUser.clerkUserId
+      createdBy: 'admin@innovatrix.com'
     });
 
     await newRole.save();
