@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { 
@@ -15,7 +15,9 @@ import {
   XMarkIcon,
   BellIcon,
   ChevronRightIcon,
-  ChatBubbleLeftRightIcon
+  ChatBubbleLeftRightIcon,
+  MagnifyingGlassIcon,
+  SparklesIcon,
 } from '@heroicons/react/24/outline'
 import { UserButton, OrganizationSwitcher } from '@clerk/nextjs'
 import { useDevSafeUser, useDevSafeClerk } from '../../lib/hooks/useDevSafeClerk'
@@ -32,11 +34,27 @@ interface HRPortalLayoutProps {
 
 const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: HRPortalLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [companyName, setCompanyName] = useState<string>('Innovatrix Smart Dashboard')
   const [userProfile, setUserProfile] = useState<{ position?: string; department?: string } | null>(null)
+  const [cursorMotion, setCursorMotion] = useState(true)
+  const cursorRef = useRef<HTMLDivElement>(null)
   const { user, isLoaded } = useDevSafeUser()
   const { signOut } = useDevSafeClerk()
   const router = useRouter()
+
+  // Cursor glow effect
+  useEffect(() => {
+    if (!cursorMotion) return
+    const handleMove = (e: MouseEvent) => {
+      if (cursorRef.current) {
+        cursorRef.current.style.left = `${e.clientX}px`
+        cursorRef.current.style.top = `${e.clientY}px`
+      }
+    }
+    window.addEventListener('mousemove', handleMove, { passive: true })
+    return () => window.removeEventListener('mousemove', handleMove)
+  }, [cursorMotion])
 
   // Fetch company name from settings
   useEffect(() => {
@@ -82,53 +100,34 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
   // Show loading state while checking authentication
   if (!isLoaded || !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center" suppressHydrationWarning>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-base)' }} suppressHydrationWarning>
         <div className="text-center">
-          <div className="relative">
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-indigo-200 border-t-indigo-600 mx-auto mb-6"></div>
-            <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-violet-400 animate-pulse"></div>
+          <div className="relative w-12 h-12 mx-auto mb-5">
+            <div className="absolute inset-0 rounded-full border-2 border-[var(--glass-border)]" />
+            <div className="absolute inset-0 rounded-full border-2 border-t-[var(--accent)] animate-spin" />
           </div>
-          <p className="text-indigo-600 text-lg font-medium">Loading HR Portal...</p>
-          <p className="text-slate-400 text-sm mt-2">Please wait while we set up your workspace</p>
+          <p className="text-[var(--accent)] text-sm font-medium">Loading Portal...</p>
+          <p className="text-[var(--text-muted)] text-xs mt-1">Setting up your workspace</p>
         </div>
       </div>
     )
   }
 
-  const baseNavigation = [
+  const navigation = [
     { name: 'Dashboard', href: getHRPortalPath('dashboard'), icon: HomeIcon, current: currentPage === 'home', description: 'Overview and insights' },
-    { name: 'Attendance', href: getHRPortalPath('attendance'), icon: ClockIcon, current: currentPage === 'attendance', description: 'Clock in/out and tracking' },
-    { name: 'Leaves', href: getHRPortalPath('leaves'), icon: CalendarIcon, current: currentPage === 'leaves', description: 'Request and manage time off' },
-    { name: 'Profile', href: getHRPortalPath('profile'), icon: UserIcon, current: currentPage === 'profile', description: 'Personal information' },
-    { name: 'Team', href: getHRPortalPath('team'), icon: UsersIcon, current: currentPage === 'team', description: 'Team management' },
-    { name: 'Chat', href: getHRPortalPath('chat'), icon: ChatBubbleLeftRightIcon, current: currentPage === 'chat', description: 'Employee communication' },
-    { name: 'Documents', href: getHRPortalPath('documents'), icon: DocumentTextIcon, current: currentPage === 'documents', description: 'File management' },
-    { name: 'Settings', href: getHRPortalPath('settings'), icon: Cog6ToothIcon, current: currentPage === 'settings', description: 'Preferences and security' },
+    { name: 'Attendance', href: getHRPortalPath('attendance'), icon: ClockIcon, current: currentPage === 'attendance', description: 'Clock in/out' },
+    { name: 'Leaves', href: getHRPortalPath('leaves'), icon: CalendarIcon, current: currentPage === 'leaves', description: 'Time off requests' },
+    { name: 'Profile', href: getHRPortalPath('profile'), icon: UserIcon, current: currentPage === 'profile', description: 'Your information' },
+    { name: 'Team', href: getHRPortalPath('team'), icon: UsersIcon, current: currentPage === 'team', description: 'Team directory' },
+    { name: 'Chat', href: getHRPortalPath('chat'), icon: ChatBubbleLeftRightIcon, current: currentPage === 'chat', description: 'Messages' },
+    { name: 'Documents', href: getHRPortalPath('documents'), icon: DocumentTextIcon, current: currentPage === 'documents', description: 'HR files' },
+    { name: 'Settings', href: getHRPortalPath('settings'), icon: Cog6ToothIcon, current: currentPage === 'settings', description: 'Preferences' },
   ]
-
-  // CEO and HR Managers both get admin portal access
-  const isAdmin = 
-    user?.publicMetadata?.role === 'admin' ||
-    user?.publicMetadata?.role === 'HR Manager' ||
-    user?.publicMetadata?.role === 'Chief Executive Officer' ||
-    user?.publicMetadata?.role === 'CEO' ||
-    user?.publicMetadata?.roleId === 'admin' ||
-    userProfile?.position === 'Chief Executive Officer' ||
-    userProfile?.position === 'CEO' ||
-    userProfile?.department?.toLowerCase() === 'hr' ||
-    userProfile?.department?.toLowerCase() === 'human resources' ||
-    userProfile?.position?.toLowerCase().includes('hr')
-
-  const navigation = baseNavigation
 
   const isCurrentPage = (href: string) => {
     if (href === getHRPortalPath('dashboard') && currentPage === 'dashboard') return true
     if (href === getHRPortalPath('dashboard') && currentPage === 'home') return true
     return href.includes(currentPage)
-  }
-
-  const handleSignOut = async () => {
-    await signOut()
   }
 
   if (!showSidebar) {
@@ -140,172 +139,224 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
   }
 
   return (
-    <div className="min-h-screen" suppressHydrationWarning>
-        {/* Sidebar overlay */}
-        {sidebarOpen && (
-          <div 
-            className="fixed inset-0 z-40"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
+    <div className="min-h-screen relative" style={{ background: 'var(--bg-base)' }} suppressHydrationWarning>
+      {/* Ambient background effects */}
+      <div className="ambient-bg" />
+      <div className="mesh-overlay" />
 
-      {/* Sidebar (moved to right, hidden by default) */}
-      <div className={`fixed inset-y-0 right-0 z-[60] w-72 glass-panel border-l transform transition-all duration-300 ease-in-out flex flex-col ${
-        sidebarOpen ? 'translate-x-0' : 'translate-x-full'
-      }`}>
-        {/* Sidebar Brand Header */}
-        <div className="px-6 pt-5 pb-3 border-b border-gray-100 flex items-center justify-between">
-          <Link href={getHRPortalPath('dashboard')} className="flex items-center gap-2.5" onClick={() => setSidebarOpen(false)}>
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-xl shadow-md flex-shrink-0">
-              🚀
-            </div>
-            <div className="leading-tight">
-              <div className="text-[9px] text-[var(--text-muted)] font-semibold uppercase tracking-widest">Innovatrix</div>
-              <div className="text-xs font-bold text-[var(--text-primary)]">Smart Dashboard</div>
-            </div>
-          </Link>
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-all"
-          >
-            <XMarkIcon className="h-4 w-4" />
-          </button>
-        </div>
+      {/* Cursor glow */}
+      <div ref={cursorRef} className={`cursor-glow ${!cursorMotion ? 'disabled' : ''}`} />
 
-        {/* User Info Header */}
-        <div className="px-8 py-5 border-b border-[var(--glass-border)] bg-[rgba(255,255,255,0.02)]">
-          <div className="flex items-center">
-            <div className="h-12 w-12 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-2xl flex items-center justify-center shadow-lg">
-              <span className="text-white text-lg font-semibold">
-                {user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
-              </span>
+      {/* ═══ FLOATING LEFT SIDEBAR ═══ */}
+      <aside className={`fixed left-0 top-0 bottom-0 z-40 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hidden lg:flex flex-col ${
+        sidebarCollapsed ? 'w-[72px]' : 'w-[260px]'
+      }`}
+        style={{
+          background: 'rgba(22, 22, 42, 0.75)',
+          backdropFilter: 'blur(32px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(32px) saturate(180%)',
+          borderRight: '1px solid var(--glass-border)',
+        }}
+      >
+        {/* Sidebar Brand */}
+        <div className="px-4 pt-5 pb-4 border-b border-[var(--glass-border)]">
+          <Link href={getHRPortalPath('dashboard')} className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0"
+              style={{
+                background: 'linear-gradient(135deg, rgba(52, 211, 153, 0.25), rgba(52, 211, 153, 0.08))',
+                border: '1px solid rgba(52, 211, 153, 0.2)',
+                boxShadow: '0 0 20px rgba(52, 211, 153, 0.1)',
+              }}
+            >
+              ⚡
             </div>
-            <div className="ml-4">
-              <p className="text-base font-semibold text-[var(--text-primary)]">
-                {user?.firstName} {user?.lastName}
-              </p>
-              <p className="text-sm text-[var(--text-secondary)]">
-                {user?.emailAddresses[0]?.emailAddress}
-              </p>
-              <div className="flex items-center mt-1">
-                <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
-                <span className="text-xs text-green-600 font-medium">Active</span>
+            {!sidebarCollapsed && (
+              <div className="leading-tight animate-fade-in">
+                <div className="text-[9px] text-[var(--text-muted)] font-semibold uppercase tracking-[0.15em]">Innovatrix</div>
+                <div className="text-[13px] font-bold text-[var(--text-primary)]">Smart HR</div>
               </div>
-            </div>
-          </div>
+            )}
+          </Link>
         </div>
 
-
-        {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto px-6 py-6">
-          <div className="space-y-2">
-            {navigation.map((item) => {
-              const Icon = item.icon
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${
-                     isCurrentPage(item.href)
-                      ? 'nav-item-active'
-                      : 'nav-item-inactive'
-                  }`}
-                  onClick={() => setSidebarOpen(false)}
-                >
-                  <Icon className={`mr-3 h-5 w-5 transition-all duration-200 ${
-                    isCurrentPage(item.href) ? 'text-[var(--accent-blue)]' : 'text-[var(--text-muted)] group-hover:text-[var(--accent-blue)]'
-                  }`} />
-                  <div className="flex-1">
-                    <div className="font-semibold">{item.name}</div>
-                    <div className={`text-xs mt-0.5 transition-all duration-200 ${
-                      isCurrentPage(item.href) ? 'text-[var(--text-secondary)]' : 'text-[var(--text-muted)] group-hover:text-[var(--text-secondary)]'
-                    }`}>
-                      {item.description}
-                    </div>
-                  </div>
-                  {isCurrentPage(item.href) && (
-                    <ChevronRightIcon className="h-4 w-4 text-blue-100 ml-2" />
-                  )}
-                </Link>
-              )
-            })}
-          </div>
+        {/* Navigation Items */}
+        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+          {navigation.map((item) => {
+            const Icon = item.icon
+            const active = isCurrentPage(item.href)
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`sidebar-nav-item ${active ? 'active' : ''}`}
+                title={sidebarCollapsed ? item.name : undefined}
+              >
+                <Icon className={`h-[18px] w-[18px] flex-shrink-0 transition-colors duration-300 ${
+                  active ? 'text-[var(--accent)]' : 'text-[var(--text-muted)]'
+                }`} />
+                {!sidebarCollapsed && (
+                  <span className="truncate">{item.name}</span>
+                )}
+              </Link>
+            )
+          })}
         </nav>
 
-        
-
-        {/* Sign Out is now handled by the UserButton in the header */}
-        <div className="flex-shrink-0 px-6 pb-6 pt-2 border-t border-gray-100">
+        {/* Sidebar Footer — Collapse toggle */}
+        <div className="px-3 pb-4 border-t border-[var(--glass-border)] pt-3">
+          <button 
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            className="sidebar-nav-item w-full justify-center"
+          >
+            <ChevronRightIcon className={`h-4 w-4 text-[var(--text-muted)] transition-transform duration-300 ${sidebarCollapsed ? '' : 'rotate-180'}`} />
+            {!sidebarCollapsed && <span className="text-[12px] text-[var(--text-muted)]">Collapse</span>}
+          </button>
         </div>
-      </div>
+      </aside>
 
-      {/* Main Content */}
-      <div>
-        {/* Top Header */}
-        <div className="glass-panel sticky top-0 z-30 border-b border-[var(--glass-border)]">
-          <div className="flex items-center justify-between px-6 py-4">
-            {/* Left: Brand */}
-            <div className="flex items-center">
-              <Link href={getHRPortalPath('dashboard')} className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-xl shadow-md flex-shrink-0">
-                  ⚡
-                </div>
+      {/* ═══ MOBILE SIDEBAR OVERLAY ═══ */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
+          <aside className="absolute left-0 top-0 bottom-0 w-[280px] flex flex-col animate-fade-in"
+            style={{
+              background: 'rgba(22, 22, 42, 0.92)',
+              backdropFilter: 'blur(40px) saturate(200%)',
+              WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+              borderRight: '1px solid var(--glass-border)',
+            }}
+          >
+            {/* Mobile sidebar header */}
+            <div className="px-5 pt-5 pb-3 border-b border-[var(--glass-border)] flex items-center justify-between">
+              <Link href={getHRPortalPath('dashboard')} className="flex items-center gap-2.5" onClick={() => setSidebarOpen(false)}>
+                <div className="w-8 h-8 rounded-xl flex items-center justify-center text-base"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(52, 211, 153, 0.25), rgba(52, 211, 153, 0.08))',
+                    border: '1px solid rgba(52, 211, 153, 0.2)',
+                  }}
+                >⚡</div>
                 <div className="leading-tight">
-                  <div className="text-[10px] text-[var(--text-muted)] font-medium uppercase tracking-wider">Innovatrix</div>
-                  <div className="text-sm font-bold text-[var(--text-primary)]">Smart Dashboard</div>
+                  <div className="text-[9px] text-[var(--text-muted)] font-semibold uppercase tracking-widest">Innovatrix</div>
+                  <div className="text-[12px] font-bold text-[var(--text-primary)]">Smart HR</div>
                 </div>
               </Link>
+              <button onClick={() => setSidebarOpen(false)} className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[rgba(255,255,255,0.06)] transition-all">
+                <XMarkIcon className="h-4 w-4" />
+              </button>
             </div>
 
+            {/* Mobile User Info */}
+            <div className="px-5 py-4 border-b border-[var(--glass-border)]">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-2xl flex items-center justify-center text-sm font-semibold text-[var(--accent)]"
+                  style={{ background: 'var(--accent-muted)', border: '1px solid rgba(52,211,153,0.15)' }}
+                >
+                  {user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
+                </div>
+                <div>
+                  <p className="text-[13px] font-semibold text-[var(--text-primary)]">{user?.firstName} {user?.lastName}</p>
+                  <p className="text-[11px] text-[var(--text-muted)]">{user?.emailAddresses[0]?.emailAddress}</p>
+                </div>
+              </div>
+            </div>
 
-            {/* Right side actions */}
-            <div className="flex items-center space-x-4">
+            {/* Mobile Navigation */}
+            <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+              {navigation.map((item) => {
+                const Icon = item.icon
+                const active = isCurrentPage(item.href)
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`sidebar-nav-item ${active ? 'active' : ''}`}
+                    onClick={() => setSidebarOpen(false)}
+                  >
+                    <Icon className={`h-[18px] w-[18px] flex-shrink-0 ${active ? 'text-[var(--accent)]' : 'text-[var(--text-muted)]'}`} />
+                    <span>{item.name}</span>
+                  </Link>
+                )
+              })}
+            </nav>
+          </aside>
+        </div>
+      )}
+
+      {/* ═══ MAIN CONTENT AREA ═══ */}
+      <div className={`relative z-10 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        sidebarCollapsed ? 'lg:ml-[72px]' : 'lg:ml-[260px]'
+      }`}>
+        {/* ═══ TOP NAVBAR ═══ */}
+        <header className="sticky top-0 z-30 border-b border-[var(--glass-border)]"
+          style={{
+            background: 'rgba(26, 26, 46, 0.6)',
+            backdropFilter: 'blur(32px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(32px) saturate(180%)',
+          }}
+        >
+          <div className="flex items-center h-14 px-5 gap-4">
+            {/* Mobile menu button */}
+            <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[rgba(255,255,255,0.06)] transition-all">
+              <Bars3Icon className="h-5 w-5" />
+            </button>
+
+            {/* Search bar */}
+            <div className="hidden md:flex items-center flex-1 max-w-md">
+              <div className="relative w-full">
+                <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
+                <input
+                  type="text"
+                  placeholder="Search anything..."
+                  className="w-full pl-9 pr-4 py-2 text-[13px] rounded-xl bg-[rgba(255,255,255,0.04)] border border-[var(--glass-border)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)] focus:shadow-[0_0_0_3px_rgba(52,211,153,0.1)] transition-all duration-300"
+                />
+              </div>
+            </div>
+
+            <div className="flex-1 md:hidden" />
+
+            {/* Right actions */}
+            <div className="flex items-center gap-2">
+              {/* AI Assistant shortcut */}
+              <button className="p-2 rounded-xl text-[var(--text-muted)] hover:text-[var(--accent)] hover:bg-[rgba(52,211,153,0.08)] transition-all duration-200" title="AI Assistant">
+                <SparklesIcon className="h-[18px] w-[18px]" />
+              </button>
+
               {/* Notifications */}
               <NotificationBell />
 
-              {/* User menu */}
-              <div className="flex items-center space-x-3">
+              {/* User info + Controls */}
+              <div className="flex items-center gap-2 ml-1">
                 <div className="text-right hidden sm:block">
-                  <p className="text-sm font-bold text-[var(--text-primary)]">{user?.firstName} {user?.lastName}</p>
-                   <p className="text-xs font-semibold text-[var(--accent-blue)]">
-                     {userProfile?.position || (user?.publicMetadata?.role as string) || 'Employee'}
+                  <p className="text-[13px] font-semibold text-[var(--text-primary)] leading-tight">{user?.firstName} {user?.lastName}</p>
+                  <p className="text-[11px] font-medium text-[var(--accent)]">
+                    {userProfile?.position || (user?.publicMetadata?.role as string) || 'Employee'}
                   </p>
                 </div>
-                <div className="flex items-center justify-center gap-3">
-                  <OrganizationSwitcher 
-                    hidePersonal={true}
-                    afterSelectOrganizationUrl="/portal/dashboard"
-                    appearance={{
-                      elements: {
-                        rootBox: "shadow-sm border border-slate-200 rounded-lg px-2",
-                        organizationSwitcherTrigger: "focus:shadow-none"
-                      }
-                    }}
-                  />
-                  <UserButton 
-                    afterSignOutUrl="/portal/auth"
-                    appearance={{
-                      elements: {
-                        avatarBox: "h-9 w-9 rounded-xl shadow-md"
-                      }
-                    }}
-                  />
-                </div>
-                {/* Sidebar toggle (3 bars) beside initials */}
-                <button
-                  onClick={() => setSidebarOpen(!sidebarOpen)}
-                  className="p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all"
-                  aria-label="Toggle sidebar"
-                >
-                  <Bars3Icon className="h-5 w-5" />
-                </button>
+                <OrganizationSwitcher 
+                  hidePersonal={true}
+                  afterSelectOrganizationUrl="/portal/dashboard"
+                  appearance={{
+                    elements: {
+                      rootBox: "shadow-sm border border-[var(--glass-border)] rounded-lg",
+                      organizationSwitcherTrigger: "focus:shadow-none"
+                    }
+                  }}
+                />
+                <UserButton 
+                  afterSignOutUrl="/portal/auth"
+                  appearance={{
+                    elements: {
+                      avatarBox: "h-8 w-8 rounded-xl shadow-md ring-2 ring-[var(--glass-border)]"
+                    }
+                  }}
+                />
               </div>
             </div>
           </div>
-        </div>
+        </header>
 
         {/* Page Content */}
-        <main className="min-h-screen p-3 sm:p-6">
+        <main className="min-h-screen p-4 sm:p-6 lg:p-8">
           {children}
         </main>
       </div>

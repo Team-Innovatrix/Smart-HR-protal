@@ -83,8 +83,8 @@ export default function AdminSubNav({
               }}
               className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap cursor-pointer ${
                 isItemActive
-                  ? 'border-orange-500 text-orange-600'
-                  : 'border-transparent text-neutral-500 hover:text-orange-600 hover:border-orange-300'
+                  ? 'border-[var(--accent)] text-[var(--accent)]'
+                  : 'border-transparent text-[var(--text-muted)] hover:text-[var(--accent)] hover:border-[var(--accent)]'
               }`}
               tabIndex={-1}
             >
@@ -92,7 +92,7 @@ export default function AdminSubNav({
                 {item.icon && <span className="w-4 h-4 flex-shrink-0">{item.icon}</span>}
                 <span>{item.label}</span>
                 {item.badge && (
-                  <span className="ml-2 px-2 py-0.5 text-xs font-medium bg-orange-100 text-orange-700 rounded-full">
+                  <span className="ml-2 px-2 py-0.5 text-xs font-medium bg-[var(--accent-muted)] text-[var(--accent)] rounded-full">
                     {item.badge}
                   </span>
                 )}
@@ -104,8 +104,8 @@ export default function AdminSubNav({
               href={item.href}
               className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap ${
                 isItemActive
-                  ? 'border-orange-500 text-orange-600'
-                  : 'border-transparent text-neutral-500 hover:text-orange-600 hover:border-orange-300'
+                  ? 'border-[var(--accent)] text-[var(--accent)]'
+                  : 'border-transparent text-[var(--text-muted)] hover:text-[var(--accent)] hover:border-[var(--accent)]'
               }`}
             >
               <div className="flex items-center space-x-2">
@@ -142,8 +142,8 @@ export default function AdminSubNav({
                 }}
                 className={`py-2 px-3 border-b-2 font-medium text-sm transition-colors whitespace-nowrap flex-shrink-0 ${
                   isItemActive
-                    ? 'border-orange-500 text-orange-600'
-                    : 'border-transparent text-neutral-500 hover:text-orange-600 hover:border-orange-300'
+                    ? 'border-[var(--accent)] text-[var(--accent)]'
+                    : 'border-transparent text-[var(--text-muted)] hover:text-[var(--accent)] hover:border-[var(--accent)]'
                 }`}
                 tabIndex={-1}
               >
@@ -163,8 +163,8 @@ export default function AdminSubNav({
                 href={item.href}
                 className={`py-2 px-3 border-b-2 font-medium text-sm transition-colors whitespace-nowrap flex-shrink-0 ${
                   isItemActive
-                    ? 'border-orange-500 text-orange-600'
-                    : 'border-transparent text-neutral-500 hover:text-orange-600 hover:border-orange-300'
+                    ? 'border-[var(--accent)] text-[var(--accent)]'
+                    : 'border-transparent text-[var(--text-muted)] hover:text-[var(--accent)] hover:border-[var(--accent)]'
                 }`}
               >
                 <div className="flex items-center space-x-1">
