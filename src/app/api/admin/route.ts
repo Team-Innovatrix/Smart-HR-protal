@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { isAdminSessionValid, ADMIN_IDENTITY } from '@/lib/adminCookieAuth';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import connectDB from '@/lib/mongodb';
 import UserProfile from '@/models/UserProfile';
 import Leave from '@/models/Leave';
@@ -9,13 +9,23 @@ import { createTodayStringQuery } from '@/lib/dateQueryUtils';
 
 export async function GET(req: NextRequest) {
   try {
-    if (!isAdminSessionValid(req)) {
+    const { userId } = await auth();
+    const user = await currentUser();
+
+    if (!userId || !user) {
       return NextResponse.json(
-        { error: 'Access denied. Admin session required.' },
+        { error: 'Access denied. Authentication required.' },
+        { status: 401 }
+      );
+    }
+
+    const role = user.publicMetadata?.role as string;
+    if (role !== 'admin' && role !== 'owner') {
+      return NextResponse.json(
+        { error: 'Access denied. Admin role required.' },
         { status: 403 }
       );
     }
-    const adminUser = ADMIN_IDENTITY;
 
     // Connect to database
     await connectDB();
@@ -79,10 +89,10 @@ export async function GET(req: NextRequest) {
         recentLeaves,
         todayAttendanceStats,
         adminUser: {
-          name: `Innovatrix Admin`,
-          employeeId: adminUser.employeeId,
-          department: adminUser.department,
-          permissions: adminUser.permissions
+          name: `${user.firstName} ${user.lastName}`,
+          employeeId: user.id,
+          department: 'Administration',
+          permissions: ['all']
         }
       }
     });
