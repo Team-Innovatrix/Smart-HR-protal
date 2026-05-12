@@ -190,35 +190,35 @@ const RecentActivityWidget = ({ userId }: RecentActivityWidgetProps) => {
   const getStatusBgColor = (status: string) => {
     switch (status) {
       case 'success':
-        return 'bg-green-50 border-green-200'
+        return 'glass border-green-500/30'
       case 'warning':
-        return 'bg-yellow-50 border-yellow-200'
+        return 'glass border-yellow-500/30'
       case 'error':
-        return 'bg-red-50 border-red-200'
+        return 'glass border-red-500/30'
       default:
-        return 'bg-blue-50 border-blue-200'
+        return 'glass border-blue-500/30'
     }
   }
 
   if (loading) {
     return (
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6">
+      <div className="glass p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
             <div className="h-10 w-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
               <ChartBarIcon className="h-5 w-5 text-white" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900">Recent Activity</h3>
+            <h3 className="text-xl font-bold text-[var(--text-primary)]">Recent Activity</h3>
           </div>
-          <div className="h-4 w-20 bg-gray-200 rounded-lg animate-pulse"></div>
+          <div className="h-4 w-20 bg-[var(--glass-border)] rounded-lg animate-pulse"></div>
         </div>
         <div className="space-y-4">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="flex items-center space-x-4 animate-pulse">
-              <div className="h-10 w-10 bg-gray-200 rounded-xl"></div>
+              <div className="h-10 w-10 bg-[var(--glass-border)] rounded-xl"></div>
               <div className="flex-1">
-                <div className="h-4 bg-gray-200 rounded-lg mb-2"></div>
-                <div className="h-3 bg-gray-200 rounded-lg w-3/4"></div>
+                <div className="h-4 bg-[var(--glass-border)] rounded-lg mb-2"></div>
+                <div className="h-3 bg-[var(--glass-border)] rounded-lg w-3/4"></div>
               </div>
             </div>
           ))}
@@ -228,7 +228,7 @@ const RecentActivityWidget = ({ userId }: RecentActivityWidgetProps) => {
   }
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6 relative overflow-hidden">
+    <div className="glass p-6 relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500 to-indigo-600 opacity-5 rounded-full -translate-y-16 translate-x-16"></div>
       
@@ -240,8 +240,8 @@ const RecentActivityWidget = ({ userId }: RecentActivityWidgetProps) => {
               <ChartBarIcon className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-gray-900">Recent Activity</h3>
-              <p className="text-sm text-gray-500">Your latest updates and actions</p>
+              <h3 className="text-xl font-bold text-[var(--text-primary)]">Recent Activity</h3>
+              <p className="text-sm text-[var(--text-muted)]">Your latest updates and actions</p>
             </div>
           </div>
         </div>
@@ -249,11 +249,11 @@ const RecentActivityWidget = ({ userId }: RecentActivityWidgetProps) => {
         {/* Activity List */}
         {activities.length === 0 ? (
           <div className="text-center py-12">
-            <div className="h-16 w-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <ClockIcon className="h-8 w-8 text-gray-400" />
+            <div className="h-16 w-16 glass rounded-2xl flex items-center justify-center mx-auto mb-4 border border-[var(--glass-border)]">
+              <ClockIcon className="h-8 w-8 text-[var(--text-muted)]" />
             </div>
-            <p className="text-gray-600 font-medium mb-2">No recent activity</p>
-            <p className="text-sm text-gray-400">Your activities will appear here as you use the portal</p>
+            <p className="text-[var(--text-primary)] font-medium mb-2">No recent activity</p>
+            <p className="text-sm text-[var(--text-muted)]">Your activities will appear here as you use the portal</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -270,26 +270,26 @@ const RecentActivityWidget = ({ userId }: RecentActivityWidgetProps) => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between mb-1">
-                      <p className="text-sm font-semibold text-gray-900 group-hover:text-gray-700 transition-colors flex-1">
+                      <p className="text-sm font-semibold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors flex-1">
                         {activity.title}
                       </p>
                       {/* Show timestamp only on larger screens */}
-                      <span className="hidden sm:block text-xs text-gray-500 font-medium bg-white/60 px-2 py-1 rounded-full ml-2 flex-shrink-0">
+                      <span className="hidden sm:block text-xs text-[var(--text-muted)] font-medium bg-white/10 px-2 py-1 rounded-full ml-2 flex-shrink-0">
                         {activity.time}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600 mb-2">
+                    <p className="text-sm text-[var(--text-muted)] mb-2">
                       {activity.description}
                     </p>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
                         <div className={`w-2 h-2 bg-gradient-to-r ${getStatusColor(activity.status)} rounded-full`}></div>
-                        <span className="text-xs text-gray-500 capitalize">
+                        <span className="text-xs text-[var(--text-muted)] capitalize">
                           {activity.type} • {activity.status}
                         </span>
                       </div>
                       {/* Show timestamp on mobile below the status */}
-                      <span className="sm:hidden text-xs text-gray-500 font-medium">
+                      <span className="sm:hidden text-xs text-[var(--text-muted)] font-medium">
                         {activity.time}
                       </span>
                     </div>
@@ -301,15 +301,15 @@ const RecentActivityWidget = ({ userId }: RecentActivityWidgetProps) => {
         )}
 
         {/* Footer */}
-        <div className="mt-6 pt-4 border-t border-gray-200/50">
+        <div className="mt-6 pt-4 border-t border-[var(--glass-border)]">
           <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-2 text-sm text-gray-500">
+            <div className="flex items-center space-x-2 text-sm text-[var(--text-muted)]">
               <TrendingUpIcon className="h-4 w-4" />
               <span>Showing {activities.length} recent activities</span>
             </div>
             <Link
               href={getHRPortalPath('attendance')}
-              className="flex items-center space-x-2 text-blue-600 hover:text-blue-800 font-medium text-sm group"
+              className="flex items-center space-x-2 text-[var(--accent)] hover:text-white font-medium text-sm group transition-colors"
             >
               <BoltIcon className="h-4 w-4 group-hover:scale-110 transition-transform" />
               <span>View full history</span>
