@@ -126,16 +126,23 @@ const LeaveCalendar = ({ userId, onDateClick }: LeaveCalendarProps) => {
     const targetDateString = formatInTimeZone(date, timezone, 'yyyy-MM-dd')
     
     return leaves.filter(leave => {
-      // Parse leave dates in the user's timezone
-      const startDate = TimezoneService.parseDateStringInTimezone(leave.startDate, timezone)
-      const endDate = TimezoneService.parseDateStringInTimezone(leave.endDate, timezone)
-      
-      // Get date strings in the user's timezone for comparison
-      const leaveStartDateString = formatInTimeZone(startDate, timezone, 'yyyy-MM-dd')
-      const leaveEndDateString = formatInTimeZone(endDate, timezone, 'yyyy-MM-dd')
-      
-      // Check if the target date falls within the leave range (inclusive)
-      return targetDateString >= leaveStartDateString && targetDateString <= leaveEndDateString
+      try {
+        if (!leave.startDate || !leave.endDate) return false
+        
+        // Parse leave dates in the user's timezone
+        const startDate = TimezoneService.parseDateStringInTimezone(leave.startDate, timezone)
+        const endDate = TimezoneService.parseDateStringInTimezone(leave.endDate, timezone)
+        
+        // Get date strings in the user's timezone for comparison
+        const leaveStartDateString = formatInTimeZone(startDate, timezone, 'yyyy-MM-dd')
+        const leaveEndDateString = formatInTimeZone(endDate, timezone, 'yyyy-MM-dd')
+        
+        // Check if the target date falls within the leave range (inclusive)
+        return targetDateString >= leaveStartDateString && targetDateString <= leaveEndDateString
+      } catch (error) {
+        console.error('Error processing leave dates:', error, leave)
+        return false
+      }
     })
   }
 
