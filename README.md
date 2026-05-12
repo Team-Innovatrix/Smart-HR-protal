@@ -87,10 +87,10 @@ A modern, high-performance HR Management System built with Next.js, featuring a 
 Copyright (c) 2025-2026 **Team Innovatrix**. All Rights Reserved.
 
 This software and all associated source code, documentation, and intellectual property are the exclusive property of Team Innovatrix:
-1. **Mohit Mohatkar** — Project Lead & Primary Owner
-2. **Rudra Bambal** — Core Developer
-3. **Vipav Bure** — Core Developer
-4. **Kartikey Kalbande** — Core Developer
+1. **Mohit Mohatkar** — Owner & Developer
+2. **Rudra Bambal** — Developer
+3. **Vipav Bure** — Developer
+4. **Kartikey Kalbande** — Developer
 
 ### Key Terms:
 - **No Copying or Reproduction**: Unauthorized copying, duplication, or replication is strictly prohibited.
