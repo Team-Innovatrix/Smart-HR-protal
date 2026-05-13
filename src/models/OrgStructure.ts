@@ -118,7 +118,6 @@ const OrgStructureSchema: Schema = new Schema({
 });
 
 // Create indexes for better query performance
-SeniorityLevelSchema.index({ order: 1 });
 SeniorityLevelSchema.index({ isActive: 1 });
 
 // Note: DepartmentSchema name field already has unique: true in schema definition
