@@ -61,13 +61,14 @@ export default function TimezoneSelector({
       
       // Fallback to basic timezones if API fails
       setTimezones([
-        { value: 'UTC', label: 'UTC (Coordinated Universal Time)' },
-        { value: 'America/New_York', label: 'Eastern Time (US) - America/New_York' },
-        { value: 'America/Chicago', label: 'Central Time (US) - America/Chicago' },
-        { value: 'America/Denver', label: 'Mountain Time (US) - America/Denver' },
-        { value: 'America/Los_Angeles', label: 'Pacific Time (US) - America/Los_Angeles' },
-        { value: 'Europe/London', label: 'Greenwich Mean Time - Europe/London' },
-        { value: 'Asia/Tokyo', label: 'Japan Standard Time - Asia/Tokyo' }
+        // { value: 'UTC', label: 'UTC (Coordinated Universal Time)' },
+        // { value: 'America/New_York', label: 'Eastern Time (US) - America/New_York' },
+        // { value: 'America/Chicago', label: 'Central Time (US) - America/Chicago' },
+        // { value: 'America/Denver', label: 'Mountain Time (US) - America/Denver' },
+        // { value: 'America/Los_Angeles', label: 'Pacific Time (US) - America/Los_Angeles' },
+        // { value: 'Europe/London', label: 'Greenwich Mean Time - Europe/London' },
+        // { value: 'Asia/Tokyo', label: 'Japan Standard Time - Asia/Tokyo' },
+        { value: 'Asia/Kolkata', label: 'India Standard Time - Asia/Kolkata' }
       ])
     } finally {
       setIsLoading(false)
