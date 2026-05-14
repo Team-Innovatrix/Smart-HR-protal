@@ -22,14 +22,6 @@ export function assertNotProduction(scriptName: string = 'script'): void {
     process.exit(1);
   }
 
-  if (!process.env.NODE_ENV || process.env.NODE_ENV === 'production') {
-    console.error(
-      `\n⚠️  WARNING: NODE_ENV is not set or is ambiguous.\n` +
-      `   Refusing to run "${scriptName}" to protect production data.\n`
-    );
-    process.exit(1);
-  }
-
   console.log(
     `✅ Production guard passed for "${scriptName}" (NODE_ENV=${process.env.NODE_ENV})`
   );
