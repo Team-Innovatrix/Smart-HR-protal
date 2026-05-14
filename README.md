@@ -47,7 +47,7 @@ What truly sets the Smart HR Portal apart from traditional systems is our integr
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/Team-Innovatrix/Smart-HR-Portal.git
+   git clone https://github.com/Team-Innovatrix/Smart-HR-protal.git
    cd HR-main
    ```
 
