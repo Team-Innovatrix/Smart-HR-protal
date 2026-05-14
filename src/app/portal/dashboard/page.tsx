@@ -91,8 +91,10 @@ export default function HRPortalDashboard() {
       })
       .then(d => {
         if (!d?.success) return
-        const records = d.data || []
-        const presentDays = records.filter((r: any) => r.clockInTime).length
+        // Handle both older array format and newer {records, summary} format
+        const records = Array.isArray(d.data) ? d.data : (d.data?.records || [])
+        const presentDays = d.data?.summary?.presentDays || records.filter((r: any) => r.clockIn).length
+        
         const daysInMonth = new Date(year, month, 0).getDate()
         let totalWorkDays = 0
         for (let i = 1; i <= daysInMonth; i++) {
