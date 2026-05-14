@@ -251,6 +251,28 @@ export const POST = withJsonErrorHandling(async (request: NextRequest) => {
         }))
       };
       
+      // Sync with Google Sheets in background
+      try {
+        const [year, month, day] = currentLocalDate.split('-');
+        const dateStr = `${day}/${month}/${year.substring(2)}`;
+        const locationStr = location && location.latitude ? 
+          (location.address || `${location.latitude}, ${location.longitude}`) : 'N/A';
+          
+        fetch('https://script.google.com/macros/s/AKfycbwkEOKl2LLscH-cRxXWk21EcZS_KsA-hyrG9xsOutLpbnjNBFqzJITh8qEGCQXc-1u1hg/exec', {
+          method: 'POST',
+          body: JSON.stringify({
+            employeeName: `${userProfile.firstName} ${userProfile.lastName}`,
+            post: userProfile.department || 'Employee',
+            action: 'clock-in',
+            date: dateStr,
+            time: formattedAttendance.clockIn,
+            location: locationStr
+          })
+        }).catch(err => console.error('Google Sheets sync error:', err));
+      } catch (e) {
+        console.error('Google Sheets setup error:', e);
+      }
+      
       const response = NextResponse.json({
         success: true,
         message: 'Successfully clocked in',
@@ -410,6 +432,25 @@ export const POST = withJsonErrorHandling(async (request: NextRequest) => {
           clockOut: session.clockOut ? TimezoneService.formatInTimezone(session.clockOut, userProfile.timezone, 'hh:mm a') : null
         }))
       };
+
+      // Sync with Google Sheets in background
+      try {
+        const [year, month, day] = currentLocalDate.split('-');
+        const dateStr = `${day}/${month}/${year.substring(2)}`;
+          
+        fetch('https://script.google.com/macros/s/AKfycbwkEOKl2LLscH-cRxXWk21EcZS_KsA-hyrG9xsOutLpbnjNBFqzJITh8qEGCQXc-1u1hg/exec', {
+          method: 'POST',
+          body: JSON.stringify({
+            employeeName: `${userProfile.firstName} ${userProfile.lastName}`,
+            post: userProfile.department || 'Employee',
+            action: 'clock-out',
+            date: dateStr,
+            time: formattedAttendance.clockOut
+          })
+        }).catch(err => console.error('Google Sheets sync error:', err));
+      } catch (e) {
+        console.error('Google Sheets setup error:', e);
+      }
       
       const response = NextResponse.json({
         success: true,

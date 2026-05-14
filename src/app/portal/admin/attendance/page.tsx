@@ -70,7 +70,7 @@ interface PayrollData {
 export default function AttendanceManagementPage() {
   const { formatTime, formatDateString, getTodayDateString, getToday, parseDateString } = useTimezone();
   const [attendanceData, setAttendanceData] = useState<AttendanceData | null>(null);
-  const [activeTab, setActiveTab] = useState<'summary' | 'payroll'>('summary');
+  const [activeTab, setActiveTab] = useState<'summary' | 'payroll' | 'sheet'>('summary');
   const [payrollData, setPayrollData] = useState<PayrollData[]>([]);
   const [selectedMonth, setSelectedMonth] = useState('2025-09'); // Default to September 2025 where we have data
   const [payrollLoading, setPayrollLoading] = useState(false);
@@ -455,13 +455,20 @@ export default function AttendanceManagementPage() {
             href: '#',
             icon: <ClockIcon className="w-4 h-4" />,
           },
+          {
+            id: 'sheet',
+            label: 'Google Sheet',
+            href: '#',
+            icon: <CalendarIcon className="w-4 h-4" />,
+          },
         ]}
         variant="tabs"
-        onItemClick={(itemId) => setActiveTab(itemId as 'summary' | 'payroll')}
+        onItemClick={(itemId) => setActiveTab(itemId as 'summary' | 'payroll' | 'sheet')}
         activeItem={activeTab}
       />
 
       {/* Header */}
+      {activeTab !== 'sheet' && (
       <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
         <div className="flex justify-between items-center mb-6">
           <div>
@@ -578,6 +585,21 @@ export default function AttendanceManagementPage() {
           </div>
         )}
       </div>
+      )}
+
+      {/* Sheet View Tab Content */}
+      {activeTab === 'sheet' && (
+        <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden" style={{ height: '800px' }}>
+          <iframe
+            src="https://docs.google.com/spreadsheets/d/1wn-SwY7ieUnTkZISRkY_ibQlwYNda85CWUVLQb8yM-0/edit?rm=minimal"
+            width="100%"
+            height="100%"
+            frameBorder="0"
+            allowFullScreen
+            title="Google Sheets Attendance Tracker"
+          ></iframe>
+        </div>
+      )}
 
       {/* Summary Tab Content */}
       {activeTab === 'summary' && (
