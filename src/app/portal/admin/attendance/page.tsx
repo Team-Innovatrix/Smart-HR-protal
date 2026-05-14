@@ -1132,6 +1132,10 @@ export default function AttendanceManagementPage() {
                       {employee.workedDays}
                     </td>
                   </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
