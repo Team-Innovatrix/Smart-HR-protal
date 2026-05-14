@@ -18,9 +18,12 @@ export default function AdminLoginPage() {
   // Fetch company settings for branding
   useEffect(() => {
     fetch('/api/settings')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) return null
+        return res.json()
+      })
       .then(data => {
-        if (data.success && data.data?.general) {
+        if (data?.success && data.data?.general) {
           if (data.data.general.companyName) setCompanyName(data.data.general.companyName);
           if (data.data.general.companyLogo) setCompanyLogo(data.data.general.companyLogo);
         }
@@ -31,9 +34,12 @@ export default function AdminLoginPage() {
   // If already logged in, redirect straight to admin
   useEffect(() => {
     fetch('/api/admin/auth/check')
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) return null
+        return r.json()
+      })
       .then(d => {
-        if (d.authenticated) router.replace('/portal/admin');
+        if (d?.authenticated) router.replace('/portal/admin');
         else setChecking(false);
       })
       .catch(() => setChecking(false));

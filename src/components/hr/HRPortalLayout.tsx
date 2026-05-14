@@ -34,6 +34,7 @@ interface HRPortalLayoutProps {
 }
 
 const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: HRPortalLayoutProps) => {
+  const [mounted, setMounted] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [sidebarHovered, setSidebarHovered] = useState(false)
   const [sidebarPinned, setSidebarPinned] = useState(false)
@@ -45,6 +46,9 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
   const { user, isLoaded } = useDevSafeUser()
   const { signOut } = useDevSafeClerk()
   const router = useRouter()
+
+  // Mark component as mounted (prevents SSR/client hydration mismatch)
+  useEffect(() => { setMounted(true) }, [])
 
   // Cursor glow effect
   useEffect(() => {
@@ -105,11 +109,13 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
     }
   }, [isLoaded, user, router])
 
-  // Show loading state while checking authentication
-  if (!isLoaded || !user) {
+  // Show loading state while checking authentication.
+  // !mounted ensures the server and first client render are identical (both show loader)
+  // before React takes over and re-renders with the real auth state.
+  if (!mounted || !isLoaded || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-base)' }} suppressHydrationWarning>
-        <div className="text-center">
+        <div className="text-center" suppressHydrationWarning>
           <div className="relative w-12 h-12 mx-auto mb-5">
             <div className="absolute inset-0 rounded-full border-2 border-[var(--glass-border)]" />
             <div className="absolute inset-0 rounded-full border-2 border-t-[var(--accent)] animate-spin" />

@@ -77,7 +77,7 @@ export default function HRPortalDashboard() {
 
   // Fetch real dashboard data
   useEffect(() => {
-    if (!user?.id) return
+    if (!isLoaded || !user?.id) return
     const uid = user.id
     const now = new Date()
     const month = now.getMonth() + 1
@@ -85,57 +85,67 @@ export default function HRPortalDashboard() {
 
     // Attendance
     fetch(`/api/attendance?userId=${uid}&month=${month}&year=${year}`)
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) return null
+        return r.json()
+      })
       .then(d => {
-        if (d.success) {
-          const records = d.data || []
-          const presentDays = records.filter((r: any) => r.clockInTime).length
-          const daysInMonth = new Date(year, month, 0).getDate()
-          let totalWorkDays = 0
-          for (let i = 1; i <= daysInMonth; i++) {
-            const day = new Date(year, month - 1, i).getDay()
-            if (day !== 0 && day !== 6) totalWorkDays++
-          }
-          const pct = totalWorkDays > 0 ? Math.round((presentDays / totalWorkDays) * 100) : 0
-          setAttendanceStats({ present: presentDays, total: totalWorkDays, pct })
+        if (!d?.success) return
+        const records = d.data || []
+        const presentDays = records.filter((r: any) => r.clockInTime).length
+        const daysInMonth = new Date(year, month, 0).getDate()
+        let totalWorkDays = 0
+        for (let i = 1; i <= daysInMonth; i++) {
+          const day = new Date(year, month - 1, i).getDay()
+          if (day !== 0 && day !== 6) totalWorkDays++
         }
+        const pct = totalWorkDays > 0 ? Math.round((presentDays / totalWorkDays) * 100) : 0
+        setAttendanceStats({ present: presentDays, total: totalWorkDays, pct })
       })
       .catch(() => {})
 
     // Leave balance
     fetch(`/api/leaves/balance?userId=${uid}`)
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) return null
+        return r.json()
+      })
       .then(d => {
-        if (d.success && d.data) {
-          const colors = ['var(--accent)', '#60a5fa', '#a78bfa', '#fbbf24', '#fb923c']
-          const mapped = (d.data.leaveTypes || []).map((lt: any, i: number) => ({
-            label: lt.type.replace(' Leave', ''),
-            used: lt.taken || 0,
-            total: lt.total || 0,
-            color: colors[i % colors.length],
-          }))
-          setLeaveData(mapped)
-          setTotalLeaveRemaining(d.data.summary?.totalRemaining || 0)
-        }
+        if (!d?.success || !d.data) return
+        const colors = ['var(--accent)', '#60a5fa', '#a78bfa', '#fbbf24', '#fb923c']
+        const mapped = (d.data.leaveTypes || []).map((lt: any, i: number) => ({
+          label: lt.type.replace(' Leave', ''),
+          used: lt.taken || 0,
+          total: lt.total || 0,
+          color: colors[i % colors.length],
+        }))
+        setLeaveData(mapped)
+        setTotalLeaveRemaining(d.data.summary?.totalRemaining || 0)
       })
       .catch(() => {})
 
     // Notifications
     fetch(`/api/notifications?userId=${uid}&unreadOnly=true&limit=100`)
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) return null
+        return r.json()
+      })
       .then(d => {
-        if (d.success) setNotifCount(d.data?.length || d.notifications?.length || 0)
+        if (d?.success) setNotifCount(d.data?.length || d.notifications?.length || 0)
       })
       .catch(() => {})
 
     // Priority Message
     fetch('/api/priority-msg')
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) return null
+        return r.json()
+      })
       .then(d => {
-        if (d.success && d.data) setPriorityMsg(d.data)
+        if (d?.success && d.data) setPriorityMsg(d.data)
       })
       .catch(() => {})
-  }, [user?.id])
+  }, [isLoaded, user?.id])
 
   useEffect(() => {
     const u = () => { const n = getToday(); setNow(n); const h = n.getHours(); setGreeting(h < 12 ? 'Good Morning' : h < 17 ? 'Good Afternoon' : 'Good Evening') }

@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
-import connectDB from '@/lib/mongodb'
-import SystemSettings from '@/models/SystemSettings'
+import { getHolidaysForYear } from '@/data/indianHolidays'
 
 /**
  * Read-only public holidays endpoint
- * Returns holiday dates from system settings (non-sensitive)
+ * Returns holiday dates from static Indian holidays data
  * Accepts optional query param `year` (single) or `years` (comma-separated)
  */
 export async function GET(request: NextRequest) {
   try {
-    await connectDB()
-
     const { searchParams } = new URL(request.url)
     const yearsParam = searchParams.get('years')
     const yearParam = searchParams.get('year')
@@ -29,18 +26,11 @@ export async function GET(request: NextRequest) {
       years.push(current, current + 1)
     }
 
-    let settings = await SystemSettings.findOne()
-    if (!settings) {
-      settings = new SystemSettings({ updatedBy: 'system' })
-      await settings.save()
-    }
-
-    const result: Record<string, Array<{ name: string; date: string }>> = {}
+    const result: Record<string, Array<{ name: string; date: string; type?: string }>> = {}
     for (const y of years) {
       const key = String(y)
-      const list = (settings.holidays?.get(key) as Array<{ name: string; date: string }>) || []
-      // Ensure output is plain array of objects
-      result[key] = list.map(h => ({ name: h.name, date: h.date }))
+      const list = getHolidaysForYear(y)
+      result[key] = list.map(h => ({ name: h.name, date: h.date, type: h.type }))
     }
 
     return NextResponse.json({ success: true, data: result })

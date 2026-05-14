@@ -102,6 +102,7 @@ const RecentActivityWidget = ({ userId }: RecentActivityWidgetProps) => {
             'Expires': '0'
           }
         })
+        if (!attendanceResponse.ok) throw new Error(`Attendance API: ${attendanceResponse.status}`)
         const attendanceData = await attendanceResponse.json()
 
         // Fetch recent leave requests
@@ -112,6 +113,7 @@ const RecentActivityWidget = ({ userId }: RecentActivityWidgetProps) => {
             'Expires': '0'
           }
         })
+        if (!leavesResponse.ok) throw new Error(`Leaves API: ${leavesResponse.status}`)
         const leavesData = await leavesResponse.json()
 
         // Combine and format activities

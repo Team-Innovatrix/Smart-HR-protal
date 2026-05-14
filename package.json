@@ -13,6 +13,7 @@
     "check:hr": "tsx src/scripts/checkHRDatabase.ts",
     "cleanup:fake-users": "tsx src/scripts/cleanupFakeUsers.ts",
     "seed:manager": "tsx src/scripts/upsertManagerRelation.ts",
+    "seed:holidays": "tsx src/scripts/seedHolidays.ts",
     "validate:env": "tsx src/lib/validateEnvironment.ts"
   },
   "dependencies": {
