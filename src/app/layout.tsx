@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import ClerkProviderWrapper from './ClerkProviderWrapper'
 import { ImageProvider } from '@/lib/contexts/ImageContext'
+import CustomCursor from '@/components/CustomCursor'
 // TimezoneProvider moved to portal layout only
 
 export const dynamic = 'force-dynamic'
@@ -63,6 +64,7 @@ export default function RootLayout({
       <body className={inter.className} suppressHydrationWarning>
         <ClerkProviderWrapper>
           <ImageProvider autoRefreshStats={false}>
+            <CustomCursor />
             {children}
           </ImageProvider>
         </ClerkProviderWrapper>

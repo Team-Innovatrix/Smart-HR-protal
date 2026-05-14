@@ -64,9 +64,6 @@ export default function HRPortalDashboard() {
   const { formatTime, getToday } = useTimezone()
   const [now, setNow] = useState<Date | null>(null)
   const [greeting, setGreeting] = useState('Welcome')
-  const [clockedIn, setClockedIn] = useState(false)
-  const [elapsed, setElapsed] = useState('00:00:00')
-  const startRef = useRef<Date | null>(null)
 
   // Real data state
   const [attendanceStats, setAttendanceStats] = useState({ present: 0, total: 0, pct: 0 })
@@ -94,7 +91,7 @@ export default function HRPortalDashboard() {
         // Handle both older array format and newer {records, summary} format
         const records = Array.isArray(d.data) ? d.data : (d.data?.records || [])
         const presentDays = d.data?.summary?.presentDays || records.filter((r: any) => r.clockIn).length
-        
+
         const daysInMonth = new Date(year, month, 0).getDate()
         let totalWorkDays = 0
         for (let i = 1; i <= daysInMonth; i++) {
@@ -153,22 +150,6 @@ export default function HRPortalDashboard() {
     const u = () => { const n = getToday(); setNow(n); const h = n.getHours(); setGreeting(h < 12 ? 'Good Morning' : h < 17 ? 'Good Afternoon' : 'Good Evening') }
     u(); const t = setInterval(u, 1000); return () => clearInterval(t)
   }, [getToday])
-
-  useEffect(() => {
-    if (!clockedIn) return
-    const id = setInterval(() => {
-      if (!startRef.current) return
-      const d = Date.now() - startRef.current.getTime()
-      const h = Math.floor(d/3600000), m = Math.floor((d%3600000)/60000), s = Math.floor((d%60000)/1000)
-      setElapsed(`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`)
-    }, 1000)
-    return () => clearInterval(id)
-  }, [clockedIn])
-
-  const toggleClock = () => {
-    if (!clockedIn) { startRef.current = new Date(); setClockedIn(true) }
-    else { setClockedIn(false); setElapsed('00:00:00'); startRef.current = null }
-  }
 
   const firstName = profile?.firstName || user?.firstName || 'there'
 
@@ -318,30 +299,30 @@ export default function HRPortalDashboard() {
             </div>
           </GlassCard>
 
-          {/* Clock In/Out */}
-          <GlassCard className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">Clock In / Out</p>
-              <span className={`flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-lg ${
-                clockedIn
-                  ? 'bg-[rgba(52,211,153,0.12)] text-[var(--accent)]'
-                  : 'bg-[rgba(255,255,255,0.04)] text-[var(--text-muted)]'
-              }`}>
-                <span className={`w-1.5 h-1.5 rounded-full ${clockedIn ? 'bg-[var(--accent)] animate-pulse' : 'bg-[var(--text-muted)]'}`} 
-                  style={clockedIn ? { boxShadow: '0 0 6px var(--accent-glow)' } : {}}
-                />
-                {clockedIn ? 'Active' : 'Offline'}
-              </span>
+          {/* Record Attendance Link */}
+          <GlassCard className="p-6 flex flex-col justify-between h-full">
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">Quick Action</p>
+              </div>
+              <div className="flex items-center gap-4 mb-5">
+                <div className="h-12 w-12 rounded-full bg-[rgba(52,211,153,0.12)] flex items-center justify-center">
+                  <ClockIcon className="h-6 w-6 text-[var(--accent)]" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-[var(--text-primary)]">Record Attendance</h3>
+                  <p className="text-[12px] text-[var(--text-secondary)]">Log your daily work hours</p>
+                </div>
+              </div>
             </div>
-            <p className="text-3xl font-bold tabular-nums mb-1 text-[var(--text-primary)]">{elapsed}</p>
-            <p className="text-[12px] mb-5 text-[var(--text-secondary)]">{clockedIn ? 'Session running…' : 'Not clocked in yet'}</p>
-            <button onClick={toggleClock} className={`w-full py-2.5 rounded-xl font-semibold text-[13px] transition-all duration-300 ${
-              clockedIn
-                ? 'bg-[rgba(255,255,255,0.04)] border border-[var(--glass-border-hover)] text-[var(--text-primary)] hover:bg-[rgba(255,255,255,0.08)]'
-                : 'bg-[var(--accent)] text-[#0f172a] hover:bg-[var(--accent-hover)]'
-            }`} style={!clockedIn ? { boxShadow: '0 4px 20px rgba(52,211,153,0.25)' } : {}}>
-              {clockedIn ? '⏹ Clock Out' : '▶ Clock In'}
-            </button>
+            <Link 
+              href={getHRPortalPath('attendance')} 
+              className="w-full py-2.5 rounded-xl font-semibold text-[13px] bg-[var(--accent)] text-[#0f172a] hover:bg-[var(--accent-hover)] transition-all duration-300 flex justify-center items-center gap-2" 
+              style={{ boxShadow: '0 4px 20px rgba(52,211,153,0.25)' }}
+            >
+              <ClockIcon className="h-4 w-4" />
+              Go to Attendance
+            </Link>
           </GlassCard>
 
           {/* Leave Balance */}

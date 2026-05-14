@@ -16,6 +16,7 @@ import {
 } from '@heroicons/react/24/outline'
 import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
+import ApplicationForm from '@/components/ApplicationForm'
 import { useState, useEffect } from 'react';
 // Removed timezone dependency - not needed for public pages
 
@@ -23,6 +24,7 @@ export default function Careers() {
   const [jobs, setJobs] = useState<Record<string, unknown>[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [applyingFor, setApplyingFor] = useState<string | null>(null);
 
   const safeFormatDate = (dateString: string, format: string) => {
     if (!dateString || dateString === 'Invalid Date') {
@@ -358,15 +360,22 @@ export default function Careers() {
                       </div>
                       
                       <div className="border-t border-gray-200 pt-6">
-                        <a
-                          href="https://formspree.io/f/xqenvpza"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="bg-emerald-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-emerald-600 transition-colors inline-flex items-center"
-                        >
-                          Apply via Formspree
-                          <ArrowRightIcon className="ml-2 h-4 w-4" />
-                        </a>
+                        {applyingFor === job._id ? (
+                          <div className="mt-4">
+                            <ApplicationForm 
+                              jobTitle={job.title as string} 
+                              onClose={() => setApplyingFor(null)} 
+                            />
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setApplyingFor(job._id as string)}
+                            className="bg-emerald-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-emerald-600 transition-colors inline-flex items-center"
+                          >
+                            Apply Now
+                            <ArrowRightIcon className="ml-2 h-4 w-4" />
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>

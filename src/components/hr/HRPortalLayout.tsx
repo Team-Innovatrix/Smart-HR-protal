@@ -42,26 +42,70 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
   const [companyLogo, setCompanyLogo] = useState<string>('')
   const [userProfile, setUserProfile] = useState<{ position?: string; department?: string } | null>(null)
   const [cursorMotion, setCursorMotion] = useState(true)
-  const cursorRef = useRef<HTMLDivElement>(null)
+  const cursorDotRef = useRef<HTMLDivElement>(null)
+  const cursorRingRef = useRef<HTMLDivElement>(null)
+  const bgContainerRef = useRef<HTMLDivElement>(null)
   const { user, isLoaded } = useDevSafeUser()
   const { signOut } = useDevSafeClerk()
   const router = useRouter()
 
   // Mark component as mounted (prevents SSR/client hydration mismatch)
   useEffect(() => { setMounted(true) }, [])
-
-  // Cursor glow effect
+  
+  // Custom cursor smooth trailing (spring/lerp)
   useEffect(() => {
-    if (!cursorMotion) return
+    if (!cursorMotion) return;
+    
+    // Mouse coordinates
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    
+    // Ring trailing coordinates
+    let ringX = mouseX;
+    let ringY = mouseY;
+    
+    let animationFrameId: number;
+
     const handleMove = (e: MouseEvent) => {
-      if (cursorRef.current) {
-        cursorRef.current.style.left = `${e.clientX}px`
-        cursorRef.current.style.top = `${e.clientY}px`
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      
+      // Update dot instantly
+      if (cursorDotRef.current) {
+        cursorDotRef.current.style.left = `${mouseX}px`;
+        cursorDotRef.current.style.top = `${mouseY}px`;
       }
-    }
-    window.addEventListener('mousemove', handleMove, { passive: true })
-    return () => window.removeEventListener('mousemove', handleMove)
-  }, [cursorMotion])
+      
+      // Cursor background movement (subtle parallax)
+      if (bgContainerRef.current) {
+        const xOffset = (mouseX / window.innerWidth - 0.5) * 30; // 15px max shift
+        const yOffset = (mouseY / window.innerHeight - 0.5) * 30;
+        bgContainerRef.current.style.transform = `translate(${-xOffset}px, ${-yOffset}px)`;
+      }
+    };
+
+    const animate = () => {
+      // Lerp (smooth interpolation) for the ring
+      // Adjust 0.15 for speed (lower = more trailing delay, higher = snappier)
+      ringX += (mouseX - ringX) * 0.15;
+      ringY += (mouseY - ringY) * 0.15;
+      
+      if (cursorRingRef.current) {
+        cursorRingRef.current.style.left = `${ringX}px`;
+        cursorRingRef.current.style.top = `${ringY}px`;
+      }
+      
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    window.addEventListener('mousemove', handleMove, { passive: true });
+    animationFrameId = requestAnimationFrame(animate);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMove);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [cursorMotion]);
 
   // Fetch company name & logo from settings
   useEffect(() => {
@@ -165,12 +209,19 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
 
   return (
     <div className="min-h-screen relative" style={{ background: 'var(--bg-base)' }} suppressHydrationWarning>
-      {/* Ambient background effects */}
-      <div className="ambient-bg" />
-      <div className="mesh-overlay" />
+      {/* Ambient background effects with Parallax */}
+      <div 
+        ref={bgContainerRef} 
+        className="fixed inset-0 pointer-events-none" 
+        style={{ zIndex: 0, transition: 'transform 0.1s ease-out', willChange: 'transform' }}
+      >
+        <div className="ambient-bg" />
+        <div className="mesh-overlay" />
+      </div>
 
-      {/* Cursor glow */}
-      <div ref={cursorRef} className={`cursor-glow ${!cursorMotion ? 'disabled' : ''}`} />
+      {/* Trending Custom Cursor */}
+      <div ref={cursorDotRef} className={`cursor-dot ${!cursorMotion ? 'disabled' : ''}`} />
+      <div ref={cursorRingRef} className={`cursor-ring ${!cursorMotion ? 'disabled' : ''}`} />
 
       {/* Hover trigger area to open sidebar */}
       <div 
@@ -180,15 +231,18 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
 
       {/* ═══ FLOATING LEFT SIDEBAR ═══ */}
       <aside 
-        className={`fixed left-0 top-0 bottom-0 z-50 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hidden lg:flex flex-col w-[260px] shadow-2xl ${
-          (sidebarHovered || sidebarPinned) ? 'translate-x-0' : '-translate-x-[260px]'
+        className={`fixed z-50 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hidden lg:flex flex-col w-[260px] shadow-2xl glass ${
+          (sidebarHovered || sidebarPinned) ? 'translate-x-0' : '-translate-x-[300px]'
         }`}
         onMouseLeave={() => setSidebarHovered(false)}
         style={{
-          background: 'rgba(22, 22, 42, 0.75)',
-          backdropFilter: 'blur(32px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(32px) saturate(180%)',
-          borderRight: '1px solid var(--glass-border)',
+          top: '20px',
+          bottom: '20px',
+          left: '20px',
+          borderRadius: 'var(--radius-xl)',
+          background: 'rgba(22, 22, 42, 0.85)', /* Much darker background for readability */
+          backdropFilter: 'blur(40px) saturate(200%)',
+          WebkitBackdropFilter: 'blur(40px) saturate(200%)',
         }}
       >
         {/* Sidebar Brand */}
@@ -324,17 +378,18 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
 
       {/* ═══ MAIN CONTENT AREA ═══ */}
       <div className={`relative z-10 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-        sidebarPinned ? 'lg:ml-[260px]' : 'lg:ml-0'
+        sidebarPinned ? 'lg:ml-[290px]' : 'lg:ml-0'
       }`}>
         {/* ═══ TOP NAVBAR ═══ */}
-        <header className="sticky top-0 z-30 border-b border-[var(--glass-border)]"
-          style={{
-            background: 'rgba(26, 26, 46, 0.6)',
-            backdropFilter: 'blur(32px) saturate(180%)',
-            WebkitBackdropFilter: 'blur(32px) saturate(180%)',
-          }}
-        >
-          <div className="flex items-center h-14 px-5 gap-4">
+        <div className="sticky top-0 z-30 pt-5 px-5 pb-2">
+          <header className="glass flex items-center h-[60px] px-5 gap-4"
+            style={{ 
+              borderRadius: 'var(--radius-xl)',
+              background: 'rgba(26, 26, 46, 0.85)', /* Darker background for readability */
+              backdropFilter: 'blur(40px) saturate(200%)',
+              WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+            }}
+          >
             {/* Mobile menu button */}
             <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[rgba(255,255,255,0.06)] transition-all">
               <Bars3Icon className="h-5 w-5" />
@@ -403,12 +458,14 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
                 />
               </div>
             </div>
-          </div>
-        </header>
+          </header>
+        </div>
 
-        {/* Page Content */}
-        <main className="min-h-screen p-4 sm:p-6 lg:p-8">
-          {children}
+        {/* ═══ PAGE CONTENT ═══ */}
+        <main className="p-5">
+          <div className="max-w-[1600px] mx-auto animate-fade-in pb-20">
+            {children}
+          </div>
         </main>
       </div>
 
