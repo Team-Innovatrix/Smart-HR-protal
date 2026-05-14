@@ -29,7 +29,7 @@ What truly sets the Smart HR Portal apart from traditional systems is our integr
 
 ## 🛠️ Technology Stack
 
-- **Framework**: [Next.js 16](https://nextjs.org/) (App Router & Turbopack)
+- **Framework**: [Next.js 15](https://nextjs.org/) (App Router & Turbopack)
 - **UI & Styling**: [Tailwind CSS v4](https://tailwindcss.com/) with custom Glassmorphism tokens
 - **Authentication**: [Clerk](https://clerk.dev/)
 - **Database**: [MongoDB](https://www.mongodb.com/) & Mongoose
@@ -47,7 +47,7 @@ What truly sets the Smart HR Portal apart from traditional systems is our integr
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/Team-Innovatrix/Smart-HR-protal.git
+   git clone https://github.com/Team-Innovatrix/Smart-HR-Portal.git
    cd HR-main
    ```
 
