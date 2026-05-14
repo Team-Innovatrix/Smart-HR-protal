@@ -14,8 +14,6 @@ import PendingApprovals from '../../../components/hr/PendingApprovals'
 import ApprovedLeaves from '../../../components/hr/ApprovedLeaves'
 import UpcomingLeave from '../../../components/hr/UpcomingLeave'
 import LeaveBalanceCharts from '../../../components/hr/LeaveBalanceCharts'
-import SmartRiskCalendar from '../../../components/hr/SmartRiskCalendar'
-import LeaveRiskDashboard from '../../../components/hr/LeaveRiskDashboard'
 import { 
   CalendarIcon, 
   ClockIcon, 
@@ -23,7 +21,6 @@ import {
   XMarkIcon,
   CheckCircleIcon,
   ExclamationTriangleIcon,
-  SparklesIcon,
   XCircleIcon
 } from '@heroicons/react/24/outline'
 
@@ -45,7 +42,7 @@ export default function LeavesPage() {
   const searchParams = useSearchParams()
   const { timezone, formatTime } = useTimezone()
   const [activeView, setActiveView] = useState<'my' | 'team'>('my')
-  const [activeTab, setActiveTab] = useState<'calendar' | 'history' | 'ai-risk'>('calendar')
+  const [activeTab, setActiveTab] = useState<'calendar' | 'history'>('calendar')
   const [showRequestForm, setShowRequestForm] = useState(false)
   const [selectedLeave, setSelectedLeave] = useState<LeaveRecord | null>(null)
   const [refreshTrigger, setRefreshTrigger] = useState(0)
@@ -379,18 +376,6 @@ export default function LeavesPage() {
                   <ClockIcon className="h-4 w-4 sm:h-5 sm:w-5" />
                   <span>Leave History</span>
                 </button>
-
-                <button
-                  onClick={() => setActiveTab('ai-risk')}
-                  className={`flex items-center justify-center gap-2 sm:gap-3 py-2 sm:py-3 px-4 sm:px-6 rounded-lg sm:rounded-xl font-medium text-xs sm:text-sm transition-all duration-200 ${
-                    activeTab === 'ai-risk'
-                      ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg'
-                      : 'text-gray-500 hover:text-white hover:bg-white/10 backdrop-blur-sm'
-                  }`}
-                >
-                  <SparklesIcon className="h-4 w-4 sm:h-5 sm:w-5" />
-                  <span>AI Risk Analysis</span>
-                </button>
               </nav>
             </div>
           </div>
@@ -427,13 +412,6 @@ export default function LeavesPage() {
                   onViewDetails={handleViewLeaveDetails}
                   key={refreshTrigger} // Force refresh when new leave is submitted
                 />
-              </div>
-            )}
-
-            {activeView === 'my' && activeTab === 'ai-risk' && (
-              <div className="space-y-6">
-                <SmartRiskCalendar />
-                <LeaveRiskDashboard />
               </div>
             )}
 
