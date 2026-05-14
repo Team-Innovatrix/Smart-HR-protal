@@ -103,12 +103,11 @@ export default function LeaveRiskDashboard() {
           </div>
         </div>
 
-        {/* Bar chart */}
         <div className="flex items-end gap-2 h-40 mb-2">
           {annualData.map((m, i) => {
-            const height = Math.max(8, (m.avgRiskScore / 60) * 100)
+            const height = Math.max(8, (m.avgRiskScore / 100) * 100) // Normalized to 100 max instead of 60
             return (
-              <div key={i} className="flex-1 flex flex-col items-center group cursor-pointer">
+              <div key={i} className="flex-1 flex flex-col items-center justify-end h-full group cursor-pointer">
                 <div className="relative w-full flex justify-center mb-1">
                   <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 px-2 py-1 rounded-lg text-[9px] font-medium text-[var(--text-primary)] whitespace-nowrap z-10" style={{ background: 'rgba(22,22,42,0.9)', border: '1px solid var(--glass-border)' }}>
                     {m.avgRiskScore}% avg • {m.highRiskDays}H • {m.criticalRiskDays}C
