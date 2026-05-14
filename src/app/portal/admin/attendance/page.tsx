@@ -840,7 +840,6 @@ export default function AttendanceManagementPage() {
               </div>
             </div>
           )}
-          )}
         </div>
       )}
 
