@@ -1129,7 +1129,7 @@ export default function AttendanceManagementPage() {
               </h2>
             </div>
             <iframe
-              src="https://docs.google.com/spreadsheets/d/1wn-SwY7ieUnTkZISRkY_ibQlwYNda85CWUVLQb8yM-0/edit?rm=minimal"
+              src="https://docs.google.com/spreadsheets/d/1wn-SwY7ieUnTkZISRkY_ibQlwYNda85CWUVLQb8yM-0/edit?rm=minimal&gid=1132078744"
               width="100%"
               height="100%"
               frameBorder="0"
