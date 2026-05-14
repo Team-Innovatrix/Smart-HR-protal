@@ -17,13 +17,35 @@ interface Vacancy {
   createdAt: string;
 }
 
+import connectDB from '@/lib/mongodb';
+import JobVacancy from '@/models/JobVacancy';
+
+export const dynamic = 'force-dynamic';
+
 async function getVacancies(): Promise<Vacancy[]> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const res = await fetch(`${baseUrl}/api/vacancies`, { cache: 'no-store' });
-    const data = await res.json();
-    return data.success ? data.data : [];
-  } catch {
+    await connectDB();
+    const docs = await JobVacancy.find({ isActive: true })
+      .select('title department location jobType description requirements salaryMin salaryMax salaryCurrency deadline createdAt')
+      .sort({ createdAt: -1 })
+      .lean();
+      
+    return docs.map((doc: any) => ({
+      _id: String(doc._id),
+      title: doc.title,
+      department: doc.department,
+      location: doc.location,
+      jobType: doc.jobType,
+      description: doc.description,
+      requirements: doc.requirements,
+      salaryMin: doc.salaryMin,
+      salaryMax: doc.salaryMax,
+      salaryCurrency: doc.salaryCurrency,
+      deadline: doc.deadline ? new Date(doc.deadline).toISOString() : undefined,
+      createdAt: new Date(doc.createdAt).toISOString(),
+    })) as Vacancy[];
+  } catch (error) {
+    console.error('getVacancies error:', error);
     return [];
   }
 }
