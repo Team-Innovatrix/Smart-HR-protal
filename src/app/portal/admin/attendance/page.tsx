@@ -1136,6 +1136,7 @@ export default function AttendanceManagementPage() {
               </tbody>
             </table>
           </div>
+          )}
         </div>
       )}
 
