@@ -31,7 +31,6 @@ const navigation = [
   { name: 'Attendance', href: '/portal/admin/attendance', icon: <ClockIcon className="w-5 h-5" /> },
   { name: 'Team Management', href: '/portal/admin/teams', icon: <UserGroupIcon className="w-5 h-5" /> },
   { name: 'Recruitment', href: '/portal/admin/jobs', icon: <BriefcaseIcon className="w-5 h-5" /> },
-  { name: 'Requirements', href: '/portal/admin/requirements', icon: <DocumentTextIcon className="w-5 h-5" /> },
   { name: 'Analytics', href: '/portal/admin/analytics', icon: <ChartBarIcon className="w-5 h-5" /> },
   { name: 'Predictive AI', href: '/portal/admin/predictive', icon: <SparklesIcon className="w-5 h-5" /> },
   { name: 'Risk Intelligence', href: '/portal/admin/risk', icon: <ShieldExclamationIcon className="w-5 h-5" /> },

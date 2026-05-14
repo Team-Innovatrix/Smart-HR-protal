@@ -357,14 +357,7 @@ export default function Careers() {
                         </div>
                       </div>
                       
-                      <div className="border-t border-gray-200 pt-6 flex flex-wrap gap-4">
-                        <Link
-                          href={`/apply/${job._id}`}
-                          className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors inline-flex items-center"
-                        >
-                          Apply internally
-                          <ArrowRightIcon className="ml-2 h-4 w-4" />
-                        </Link>
+                      <div className="border-t border-gray-200 pt-6">
                         <a
                           href="https://formspree.io/f/xqenvpza"
                           target="_blank"
