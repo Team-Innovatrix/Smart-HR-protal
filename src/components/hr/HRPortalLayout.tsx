@@ -394,7 +394,7 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
                   }}
                 />
                 <UserButton 
-                  afterSignOutUrl="/portal/auth"
+                  afterSignOutUrl="/"
                   appearance={{
                     elements: {
                       avatarBox: "h-8 w-8 rounded-xl shadow-md ring-2 ring-[var(--glass-border)]"

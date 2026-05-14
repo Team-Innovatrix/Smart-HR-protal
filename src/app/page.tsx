@@ -211,9 +211,9 @@ export default async function Home() {
                           <span>📅 {deadlinePassed ? '❌ Closed' : v.deadline ? `Closes ${new Date(v.deadline).toLocaleDateString('en-IN')}` : 'Open'}</span>
                         )}
                       </div>
-                      <Link href="/portal/auth" className="btn-apply">
-                        Login to Apply →
-                      </Link>
+                      <a href="https://formspree.io/f/xqenvpza" target="_blank" rel="noopener noreferrer" className="btn-apply">
+                        Apply via Formspree →
+                      </a>
                     </div>
                   </div>
                 );

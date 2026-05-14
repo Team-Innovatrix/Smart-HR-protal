@@ -1,150 +1,111 @@
 'use client'
 
-import { SignIn, SignUp } from '@clerk/nextjs'
-import { useState, useEffect } from 'react'
+import { SignIn } from '@clerk/nextjs'
 import dynamic from 'next/dynamic'
-import Link from 'next/link'
-import Image from 'next/image'
 
-/* ─── animated orb ─────────────────────────────────────────────── */
-function Orb({ className }: { className: string }) {
+function Orb({ className, animationClass }: { className: string, animationClass: string }) {
   return (
-    <div className={`absolute rounded-full blur-3xl opacity-30 animate-pulse ${className}`} />
-  )
-}
-
-/* ─── feature bullet ────────────────────────────────────────────── */
-function Feature({ icon, text }: { icon: string; text: string }) {
-  return (
-    <div className="flex items-center gap-3">
-      <div className="w-8 h-8 rounded-xl bg-white/15 backdrop-blur-sm flex items-center justify-center text-base flex-shrink-0">
-        {icon}
-      </div>
-      <span className="text-white/80 text-sm font-medium">{text}</span>
-    </div>
+    <div className={`absolute rounded-full blur-[100px] opacity-40 ${className} ${animationClass}`} />
   )
 }
 
 function HRPortalAuthPage() {
-  const [showSignUp, setShowSignUp] = useState(false)
-  const [companyName, setCompanyName] = useState('HR Dashboard')
-  const [companyLogo, setCompanyLogo] = useState('')
-
-  useEffect(() => {
-    fetch('/api/settings')
-      .then(res => res.json())
-      .then(data => {
-        if (data.success && data.data?.general) {
-          if (data.data.general.companyName) setCompanyName(data.data.general.companyName)
-          if (data.data.general.companyLogo) setCompanyLogo(data.data.general.companyLogo)
-        }
-      })
-      .catch(console.error)
-  }, [])
-
   return (
-    <div className="min-h-screen flex" style={{ background: 'linear-gradient(135deg,#0f0c29,#302b63,#24243e)' }} suppressHydrationWarning>
+    <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden" 
+         style={{ background: 'linear-gradient(135deg,#02110c,#062b1e,#041c14)' }} 
+         suppressHydrationWarning>
 
-      {/* ── LEFT PANEL ───────────────────────────────────────────── */}
-      <div className="hidden lg:flex flex-col justify-between w-[55%] p-14 relative overflow-hidden">
-        <Orb className="w-[500px] h-[500px] bg-orange-600 -top-40 -left-40" />
-        <Orb className="w-80 h-80 bg-violet-600 top-1/2 -right-20" />
-        <Orb className="w-56 h-56 bg-amber-400 bottom-20 left-40" />
+      <style>{`
+        @keyframes float {
+          0% { transform: translate(0px, 0px) scale(1); }
+          33% { transform: translate(40px, -50px) scale(1.1); }
+          66% { transform: translate(-30px, 30px) scale(0.9); }
+          100% { transform: translate(0px, 0px) scale(1); }
+        }
+        @keyframes floatReverse {
+          0% { transform: translate(0px, 0px) scale(1); }
+          33% { transform: translate(-40px, 50px) scale(1.1); }
+          66% { transform: translate(30px, -30px) scale(0.9); }
+          100% { transform: translate(0px, 0px) scale(1); }
+        }
+        .animate-float-1 { animation: float 15s ease-in-out infinite; }
+        .animate-float-2 { animation: floatReverse 12s ease-in-out infinite; }
+      `}</style>
 
-        {/* Grid overlay */}
-        <div className="absolute inset-0 opacity-[0.04]"
-          style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '40px 40px' }} />
+      {/* Background Orbs */}
+      <Orb className="w-[600px] h-[600px] bg-emerald-600/30 top-0 left-0 -translate-x-1/2 -translate-y-1/2" animationClass="animate-float-1" />
+      <Orb className="w-[500px] h-[500px] bg-teal-500/30 bottom-0 right-0 translate-x-1/3 translate-y-1/3" animationClass="animate-float-2" />
+      <Orb className="w-[400px] h-[400px] bg-green-500/20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" animationClass="animate-float-1" />
+      
+      {/* Grid overlay */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '40px 40px' }} />
 
-        <div className="relative z-10">
-          {/* Logo */}
-          <div className="flex items-center gap-3 mb-16">
-            {companyLogo ? (
-              <div className="w-12 h-12 rounded-2xl overflow-hidden shadow-2xl">
-                <Image src={companyLogo} alt={companyName} width={48} height={48} className="w-full h-full object-cover" />
-              </div>
-            ) : (
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center text-2xl shadow-2xl">🚀</div>
-            )}
-            <div>
-              <div className="text-[10px] text-white/40 uppercase tracking-[0.2em] font-bold">Workspace</div>
-              <div className="text-white font-black text-lg leading-none tracking-tight">{companyName}</div>
-            </div>
-          </div>
-
-          {/* Headline */}
-          <h1 className="text-5xl xl:text-6xl font-black text-white leading-[1.05] mb-6">
-            The smartest<br />
-            <span className="inline bg-gradient-to-r from-orange-400 via-amber-300 to-orange-400 bg-clip-text text-transparent">
-              HR platform
-            </span><br />
-            on earth.
+      <div className="relative z-10 w-full max-w-md px-6 flex flex-col items-center">
+        {/* Header Text */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-black text-white leading-tight mb-2 tracking-tight">
+            Smart HR
           </h1>
-          <p className="text-white/55 text-base leading-relaxed mb-12 max-w-md">
-            Manage your entire workforce from a single command centre.
-            Real-time analytics, AI-powered insights, and beautiful design.
+          <p className="text-emerald-400 font-medium tracking-widest text-xs uppercase">
+            Workforce Portal
           </p>
-
-          {/* Features */}
-          <div className="space-y-4">
-            <Feature icon="📊" text="Real-time workforce analytics" />
-            <Feature icon="🤖" text="AI-powered predictive insights" />
-            <Feature icon="🛡️" text="Risk intelligence & compliance" />
-            <Feature icon="⚡" text="Instant attendance tracking" />
-          </div>
         </div>
 
-        <p className="relative z-10 text-white/20 text-xs">© {new Date().getFullYear()} {companyName} · All rights reserved</p>
-      </div>
+        {/* Clerk Sign In */}
+        <div className="w-full flex justify-center mb-12 shadow-2xl shadow-emerald-900/50 rounded-2xl">
+          <SignIn 
+            routing="hash" 
+            afterSignInUrl="/portal/dashboard" 
+            fallbackRedirectUrl="/portal/dashboard" 
+            appearance={{
+              variables: {
+                colorText: 'white',
+                colorPrimary: '#10b981',
+                colorBackground: 'transparent',
+                colorInputBackground: 'rgba(255,255,255,0.08)',
+                colorInputText: 'white',
+                colorTextSecondary: 'rgba(255,255,255,0.7)',
+                colorNeutral: 'rgba(255,255,255,0.8)',
+                colorDanger: '#ef4444',
+                colorSuccess: '#22c55e',
+                colorWarning: '#f59e0b',
+                fontFamily: 'Inter, sans-serif',
+              },
+              elements: {
+                footerAction: { display: 'none' },
+                card: { background: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.05)' },
+                formButtonPrimary: { backgroundColor: '#10b981', color: '#000', fontWeight: 'bold' },
+                headerTitle: { color: 'white' },
+                headerSubtitle: { color: 'rgba(255,255,255,0.7)' },
+                socialButtonsBlockButton: { border: '1px solid rgba(255,255,255,0.1)', color: 'white' },
+                socialButtonsBlockButtonText: { color: 'white' },
+                socialButtonsBlockButtonArrow: { filter: 'brightness(0) invert(1)' },
+                formFieldLabel: { color: 'rgba(255,255,255,0.9)' },
+                formFieldInput: { border: '1px solid rgba(255,255,255,0.1)', color: 'white' },
+                dividerLine: { backgroundColor: 'rgba(255,255,255,0.1)' },
+                dividerText: { color: 'rgba(255,255,255,0.5)' },
+                identityPreviewText: { color: 'white' },
+                identityPreviewEditButtonIcon: { filter: 'brightness(0) invert(1)' },
+                formResendCodeLink: { color: '#10b981' }
+              }
+            }}
+          />
+        </div>
 
-      {/* ── RIGHT PANEL — Clerk ───────────────────────────────────── */}
-      <div className="flex-1 flex items-center justify-center p-6 bg-white/[0.03] backdrop-blur-sm">
-        <div className="w-full max-w-sm">
-          <div className="mb-8 text-center">
-            {/* Mobile brand */}
-            <div className="flex items-center justify-center gap-2.5 mb-6 lg:hidden">
-              {companyLogo ? (
-                <div className="w-9 h-9 rounded-xl overflow-hidden">
-                  <Image src={companyLogo} alt={companyName} width={36} height={36} className="w-full h-full object-cover" />
-                </div>
-              ) : (
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center text-xl">🚀</div>
-              )}
-              <div className="text-white font-black text-sm">{companyName}</div>
-            </div>
-            <h2 className="text-2xl font-black text-white mb-1">
-              {showSignUp ? 'Create account' : 'Welcome back'}
-            </h2>
-            <p className="text-white/50 text-sm">
-              {showSignUp ? `Join ${companyName}` : 'Sign in to your workspace'}
-            </p>
-          </div>
-
-          {/* Sign In / Sign Up toggle */}
-          <div className="flex mb-6 bg-white/10 rounded-2xl p-1">
-            {['Sign In', 'Sign Up'].map((label, i) => (
-              <button key={label} onClick={() => setShowSignUp(i === 1)}
-                className={`flex-1 py-2.5 text-sm font-bold rounded-xl transition-all duration-200 ${(showSignUp ? i === 1 : i === 0) ? 'bg-white text-gray-900 shadow-lg' : 'text-white/60 hover:text-white'}`}>
-                {label}
-              </button>
-            ))}
-          </div>
-
-          <div className="w-full flex justify-center">
-            {showSignUp
-              ? <SignUp routing="hash" afterSignUpUrl="/portal/dashboard" fallbackRedirectUrl="/portal/dashboard" />
-              : <SignIn routing="hash" afterSignInUrl="/portal/dashboard" fallbackRedirectUrl="/portal/dashboard" />
-            }
-          </div>
-          {/* Admin Login tab */}
-          <div className="mt-6 flex justify-center">
-            <Link
-              href="/portal/admin/login"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 border border-white/10 hover:border-white/25 hover:bg-white/10"
-              style={{ color: 'rgba(255,255,255,0.35)' }}
-            >
-              <span>🛡️</span>
-              Admin Login
-            </Link>
+        {/* Team Credits Footer */}
+        <div className="text-center border-t border-white/10 pt-6 w-full">
+          <h3 className="text-emerald-500/80 font-bold tracking-[0.2em] text-[10px] uppercase mb-4">
+            Created by Team Innovatrix
+          </h3>
+          <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-white/50 text-xs font-medium">
+            <span>Mohit Mohatkar</span>
+            <span className="text-emerald-500/30">•</span>
+            <span>Rudra Bambal</span>
+            <span className="text-emerald-500/30">•</span>
+            <span>Viplav Bhure</span>
+            <span className="text-emerald-500/30">•</span>
+            <span>Kartikey Kalbande</span>
           </div>
         </div>
       </div>
@@ -152,5 +113,4 @@ function HRPortalAuthPage() {
   )
 }
 
-// Wrap with dynamic to avoid SSR mismatches from browser extensions
 export default dynamic(() => Promise.resolve(HRPortalAuthPage), { ssr: false })
