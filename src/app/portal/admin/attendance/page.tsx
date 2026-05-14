@@ -587,19 +587,7 @@ export default function AttendanceManagementPage() {
       </div>
       )}
 
-      {/* Sheet View Tab Content */}
-      {activeTab === 'sheet' && (
-        <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden" style={{ height: '800px' }}>
-          <iframe
-            src="https://docs.google.com/spreadsheets/d/1wn-SwY7ieUnTkZISRkY_ibQlwYNda85CWUVLQb8yM-0/edit?rm=minimal"
-            width="100%"
-            height="100%"
-            frameBorder="0"
-            allowFullScreen
-            title="Google Sheets Attendance Tracker"
-          ></iframe>
-        </div>
-      )}
+
 
       {/* Summary Tab Content */}
       {activeTab === 'summary' && (
@@ -1132,6 +1120,23 @@ export default function AttendanceManagementPage() {
             </table>
             </div>
           )}
+
+          {/* Embedded Google Sheet at the Bottom */}
+          <div className="mt-12 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden" style={{ height: '800px' }}>
+            <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+              <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                <span>📊</span> Google Sheet Live Sync
+              </h2>
+            </div>
+            <iframe
+              src="https://docs.google.com/spreadsheets/d/1wn-SwY7ieUnTkZISRkY_ibQlwYNda85CWUVLQb8yM-0/edit?rm=minimal"
+              width="100%"
+              height="100%"
+              frameBorder="0"
+              allowFullScreen
+              title="Google Sheets Attendance Tracker"
+            ></iframe>
+          </div>
         </div>
       )}
 
