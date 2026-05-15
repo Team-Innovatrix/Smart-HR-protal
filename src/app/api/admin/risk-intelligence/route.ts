@@ -7,6 +7,7 @@
  */
 
 export const dynamic = 'force-dynamic';
+export const maxDuration = 60; // Allow up to 60s (requires Vercel Pro; Hobby capped at 10s)
 
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
@@ -38,8 +39,8 @@ export async function GET(request: NextRequest) {
 
     if (hasOpenAI) {
       // ── AI MODE: Aggregate real data + Gemini analysis ──────────────────
-      // Limit to 5 employees per call to stay within free-tier rate limits
-      const batchSize = Math.min(employees.length, 5);
+      // Limit to 3 employees per call to fit within Vercel's serverless timeout
+      const batchSize = Math.min(employees.length, 3);
       const batch = employees.slice(0, batchSize);
 
       // Process sequentially to avoid hitting Gemini free-tier quota (15 req/min)
