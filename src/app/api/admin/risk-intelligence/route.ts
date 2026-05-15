@@ -39,8 +39,8 @@ export async function GET(request: NextRequest) {
 
     if (hasOpenAI) {
       // ── AI MODE: Aggregate real data + Gemini analysis ──────────────────
-      // Limit to 3 employees per call to fit within Vercel's serverless timeout
-      const batchSize = Math.min(employees.length, 3);
+      // Vercel Hobby plan hard-caps at 10s — 1 employee per call ensures Gemini completes in time
+      const batchSize = Math.min(employees.length, 1);
       const batch = employees.slice(0, batchSize);
 
       // Process sequentially to avoid hitting Gemini free-tier quota (15 req/min)
