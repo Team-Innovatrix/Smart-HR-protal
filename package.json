@@ -21,6 +21,7 @@
     "@aws-sdk/s3-request-presigner": "^3.864.0",
     "@clerk/nextjs": "^6.36.1",
     "@formspree/react": "^3.0.0",
+    "@google/generative-ai": "^0.24.1",
     "@headlessui/react": "^2.2.7",
     "@heroicons/react": "^2.2.0",
     "@langchain/community": "^0.3.56",

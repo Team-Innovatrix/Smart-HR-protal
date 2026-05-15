@@ -1,19 +1,19 @@
 /**
  * API: /api/admin/ai-insights
- * Uses GPT-4o to generate contextual AI insights for the 4 prediction cards:
+ * Uses Gemini to generate contextual AI insights for the 4 prediction cards:
  *   - Turnover Risk, Performance Forecast, Leave Pattern, Workforce Capacity
  */
 export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(request: NextRequest) {
-  if (!process.env.OPENAI_API_KEY) {
-    return NextResponse.json({ success: false, error: 'OpenAI not configured' }, { status: 503 });
+  if (!process.env.GEMINI_API_KEY) {
+    return NextResponse.json({ success: false, error: 'Gemini not configured' }, { status: 503 });
   }
 
-  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  const gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
   const body = await request.json();
   const { org } = body; // computeOrgInsights() result
@@ -56,18 +56,16 @@ Be direct, data-driven, and use the actual numbers. Vary your language — don't
 `;
 
   try {
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
-      messages: [{ role: 'user', content: prompt }],
-      response_format: { type: 'json_object' },
-      temperature: 0.4,
-      max_tokens: 600,
+    const model = gemini.getGenerativeModel({
+      model: 'gemini-2.5-flash',
+      generationConfig: { responseMimeType: 'application/json' }
     });
-
-    const parsed = JSON.parse(completion.choices[0].message.content || '{}');
+    
+    const result = await model.generateContent(prompt);
+    const parsed = JSON.parse(result.response.text() || '{}');
     return NextResponse.json({ success: true, insights: parsed });
   } catch (err: any) {
-    console.error('[AI Insights] GPT-4o error:', err?.message);
+    console.error('[AI Insights] Gemini error:', err?.message);
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }
 }

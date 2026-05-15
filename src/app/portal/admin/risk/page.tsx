@@ -436,10 +436,10 @@ function DetailPanel({ emp, result }: { emp: any; result: RiskResult }) {
       )}
 
       {/* GPT Reasoning Trace */}
-      {(result as any).reasoningTrace && (result as any).reasoningTrace !== 'Rule-based fallback analysis (OpenAI not configured).' && (
+      {(result as any).reasoningTrace && (result as any).reasoningTrace !== 'Rule-based fallback analysis (Gemini not configured).' && (
         <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl border border-indigo-100 p-5">
           <h3 className="font-semibold text-indigo-800 mb-2 flex items-center gap-2">
-            <SparklesIcon className="w-4 h-4" /> GPT-4o Reasoning Trace
+            <SparklesIcon className="w-4 h-4" /> Gemini Reasoning Trace
           </h3>
           <p className="text-sm text-indigo-900 leading-relaxed">{(result as any).reasoningTrace}</p>
           {(result as any).fairnessNote && (
@@ -554,7 +554,7 @@ export default function RiskIntelligencePage() {
   useEffect(() => {
     async function fetchAIRisk() {
       try {
-        // Try the new GPT-4o powered endpoint first
+        // Try the new Gemini powered endpoint first
         const res = await fetch('/api/admin/risk-intelligence');
         const data = await res.json();
         if (data.success && data.results?.length > 0) {
@@ -664,12 +664,12 @@ export default function RiskIntelligencePage() {
               </div>
             </div>
               <p className="text-slate-300 max-w-xl">
-                Real-time employee risk scoring using GPT-4o analysis of live attendance, leave, and HR data. Identify at-risk employees before attrition happens and take <strong className="text-white">preventive action</strong>.
+                Real-time employee risk scoring using Gemini analysis of live attendance, leave, and HR data. Identify at-risk employees before attrition happens and take <strong className="text-white">preventive action</strong>.
               </p>
               {aiMode && (
                 <div className="mt-3 inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-500/30 rounded-full px-4 py-1.5">
                   <SparklesIcon className="w-4 h-4 text-emerald-400" />
-                  <span className="text-emerald-300 text-xs font-semibold">GPT-4o Active — Analyzing real MongoDB data</span>
+                  <span className="text-emerald-300 text-xs font-semibold">Gemini Active — Analyzing real MongoDB data</span>
                 </div>
               )}
           </div>
@@ -695,7 +695,7 @@ export default function RiskIntelligencePage() {
         <div className="bg-gradient-to-r from-indigo-950 to-slate-900 rounded-2xl p-6 border border-indigo-800/40">
           <div className="flex items-center gap-2 mb-3">
             <SparklesIcon className="w-5 h-5 text-indigo-400" />
-            <h3 className="font-bold text-white text-sm">GPT-4o Organizational Risk Narrative</h3>
+            <h3 className="font-bold text-white text-sm">Gemini Organizational Risk Narrative</h3>
             <span className="ml-auto text-xs text-indigo-400 bg-indigo-900/50 px-2 py-0.5 rounded-full">AI Generated</span>
           </div>
           <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-line">{orgSummary.orgInsightNarrative}</p>
@@ -841,16 +841,16 @@ export default function RiskIntelligencePage() {
         </div>
       </div>
 
-      {/* Footer — IBM HR Dataset + GPT-4o attribution */}
+      {/* Footer — IBM HR Dataset + Gemini attribution */}
       <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 rounded-2xl p-5 flex items-start gap-3">
         <SparklesIcon className="w-5 h-5 text-indigo-600 flex-shrink-0 mt-0.5" />
         <div className="flex-1">
-          <p className="text-sm font-semibold text-indigo-900">IBM HR Analytics Dataset · XGBoost + GPT-4o Hybrid Engine</p>
+          <p className="text-sm font-semibold text-indigo-900">IBM HR Analytics Dataset · XGBoost + Gemini Hybrid Engine</p>
           <p className="text-sm text-indigo-700 mt-1">
             Attrition predictions are calibrated against the{' '}
             <strong>IBM HR Analytics Dataset</strong> (WA_Fn-UseC_-HR-Employee-Attrition, N=1,470)
             using XGBoost feature importances (AUC-ROC ≈ 0.87) with SMOTE class balancing.
-            GPT-4o provides SHAP-style reasoning traces anchored to IBM population statistics
+            Gemini provides SHAP-style reasoning traces anchored to IBM population statistics
             (16.1% base attrition rate). Analysis is based strictly on behavioral data
             per Barocas et al. (2019) fairness framework.
           </p>
@@ -860,7 +860,7 @@ export default function RiskIntelligencePage() {
               'XGBoost · AUC-ROC 0.87',
               'SMOTE Class Balancing',
               'SHAP Explainability',
-              'GPT-4o Reasoning',
+              'Gemini Reasoning',
               'Fairness-Aware (Barocas 2019)',
             ].map(tag => (
               <span key={tag} className="text-[11px] px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-700 font-medium border border-indigo-200">

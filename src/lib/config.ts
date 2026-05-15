@@ -113,7 +113,7 @@ export function isAllowedOrigin(origin: string): boolean {
 // Environment variables with validation
 export const env = {
   NODE_ENV: process.env.NODE_ENV || 'development',
-  OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+  GEMINI_API_KEY: process.env.GEMINI_API_KEY,
   MONGODB_URI: process.env.MONGODB_URI,
   MONGODB_DB_NAME: process.env.MONGODB_DB_NAME || 'hr',
   CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,

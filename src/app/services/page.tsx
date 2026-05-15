@@ -90,7 +90,7 @@ export default function Services() {
   const techStack = [
     'React, Next.js, Node.js',
     'Python, Django, FastAPI',
-    'AI/ML: OpenAI, Anthropic, LangChain',
+    'AI/ML: Gemini, Anthropic, LangChain',
     'Cloud: AWS, GCP, Azure',
     'Databases: PostgreSQL, MongoDB, Redis',
     'DevOps: Docker, Kubernetes, CI/CD'

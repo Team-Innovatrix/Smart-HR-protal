@@ -1,4 +1,4 @@
-import OpenAI from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { formatDetailedIntentsForPrompt } from './langGraph/config/availableIntents';
 
 export interface WhisperTranscriptionResult {
@@ -25,19 +25,16 @@ export interface IntentContinuityResult {
 }
 
 export class OpenAIService {
-  private openai: OpenAI;
+  private gemini: GoogleGenerativeAI;
   private isMockMode: boolean = false;
   
   constructor() {
-    if (!process.env.OPENAI_API_KEY) {
-      console.warn('OPENAI_API_KEY is missing. Operating in Mock Mode.');
+    if (!process.env.GEMINI_API_KEY) {
+      console.warn('GEMINI_API_KEY is missing. Operating in Mock Mode.');
       this.isMockMode = true;
-      this.openai = new OpenAI({ apiKey: 'dummy', dangerouslyAllowBrowser: true });
+      this.gemini = new GoogleGenerativeAI('dummy');
     } else {
-      this.openai = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
-        organization: process.env.OPENAI_ORGANIZATION,
-      });
+      this.gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     }
   }
   
@@ -52,20 +49,25 @@ export class OpenAIService {
     }
 
     try {
-      // Convert Blob to File for OpenAI API
-      const audioFile = new File([audioBlob], 'voice-command.webm', { type: 'audio/webm' });
+      const model = this.gemini.getGenerativeModel({ model: 'gemini-2.5-flash' });
       
-      const transcription = await this.openai.audio.transcriptions.create({
-        file: audioFile,
-        model: 'whisper-1',
-        response_format: 'verbose_json',
-        language: 'en'
-      });
+      const buffer = await audioBlob.arrayBuffer();
+      const base64Audio = Buffer.from(buffer).toString('base64');
+      
+      const result = await model.generateContent([
+        {
+          inlineData: {
+            mimeType: audioBlob.type || 'audio/webm',
+            data: base64Audio
+          }
+        },
+        { text: "Transcribe the following audio accurately. Return only the transcription text, nothing else." }
+      ]);
       
       return {
-        text: transcription.text,
-        language: transcription.language || 'en',
-        confidence: transcription.duration || 0
+        text: result.response.text().trim(),
+        language: 'en',
+        confidence: 0.99
       };
     } catch (error) {
       throw new Error(`Transcription failed: ${error}`);
@@ -161,28 +163,16 @@ Output: {"isRelevant": true, "intent": "view_attendance_history", "confidence": 
     }
 
     try {
-      const completion = await this.openai.chat.completions.create({
-        model: "gpt-5-mini",
-        messages: [
-          {
-            role: "system",
-            content: intentExtractionPrompt
-          },
-          {
-            role: "user",
-            content: transcribedText
-          }
-        ],
-        max_completion_tokens: 800, // Increased for reasoning model to prevent token limit issues
-        reasoning_effort: 'minimal',  // For faster responses
-        verbosity: 'low',             // For concise outputs
-        response_format: { type: "json_object" }  // Force valid JSON output
+      const model = this.gemini.getGenerativeModel({
+        model: 'gemini-2.5-flash',
+        generationConfig: { responseMimeType: 'application/json' }
       });
-
-      const responseContent = completion.choices[0].message.content;
+      
+      const result = await model.generateContent(`${intentExtractionPrompt}\n\nUser Message: "${transcribedText}"`);
+      const responseContent = result.response.text();
       
       if (!responseContent) {
-        throw new Error('No response content received from OpenAI');
+        throw new Error('No response content received from Gemini');
       }
       
       // Try to extract JSON from the response
@@ -210,32 +200,32 @@ Output: {"isRelevant": true, "intent": "view_attendance_history", "confidence": 
       
       return intentData;
     } catch (error) {
-      console.error('OpenAI intent extraction failed:', error);
+      console.error('Gemini intent extraction failed:', error);
       throw new Error('Failed to understand command intent');
     }
   }
   
-  // Method to check if OpenAI service is properly configured
+  // Method to check if Gemini service is properly configured
   isConfigured(): boolean {
-    return !!process.env.OPENAI_API_KEY;
+    return !!process.env.GEMINI_API_KEY;
   }
   
   // Method to get API configuration status
   getConfigurationStatus(): { apiKey: boolean; organization: boolean } {
     return {
-      apiKey: !!process.env.OPENAI_API_KEY,
-      organization: !!process.env.OPENAI_ORGANIZATION
+      apiKey: !!process.env.GEMINI_API_KEY,
+      organization: false
     };
   }
   
   // Method to validate API key (optional - can be used to test connectivity)
   async validateAPIKey(): Promise<boolean> {
     try {
-      // Make a simple API call to test the key
-      await this.openai.models.list();
+      const model = this.gemini.getGenerativeModel({ model: "gemini-2.5-flash" });
+      await model.generateContent("test");
       return true;
     } catch (error) {
-      console.error('OpenAI API key validation failed:', error);
+      console.error('Gemini API key validation failed:', error);
       return false;
     }
   }
@@ -286,22 +276,9 @@ Examples of BAD responses (avoid these patterns):
 
 Generate a response now:`;
 
-    try {
-      const response = await this.openai.chat.completions.create({
-        model: "gpt-5-nano",
-        messages: [
-          {
-            role: "system",
-            content: prompt
-          }
-        ],
-        max_completion_tokens: 200,
-        reasoning_effort: 'low',
-        verbosity: 'low'
-        // Note: gpt-5-nano only supports default temperature (1)
-      });
-
-      return response.choices[0].message.content || "I need some additional information to process your request.";
+      const model = this.gemini.getGenerativeModel({ model: "gemini-2.5-flash" });
+      const result = await model.generateContent(prompt);
+      return result.response.text() || "I need some additional information to process your request.";
     } catch (error) {
       console.error('Error generating data collection reply:', error);
       return "I need some additional information to process your request. Please provide the missing details.";
@@ -348,23 +325,15 @@ Example:
 {"startDate": "next Friday", "endDate": "next Friday"} 
 → {"startDate": "2025-10-10", "endDate": "2025-10-10"}`;
 
-    try {
-      const response = await this.openai.chat.completions.create({
-        model: "gpt-5-mini",
-        messages: [
-          {
-            role: "system",
-            content: prompt
-          }
-        ],
-        max_completion_tokens: 1000, // Increased from 500 to 1000
-        reasoning_effort: 'high',
-        verbosity: 'low'
+      const model = this.gemini.getGenerativeModel({
+        model: 'gemini-2.5-flash',
+        generationConfig: { responseMimeType: 'application/json' }
       });
-
-      const content = response.choices[0].message.content;
+      const result = await model.generateContent(prompt);
+      const content = result.response.text();
+      
       if (!content) {
-        console.error('No content in normalization response:', response.choices[0]);
+        console.error('No content in normalization response');
         return data; // Return original if no response
       }
 
@@ -471,25 +440,17 @@ Return JSON:
       };
     }
 
-    try {
-      const completion = await this.openai.chat.completions.create({
-        model: "gpt-5-mini",
-        messages: [
-          {
-            role: "system",
-            content: relevancePrompt
-          }
-        ],
-        max_completion_tokens: 1000, // Increased for reasoning model to accommodate reasoning tokens + JSON response
-        reasoning_effort: 'low',
-        response_format: { type: "json_object" }
+      const model = this.gemini.getGenerativeModel({
+        model: 'gemini-2.5-flash',
+        generationConfig: { responseMimeType: 'application/json' }
       });
-
-      const content = completion.choices[0].message.content;
+      
+      const result = await model.generateContent(relevancePrompt);
+      const content = result.response.text();
+      
       if (!content) {
-        // Log finish_reason to help diagnose token limit issues
-        console.error('[ERROR] Empty content in OpenAI response. Finish reason:', completion.choices[0].finish_reason);
-        throw new Error('No response content received from OpenAI');
+        console.error('[ERROR] Empty content in Gemini response.');
+        throw new Error('No response content received from Gemini');
       }
 
       const result = JSON.parse(content);
@@ -565,28 +526,16 @@ Current: "clock me in" (different intent) → {"isSame": false, "newData": {}}
       };
     }
 
-    try {
-      const completion = await this.openai.chat.completions.create({
-        model: "gpt-5-mini",
-        messages: [
-          {
-            role: "system",
-            content: prompt
-          },
-          {
-            role: "user",
-            content: currentText
-          }
-        ],
-        max_completion_tokens: 800, // Increased for reasoning model to prevent token limit issues
-        reasoning_effort: 'minimal', 
-        verbosity: 'low'
+      const model = this.gemini.getGenerativeModel({
+        model: 'gemini-2.5-flash',
+        generationConfig: { responseMimeType: 'application/json' }
       });
-
-      const responseContent = completion.choices[0].message.content;
+      
+      const result = await model.generateContent(`${prompt}\n\nCurrent Message: "${currentText}"`);
+      const responseContent = result.response.text();
       
       if (!responseContent) {
-        throw new Error('No response content received from OpenAI');
+        throw new Error('No response content received from Gemini');
       }
       
       // Try to extract JSON from the response

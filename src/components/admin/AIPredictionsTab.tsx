@@ -187,7 +187,7 @@ export default function AIPredictionsTab() {
   const activeResults = mlResults ?? fallbackResults;
   const org = useMemo(() => computeOrgInsights(activeResults), [activeResults]);
 
-  // Fetch GPT-4o insights once org data is ready
+  // Fetch Gemini insights once org data is ready
   useEffect(() => {
     if (!org || insightsLoading || Object.keys(gptInsights).length > 0) return;
     setInsightsLoading(true);
@@ -198,7 +198,7 @@ export default function AIPredictionsTab() {
     })
       .then(r => r.json())
       .then(d => { if (d.success) setGptInsights(d.insights || {}); })
-      .catch(e => console.error('GPT-4o insights failed:', e))
+      .catch(e => console.error('Gemini insights failed:', e))
       .finally(() => setInsightsLoading(false));
   }, [org]);
 
@@ -233,7 +233,7 @@ export default function AIPredictionsTab() {
         <p className="text-xs text-[var(--text-secondary)]">
           {mlOnline
             ? <><span className="font-semibold text-[var(--accent)]">XGBoost ML Engine</span> — live predictions for <span className="font-semibold text-[var(--text-primary)]">{org?.total} employees</span>. SHAP explainability active. <span className="text-[var(--accent)]">✓ Phase 2 Live</span></>
-            : <><span className="font-semibold text-indigo-400">GPT-4o Intelligence Engine</span> — Analyzing real HR data for <span className="font-semibold text-[var(--text-primary)]">{org?.total} employees</span>. {insightsLoading ? <span className="text-indigo-300 animate-pulse">⟳ Generating AI insights...</span> : <span className="text-indigo-300">✓ AI Insights Active</span>}</>}
+            : <><span className="font-semibold text-indigo-400">Gemini Intelligence Engine</span> — Analyzing real HR data for <span className="font-semibold text-[var(--text-primary)]">{org?.total} employees</span>. {insightsLoading ? <span className="text-indigo-300 animate-pulse">⟳ Generating AI insights...</span> : <span className="text-indigo-300">✓ AI Insights Active</span>}</>}
         </p>
       </div>
 
@@ -250,7 +250,7 @@ export default function AIPredictionsTab() {
               <div>
                 <h3 className="font-bold text-[var(--text-primary)]">Turnover Risk Prediction</h3>
                 <p className="text-[11px] text-[var(--text-muted)]">
-                  {mlOnline ? '⚡ XGBoost · AUC-ROC trained model' : '✨ GPT-4o · Live HR data analysis'}
+                  {mlOnline ? '⚡ XGBoost · AUC-ROC trained model' : '✨ Gemini · Live HR data analysis'}
                 </p>
               </div>
             </div>
@@ -273,7 +273,7 @@ export default function AIPredictionsTab() {
             <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
               <span className="text-[var(--accent)] font-semibold">AI Insight:</span>{' '}
               {insightsLoading
-                ? <span className="animate-pulse">GPT-4o analyzing retention patterns...</span>
+                ? <span className="animate-pulse">Gemini analyzing retention patterns...</span>
                 : gptInsights.turnoverInsight || (
                   org.attritionRisk >= 40
                     ? `⚠️ Attrition risk is elevated at ${org.attritionRisk}%. Prioritize retention 1-on-1s for ${org.high} high-risk employees immediately.`
@@ -316,7 +316,7 @@ export default function AIPredictionsTab() {
             <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
               <span className="text-[var(--accent)] font-semibold">AI Insight:</span>{' '}
               {insightsLoading
-                ? <span className="animate-pulse">GPT-4o forecasting performance trends...</span>
+                ? <span className="animate-pulse">Gemini forecasting performance trends...</span>
                 : gptInsights.performanceInsight || (
                   org.performanceScore >= 70
                     ? `✅ Strong performance outlook. Average evaluation at ${org.avgEval}% suggests a productive quarter ahead.`
@@ -359,7 +359,7 @@ export default function AIPredictionsTab() {
             <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
               <span className="text-[var(--accent)] font-semibold">AI Insight:</span>{' '}
               {insightsLoading
-                ? <span className="animate-pulse">GPT-4o analyzing leave patterns...</span>
+                ? <span className="animate-pulse">Gemini analyzing leave patterns...</span>
                 : gptInsights.leaveInsight || (
                   org.leaveRiskPct >= 40
                     ? `🚨 ${org.highAbsent} employees show elevated absenteeism. Cross-reference with holiday calendar to plan minimum coverage.`
@@ -404,7 +404,7 @@ export default function AIPredictionsTab() {
             <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
               <span className="text-[var(--accent)] font-semibold">AI Insight:</span>{' '}
               {insightsLoading
-                ? <span className="animate-pulse">GPT-4o mapping department capacity...</span>
+                ? <span className="animate-pulse">Gemini mapping department capacity...</span>
                 : gptInsights.capacityInsight || (
                   org.deptRisk[0]
                     ? `⚠️ ${org.deptRisk[0].dept} is the highest-risk department (avg score ${org.deptRisk[0].avg}). Prioritize HR interventions there. ${org.deptRisk[org.deptRisk.length-1]?.dept} is the healthiest at ${org.deptRisk[org.deptRisk.length-1]?.avg}.`
@@ -442,7 +442,7 @@ export default function AIPredictionsTab() {
           <p className="text-[10px] text-[var(--text-muted)]">
             {mlOnline
               ? '* Real SHAP values from XGBoost — showing which features most pushed attrition probability up per employee.'
-              : '* GPT-4o feature attribution — natural language reasoning from real attendance, leave & profile data.'}
+              : '* Gemini feature attribution — natural language reasoning from real attendance, leave & profile data.'}
           </p>
         </div>
       )}
@@ -462,8 +462,8 @@ export default function AIPredictionsTab() {
               </p>
               <p className="text-[11px] text-[var(--text-muted)] mt-1">
                 {mlOnline
-                  ? '✅ XGBoost (Phase 2 active) · Prophet leave forecast ready · GPT-4o insights active'
-                  : '✅ GPT-4o Intelligence Active · Real MongoDB data · Live organizational analysis'}
+                  ? '✅ XGBoost (Phase 2 active) · Prophet leave forecast ready · Gemini insights active'
+                  : '✅ Gemini Intelligence Active · Real MongoDB data · Live organizational analysis'}
               </p>
             </div>
           </div>

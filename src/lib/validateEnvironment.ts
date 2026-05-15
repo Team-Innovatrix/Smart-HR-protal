@@ -47,7 +47,7 @@ export function logEnvironmentStatus(): boolean {
   console.log('\n🔧 Optional Environment Variables:');
   const optionalVars = [
     'MONGODB_DB_NAME',
-    'OPENAI_API_KEY',
+    'GEMINI_API_KEY',
     'AWS_ACCESS_KEY_ID',
     'AWS_SECRET_ACCESS_KEY',
     'AWS_REGION',

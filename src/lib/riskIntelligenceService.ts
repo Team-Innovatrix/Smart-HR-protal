@@ -1,11 +1,10 @@
 /**
  * riskIntelligenceService.ts
  * ─────────────────────────────────────────────────────────────────────────────
- * GPT-4o Powered Risk Intelligence Engine
+ * Gemini Powered Risk Intelligence Engine
  *
  * Architecture (based on literature review):
- *   - Aggregates REAL data from MongoDB: Attendance, Leave, UserProfile
- *   - Sends structured employee context to OpenAI GPT-4o
+ *   - Sends structured employee context to Gemini 1.5 Flash
  *   - Returns natural-language reasoning traces + structured risk scores
  *   - Includes fairness constraints in system prompt (Barocas et al., 2019)
  *   - Provides SHAP-style feature attribution (Lundberg & Lee, 2017)
@@ -17,7 +16,7 @@
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
-import OpenAI from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import connectDB from './mongodb';
 import Attendance from '../models/Attendance';
 import Leave from '../models/Leave';
@@ -95,17 +94,17 @@ export interface OrgRiskSummary {
   recommendations: string[];
 }
 
-// ─── OpenAI Client (singleton) ───────────────────────────────────────────────
-let openaiClient: OpenAI | null = null;
+// ─── Gemini Client (singleton) ───────────────────────────────────────────────
+let geminiClient: GoogleGenerativeAI | null = null;
 
-function getOpenAI(): OpenAI {
-  if (!openaiClient) {
-    if (!process.env.OPENAI_API_KEY) {
-      throw new Error('OPENAI_API_KEY is not configured.');
+function getGemini(): GoogleGenerativeAI {
+  if (!geminiClient) {
+    if (!process.env.GEMINI_API_KEY) {
+      throw new Error('GEMINI_API_KEY is not configured.');
     }
-    openaiClient = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    geminiClient = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
   }
-  return openaiClient;
+  return geminiClient;
 }
 
 // ─── Data Aggregator: Pull real MongoDB data for one employee ─────────────
@@ -205,9 +204,9 @@ export async function aggregateEmployeeData(userId: string): Promise<EmployeeRis
   };
 }
 
-// ─── GPT-4o Risk Analysis Agent ──────────────────────────────────────────────
 export async function analyzeEmployeeRiskWithAI(ctx: EmployeeRiskContext): Promise<AIRiskResult> {
-  const openai = getOpenAI();
+  const gemini = getGemini();
+  const model = gemini.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
   const systemPrompt = `
 You are an expert HR Risk Intelligence Agent powered by the IBM HR Analytics Dataset (WA_Fn-UseC_-HR-Employee-Attrition, N=1,470).
@@ -310,18 +309,17 @@ Provide your IBM-calibrated risk analysis. Your attritionProbability must be wit
 `;
 
   try {
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt },
+    const result = await model.generateContent({
+      contents: [
+        { role: 'user', parts: [{ text: systemPrompt + '\n\n' + userPrompt }] }
       ],
-      response_format: { type: 'json_object' },
-      temperature: 0.3,      // Lower temp for consistent risk scoring
-      max_tokens: 1500,
+      generationConfig: {
+        temperature: 0.3,
+        responseMimeType: 'application/json',
+      }
     });
 
-    const raw = completion.choices[0].message.content || '{}';
+    const raw = result.response.text() || '{}';
     const parsed = JSON.parse(raw);
 
     return {
@@ -366,7 +364,7 @@ export async function generateOrgRiskNarrative(
   results: AIRiskResult[],
   totalEmployees: number
 ): Promise<string> {
-  const openai = getOpenAI();
+  const gemini = getGemini();
 
   const highRisk = results.filter(r => r.riskLevel === 'high').length;
   const moderate = results.filter(r => r.riskLevel === 'moderate').length;
@@ -405,13 +403,9 @@ Be direct, data-driven, and professional. No bullet points. Plain text only.
 `;
 
   try {
-    const res = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.4,
-      max_tokens: 400,
-    });
-    return res.choices[0].message.content || 'Narrative unavailable.';
+    const model = gemini.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const result = await model.generateContent(prompt);
+    return result.response.text() || 'Narrative unavailable.';
   } catch {
     return `Organization is tracking ${totalEmployees} employees with an average risk score of ${avgRisk}/100 and ${avgAttrition}% average attrition probability. ${highRisk} employees are flagged as high risk requiring immediate HR attention.`;
   }

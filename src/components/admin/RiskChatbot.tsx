@@ -109,7 +109,7 @@ export default function RiskChatbot({ orgContext, employeeContext }: Props) {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-bold text-white leading-none">HR Risk AI</p>
-              <p className="text-[10px] text-indigo-200 mt-0.5">IBM Dataset · GPT-4o · Live data</p>
+              <p className="text-[10px] text-indigo-200 mt-0.5">IBM Dataset · Gemini · Live data</p>
             </div>
             <span className="flex items-center gap-1 text-[10px] text-emerald-300 font-medium">
               <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />

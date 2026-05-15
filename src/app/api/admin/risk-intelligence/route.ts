@@ -1,9 +1,9 @@
 /**
  * API Route: /api/admin/risk-intelligence
  * 
- * Powers the AI Risk Intelligence dashboard using GPT-4o + real MongoDB data.
+ * Powers the AI Risk Intelligence dashboard using Gemini + real MongoDB data.
  * Aggregates attendance, leave, and profile data per employee, then feeds
- * it to GPT-4o for SHAP-style analysis with natural language reasoning traces.
+ * it to Gemini for SHAP-style analysis with natural language reasoning traces.
  */
 
 export const dynamic = 'force-dynamic';
@@ -33,41 +33,38 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: true, results: [], orgSummary: null });
     }
 
-    const hasOpenAI = !!process.env.OPENAI_API_KEY;
+    const hasOpenAI = !!process.env.GEMINI_API_KEY;
     const results: AIRiskResult[] = [];
 
     if (hasOpenAI) {
-      // ── AI MODE: Aggregate real data + GPT-4o analysis ──────────────────
-      // Process up to 20 employees to stay within API budget
-      const batchSize = Math.min(employees.length, 20);
+      // ── AI MODE: Aggregate real data + Gemini analysis ──────────────────
+      // Limit to 5 employees per call to stay within free-tier rate limits
+      const batchSize = Math.min(employees.length, 5);
       const batch = employees.slice(0, batchSize);
 
-      const analysisPromises = batch.map(async (emp: any) => {
+      // Process sequentially to avoid hitting Gemini free-tier quota (15 req/min)
+      for (const emp of batch) {
         try {
           const ctx = await aggregateEmployeeData(emp.clerkUserId || emp._id.toString());
-          if (!ctx) return null;
-          return await analyzeEmployeeRiskWithAI(ctx);
+          if (!ctx) continue;
+          const result = await analyzeEmployeeRiskWithAI(ctx);
+          if (result) {
+            const joinDate = emp.joinDate || emp.createdAt;
+            const yearsAtCompany = joinDate
+              ? +((Date.now() - new Date(joinDate).getTime()) / (1000 * 60 * 60 * 24 * 365.25)).toFixed(1)
+              : 0;
+            results.push({
+              ...result,
+              department: emp.department || 'Unassigned',
+              position: emp.position || 'Employee',
+              yearsAtCompany,
+              overtimeHours: 0,
+            } as AIRiskResult & { department: string; position: string; yearsAtCompany: number; overtimeHours: number });
+          }
         } catch (err) {
           console.error(`[RiskAPI] Failed for ${emp.firstName}:`, err);
-          return null;
         }
-      });
-
-      const rawResults = await Promise.allSettled(analysisPromises);
-      rawResults.forEach((r, idx) => {
-        if (r.status === 'fulfilled' && r.value) {
-          const emp = batch[idx];
-          const joinDate = emp.joinDate || emp.createdAt;
-          const yearsAtCompany = joinDate ? +((Date.now() - new Date(joinDate).getTime()) / (1000 * 60 * 60 * 24 * 365.25)).toFixed(1) : 0;
-          results.push({
-            ...r.value,
-            department: emp.department || 'Unassigned',
-            position: emp.position || 'Employee',
-            yearsAtCompany,
-            overtimeHours: 0, // We don't have this readily available here without recalculating, default to 0
-          } as AIRiskResult & { department: string; position: string; yearsAtCompany: number; overtimeHours: number });
-        }
-      });
+      }
 
       // Generate org-level narrative via GPT
       const orgNarrative = await generateOrgRiskNarrative(results, employees.length);
@@ -142,7 +139,7 @@ export async function GET(request: NextRequest) {
           attritionProbability: risk.riskScore,
           moodScore: risk.moodScore,
           sentiment: risk.sentiment,
-          reasoningTrace: 'Rule-based fallback analysis (OpenAI not configured).',
+          reasoningTrace: 'Rule-based fallback analysis (Gemini not configured).',
           featureAttribution: Object.entries(risk.breakdown).map(([feature, impact]) => ({
             feature,
             impact: impact as number,

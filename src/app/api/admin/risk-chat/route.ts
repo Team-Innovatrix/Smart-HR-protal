@@ -1,19 +1,19 @@
 /**
  * API: /api/admin/risk-chat
- * HR Analytics Chatbot — powered by GPT-4o with full org risk context.
+ * HR Analytics Chatbot — powered by Gemini with full org risk context.
  * Allows HR managers to ask natural-language questions about risk analysis results.
  */
 export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(request: NextRequest) {
-  if (!process.env.OPENAI_API_KEY) {
-    return NextResponse.json({ success: false, error: 'OpenAI not configured' }, { status: 503 });
+  if (!process.env.GEMINI_API_KEY) {
+    return NextResponse.json({ success: false, error: 'Gemini not configured' }, { status: 503 });
   }
 
-  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  const gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
   const body = await request.json();
   const { messages, orgContext, employeeContext } = body;
@@ -52,7 +52,7 @@ CURRENTLY SELECTED EMPLOYEE:
 ` : 'No employee selected.';
 
   const systemPrompt = `You are an expert HR Analytics AI Assistant integrated into a Smart HR Portal.
-You have been given real-time risk intelligence data powered by the IBM HR Analytics Dataset (XGBoost calibrated, AUC-ROC ≈ 0.87) and GPT-4o reasoning.
+You have been given real-time risk intelligence data powered by the IBM HR Analytics Dataset (XGBoost calibrated, AUC-ROC ≈ 0.87) and Gemini reasoning.
 
 ${orgCtxStr}
 
@@ -108,29 +108,30 @@ You are NOT a general chatbot. Focus exclusively on HR risk intelligence.`;
   }
 
   try {
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        ...messages.map((m: any) => ({ role: m.role, content: m.content })),
-      ],
-      temperature: 0.5,
-      max_tokens: 400,
-    });
-
-    const reply = completion.choices[0].message.content || 'Sorry, I could not generate a response.';
+    const model = gemini.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    
+    const contents = [
+      { role: 'user', parts: [{ text: systemPrompt }] },
+      ...messages.map((m: any) => ({
+        role: m.role === 'assistant' ? 'model' : m.role,
+        parts: [{ text: m.content }]
+      }))
+    ];
+    
+    const result = await model.generateContent({ contents });
+    const reply = result.response.text() || 'Sorry, I could not generate a response.';
     return NextResponse.json({ success: true, reply });
   } catch (err: any) {
-    console.error('[RiskChat] GPT-4o error:', err?.message);
+    console.error('[RiskChat] Gemini error:', err?.message);
 
-    // For quota errors (429) or any failure — use IBM model-based fallback
     const lastUserMessage = messages.filter((m: any) => m.role === 'user').pop()?.content || '';
     const fallbackReply = generateFallbackResponse(lastUserMessage);
-    const isQuotaError = err?.status === 429 || err?.message?.includes('429') || err?.message?.includes('quota');
+    // Only flag as quota error on actual 429 rate-limit responses
+    const isQuotaError = err?.status === 429 || err?.message?.includes('429 Too Many Requests');
 
     return NextResponse.json({
       success: true,
-      reply: fallbackReply + (isQuotaError ? '\n\n_ℹ️ GPT-4o quota reached — responding from IBM model data directly._' : ''),
+      reply: fallbackReply + (isQuotaError ? '\n\n_ℹ️ Gemini rate limit reached — responding from IBM model data directly._' : ''),
     });
   }
 }
