@@ -5,16 +5,17 @@ import { getCareersApplicationModel } from '@/models/careers/Application';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 
-// Initialize S3 client
+// Initialize S3 client — uses ap-south-1 (Mumbai) where the bucket was created
 const s3Client = new S3Client({
-  region: process.env.AWS_REGION || 'us-east-2',
+  region: process.env.AWS_S3_REGION || process.env.AWS_REGION || 'ap-south-1',
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
   },
 });
 
-const BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME!;
+const BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME || process.env.AWS_S3_BUCKET || 'innovatrix-hr-assets-2026';
+const BUCKET_REGION = process.env.AWS_S3_REGION || 'ap-south-1';;
 
 export async function POST(request: NextRequest) {
   try {
@@ -93,7 +94,7 @@ export async function POST(request: NextRequest) {
         });
 
         await s3Client.send(uploadCommand);
-        resumeUrl = `https://${BUCKET_NAME}.s3.${process.env.AWS_REGION || 'us-east-2'}.amazonaws.com/${fileName}`;
+        resumeUrl = `https://${BUCKET_NAME}.s3.${BUCKET_REGION}.amazonaws.com/${fileName}`;
       } catch (uploadError) {
         console.error('S3 upload error:', uploadError);
         return NextResponse.json(

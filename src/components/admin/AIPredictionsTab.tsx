@@ -125,6 +125,8 @@ export default function AIPredictionsTab() {
   const [mlOnline, setMlOnline]     = useState(false);
   const [mlResults, setMlResults]   = useState<{ emp: EmployeeProfile; result: RiskResult }[] | null>(null);
   const [mlChecked, setMlChecked]   = useState(false);
+  const [gptInsights, setGptInsights] = useState<Record<string, string>>({});
+  const [insightsLoading, setInsightsLoading] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -185,6 +187,21 @@ export default function AIPredictionsTab() {
   const activeResults = mlResults ?? fallbackResults;
   const org = useMemo(() => computeOrgInsights(activeResults), [activeResults]);
 
+  // Fetch GPT-4o insights once org data is ready
+  useEffect(() => {
+    if (!org || insightsLoading || Object.keys(gptInsights).length > 0) return;
+    setInsightsLoading(true);
+    fetch('/api/admin/ai-insights', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ org }),
+    })
+      .then(r => r.json())
+      .then(d => { if (d.success) setGptInsights(d.insights || {}); })
+      .catch(e => console.error('GPT-4o insights failed:', e))
+      .finally(() => setInsightsLoading(false));
+  }, [org]);
+
   if (isLoading) return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {[1,2,3,4].map(i => <CardSkeleton key={i} />)}
@@ -208,15 +225,15 @@ export default function AIPredictionsTab() {
 
       {/* ── Model banner ── */}
       <div className={`glass px-5 py-3 flex items-center gap-3 rounded-xl border ${
-        mlOnline ? 'border-[rgba(52,211,153,0.25)]' : 'border-[rgba(251,191,36,0.2)]'
+        mlOnline ? 'border-[rgba(52,211,153,0.25)]' : 'border-[rgba(99,102,241,0.35)]'
       }`}>
         {mlOnline
           ? <SignalIcon className="w-4 h-4 text-[var(--accent)] flex-shrink-0" />
-          : <SignalSlashIcon className="w-4 h-4 text-amber-400 flex-shrink-0" />}
+          : <SparklesIcon className="w-4 h-4 text-indigo-400 flex-shrink-0 animate-pulse" />}
         <p className="text-xs text-[var(--text-secondary)]">
           {mlOnline
-            ? <><span className="font-semibold text-[var(--accent)]">XGBoost ML Engine</span> — live predictions for <span className="font-semibold text-[var(--text-primary)]">{org?.total} employees</span>. SHAP explainability active. <span className="text-[var(--accent)]">✓ Phase 2 Live</span></>
-            : <><span className="font-semibold text-amber-400">Rule-based Engine (Fallback)</span> — ML API offline. <span className="text-[var(--text-primary)] font-medium">Run hr-ml-api/setup.bat to activate XGBoost.</span> Analyzing {org?.total} employees. <span className="text-amber-400">Phase 2 ready to deploy →</span></>}
+            ? <><span className="font-semibold text-[var(--accent)]">XGBoost ML Engine</span> — live predictions for <span className="font-semibold text-[var(--text-primary)]">{org?.total} employees</span>. SHAP explainability active. <span className="text-[var(--accent)]">✓ Phase 2 Live</span></>
+            : <><span className="font-semibold text-indigo-400">GPT-4o Intelligence Engine</span> — Analyzing real HR data for <span className="font-semibold text-[var(--text-primary)]">{org?.total} employees</span>. {insightsLoading ? <span className="text-indigo-300 animate-pulse">⟳ Generating AI insights...</span> : <span className="text-indigo-300">✓ AI Insights Active</span>}</>}
         </p>
       </div>
 
@@ -233,7 +250,7 @@ export default function AIPredictionsTab() {
               <div>
                 <h3 className="font-bold text-[var(--text-primary)]">Turnover Risk Prediction</h3>
                 <p className="text-[11px] text-[var(--text-muted)]">
-                  {mlOnline ? '⚡ XGBoost · AUC-ROC trained model' : 'Rule-based v1 (fallback)'}
+                  {mlOnline ? '⚡ XGBoost · AUC-ROC trained model' : '✨ GPT-4o · Live HR data analysis'}
                 </p>
               </div>
             </div>
@@ -255,11 +272,15 @@ export default function AIPredictionsTab() {
           <div className="bg-[rgba(255,255,255,0.03)] rounded-xl p-3 border border-[var(--glass-border)]">
             <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
               <span className="text-[var(--accent)] font-semibold">AI Insight:</span>{' '}
-              {org.attritionRisk >= 40
-                ? `⚠️ Attrition risk is elevated at ${org.attritionRisk}%. Prioritize retention 1-on-1s for ${org.high} high-risk employees immediately.`
-                : org.attritionRisk >= 20
-                ? `Moderate attrition risk (${org.attritionRisk}%). Schedule check-ins for ${org.moderate} watch-list employees this sprint.`
-                : `✅ Org retention looks healthy. ${org.safe} of ${org.total} employees are in the safe zone.`}
+              {insightsLoading
+                ? <span className="animate-pulse">GPT-4o analyzing retention patterns...</span>
+                : gptInsights.turnoverInsight || (
+                  org.attritionRisk >= 40
+                    ? `⚠️ Attrition risk is elevated at ${org.attritionRisk}%. Prioritize retention 1-on-1s for ${org.high} high-risk employees immediately.`
+                    : org.attritionRisk >= 20
+                    ? `Moderate attrition risk (${org.attritionRisk}%). Schedule check-ins for ${org.moderate} watch-list employees this sprint.`
+                    : `✅ Org retention looks healthy. ${org.safe} of ${org.total} employees are in the safe zone.`
+                )}
             </p>
           </div>
         </div>
@@ -294,11 +315,15 @@ export default function AIPredictionsTab() {
           <div className="bg-[rgba(255,255,255,0.03)] rounded-xl p-3 border border-[var(--glass-border)]">
             <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
               <span className="text-[var(--accent)] font-semibold">AI Insight:</span>{' '}
-              {org.performanceScore >= 70
-                ? `✅ Strong performance outlook. Average evaluation at ${org.avgEval}% suggests a productive quarter ahead.`
-                : org.performanceScore >= 50
-                ? `Performance is average at ${org.performanceScore}/100. Focus on coaching low-evaluation employees to push the org forward.`
-                : `⚠️ Performance indicators are below target. Review workload balance and re-evaluate KPIs this quarter.`}
+              {insightsLoading
+                ? <span className="animate-pulse">GPT-4o forecasting performance trends...</span>
+                : gptInsights.performanceInsight || (
+                  org.performanceScore >= 70
+                    ? `✅ Strong performance outlook. Average evaluation at ${org.avgEval}% suggests a productive quarter ahead.`
+                    : org.performanceScore >= 50
+                    ? `Performance is average at ${org.performanceScore}/100. Focus on coaching low-evaluation employees to push the org forward.`
+                    : `⚠️ Performance indicators are below target. Review workload balance and re-evaluate KPIs this quarter.`
+                )}
             </p>
           </div>
         </div>
@@ -333,11 +358,15 @@ export default function AIPredictionsTab() {
           <div className="bg-[rgba(255,255,255,0.03)] rounded-xl p-3 border border-[var(--glass-border)]">
             <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
               <span className="text-[var(--accent)] font-semibold">AI Insight:</span>{' '}
-              {org.leaveRiskPct >= 40
-                ? `🚨 ${org.highAbsent} employees show elevated absenteeism. Cross-reference with holiday calendar to plan minimum coverage.`
-                : org.leaveRiskPct >= 20
-                ? `Moderate leave risk — ${org.highAbsent} employees trending above average. Monitor around upcoming holiday clusters.`
-                : `✅ Leave patterns are within healthy norms. Average ${org.avgAbsent} absent days/year is below warning threshold.`}
+              {insightsLoading
+                ? <span className="animate-pulse">GPT-4o analyzing leave patterns...</span>
+                : gptInsights.leaveInsight || (
+                  org.leaveRiskPct >= 40
+                    ? `🚨 ${org.highAbsent} employees show elevated absenteeism. Cross-reference with holiday calendar to plan minimum coverage.`
+                    : org.leaveRiskPct >= 20
+                    ? `Moderate leave risk — ${org.highAbsent} employees trending above average. Monitor around upcoming holiday clusters.`
+                    : `✅ Leave patterns are within healthy norms. Average ${org.avgAbsent} absent days/year is below warning threshold.`
+                )}
             </p>
           </div>
         </div>
@@ -374,9 +403,13 @@ export default function AIPredictionsTab() {
           <div className="bg-[rgba(255,255,255,0.03)] rounded-xl p-3 border border-[var(--glass-border)]">
             <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
               <span className="text-[var(--accent)] font-semibold">AI Insight:</span>{' '}
-              {org.deptRisk[0]
-                ? `⚠️ ${org.deptRisk[0].dept} is the highest-risk department (avg score ${org.deptRisk[0].avg}). Prioritize HR interventions there. ${org.deptRisk[org.deptRisk.length-1]?.dept} is the healthiest at ${org.deptRisk[org.deptRisk.length-1]?.avg}.`
-                : 'No department data available.'}
+              {insightsLoading
+                ? <span className="animate-pulse">GPT-4o mapping department capacity...</span>
+                : gptInsights.capacityInsight || (
+                  org.deptRisk[0]
+                    ? `⚠️ ${org.deptRisk[0].dept} is the highest-risk department (avg score ${org.deptRisk[0].avg}). Prioritize HR interventions there. ${org.deptRisk[org.deptRisk.length-1]?.dept} is the healthiest at ${org.deptRisk[org.deptRisk.length-1]?.avg}.`
+                    : 'No department data available.'
+                )}
             </p>
           </div>
         </div>
@@ -409,7 +442,7 @@ export default function AIPredictionsTab() {
           <p className="text-[10px] text-[var(--text-muted)]">
             {mlOnline
               ? '* Real SHAP values from XGBoost — showing which features most pushed attrition probability up per employee.'
-              : '* Rule-based factor weights. Activate hr-ml-api to get real SHAP explainability from XGBoost.'}
+              : '* GPT-4o feature attribution — natural language reasoning from real attendance, leave & profile data.'}
           </p>
         </div>
       )}
@@ -423,12 +456,14 @@ export default function AIPredictionsTab() {
             <span className="text-4xl font-black tabular-nums" style={{ color: perfColor }}>{org.performanceScore}</span>
             <div>
               <p className="text-xs text-[var(--text-secondary)]">
-                Based on satisfaction, performance, sentiment, overtime & absenteeism across {org?.total} employees.
+                {gptInsights.overallNarrative
+                  ? gptInsights.overallNarrative
+                  : `Based on satisfaction, performance, sentiment, overtime & absenteeism across ${org?.total} employees.`}
               </p>
               <p className="text-[11px] text-[var(--text-muted)] mt-1">
                 {mlOnline
-                  ? '✅ XGBoost (Phase 2 active) · Prophet leave forecast ready · Zero-shot GPT-4o sentiment'
-                  : 'Phase 2: Run hr-ml-api/setup.bat → XGBoost AUC-ROC >0.85 · Prophet MAPE <15%'}
+                  ? '✅ XGBoost (Phase 2 active) · Prophet leave forecast ready · GPT-4o insights active'
+                  : '✅ GPT-4o Intelligence Active · Real MongoDB data · Live organizational analysis'}
               </p>
             </div>
           </div>

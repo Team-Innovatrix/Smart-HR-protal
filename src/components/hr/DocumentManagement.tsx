@@ -40,32 +40,44 @@ interface Document {
 }
 
 const DocumentManagement: React.FC = () => {
-  const [documents, setDocuments] = useState<Document[]>([]);
+  const [documents, setDocuments] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedType, setSelectedType] = useState('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showUploadModal, setShowUploadModal] = useState(false);
-  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
+  const [selectedDocument, setSelectedDocument] = useState<any | null>(null);
   const [showDocumentDetails, setShowDocumentDetails] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [uploadForm, setUploadForm] = useState({
-    name: '',
+    title: '',
     category: 'other',
     description: '',
-    tags: ''
+    tags: '',
+    file: null as File | null
   });
 
-  // For Day 1, fetch real data. For now, it starts blank!
+  const fetchDocuments = async () => {
+    try {
+      const res = await fetch('/api/documents');
+      const data = await res.json();
+      if (data.success) {
+        setDocuments(data.documents);
+      }
+    } catch (error) {
+      console.error('Failed to fetch documents:', error);
+    }
+  };
+
   useEffect(() => {
-    // In the future: api/documents
-    setDocuments([]);
+    fetchDocuments();
   }, []);
 
   const filteredDocuments = documents.filter(doc => {
-    const matchesSearch = doc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      doc.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      doc.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesSearch = doc.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      doc.description?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesCategory = selectedCategory === 'all' || doc.category === selectedCategory;
 
@@ -127,16 +139,65 @@ const DocumentManagement: React.FC = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
-  const handleUpload = () => {
-    // Implement file upload functionality
-    console.log('Uploading document:', uploadForm);
-    setShowUploadModal(false);
-    setUploadForm({ name: '', category: 'other', description: '', tags: '' });
+  const handleUpload = async () => {
+    const file = uploadForm.file;
+    if (!file) return alert('Please select a file first.');
+
+    setIsUploading(true);
+
+    try {
+      // 1. Get Presigned URL
+      const presignRes = await fetch('/api/upload/presigned', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fileName: file.name,
+          fileType: file.type,
+          folder: 'hr-vault'
+        })
+      });
+      const { url, key, publicUrl } = await presignRes.json();
+
+      // 2. Upload to S3
+      const uploadRes = await fetch(url, {
+        method: 'PUT',
+        headers: { 'Content-Type': file.type },
+        body: file
+      });
+
+      if (!uploadRes.ok) throw new Error('Upload to S3 failed. Please check CORS settings.');
+
+      // 3. Save to MongoDB
+      const saveRes = await fetch('/api/documents', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: uploadForm.title || file.name,
+          category: uploadForm.category,
+          fileType: file.type,
+          fileSize: file.size,
+          s3Url: publicUrl,
+          s3Key: key,
+          isPublic: false
+        })
+      });
+
+      if (saveRes.ok) {
+        setShowUploadModal(false);
+        setUploadForm({ title: '', category: 'other', description: '', tags: '', file: null });
+        fetchDocuments();
+      }
+    } catch (error) {
+      console.error('Upload Error:', error);
+      alert('Upload failed. See console.');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
-  const handleDelete = (documentId: string) => {
-    // Implement delete functionality
-    setDocuments(docs => docs.filter(doc => doc.id !== documentId));
+  const handleDelete = async (documentId: string) => {
+    // Basic UI optimstic delete for now
+    setDocuments(docs => docs.filter(doc => doc._id !== documentId));
   };
 
   // Loading state removed to prevent mobile loading issues
@@ -264,19 +325,19 @@ const DocumentManagement: React.FC = () => {
                     </button>
                   </div>
                 </div>
-                <h3 className="font-bold text-gray-900 text-sm mb-3 truncate">{doc.name}</h3>
+                <h3 className="font-bold text-gray-900 text-sm mb-3 truncate">{doc.title}</h3>
                 <div className="space-y-2 text-xs text-gray-600">
                   <div className="flex items-center gap-2">
                     <span className="px-3 py-1 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 rounded-full font-medium">
-                      {getFileTypeLabel(doc.type)}
+                      {getFileTypeLabel(doc.fileType?.includes('pdf') ? 'pdf' : 'other')}
                     </span>
                     <span className="px-3 py-1 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 rounded-full font-medium">
                       {getCategoryLabel(doc.category)}
                     </span>
                   </div>
-                  <div className="text-gray-500">{formatFileSize(doc.size)}</div>
+                  <div className="text-gray-500">{formatFileSize(doc.fileSize)}</div>
                   <div className="text-gray-500">Uploaded by {doc.uploadedBy}</div>
-                  <div className="text-gray-500">{format(new Date(doc.uploadedAt), 'MMM dd, yyyy')}</div>
+                  <div className="text-gray-500">{format(new Date(doc.createdAt), 'MMM dd, yyyy')}</div>
                 </div>
               </div>
             ))}
@@ -322,8 +383,8 @@ const DocumentManagement: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Document Name</label>
                   <input
                     type="text"
-                    value={uploadForm.name}
-                    onChange={(e) => setUploadForm({ ...uploadForm, name: e.target.value })}
+                    value={uploadForm.title}
+                    onChange={(e) => setUploadForm({ ...uploadForm, title: e.target.value })}
                     className={formInputs.input}
                     placeholder="Enter document name"
                   />
@@ -363,20 +424,35 @@ const DocumentManagement: React.FC = () => {
                     placeholder="Enter tags separated by commas"
                   />
                 </div>
-                <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center glass hover:bg-white/10 transition-all duration-200">
+                <div 
+                  className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center glass hover:bg-white/10 transition-all duration-200 cursor-pointer"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    className="hidden" 
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) setUploadForm({ ...uploadForm, file, title: uploadForm.title || file.name });
+                    }}
+                  />
                   <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
                     <PlusIcon className="w-6 h-6 text-white" />
                   </div>
-                  <p className="text-sm text-gray-600 font-medium">Click to upload or drag and drop</p>
-                  <p className="text-xs text-gray-500 mt-1">PDF, DOC, XLS, Images up to 10MB</p>
+                  <p className="text-sm text-gray-600 font-medium">
+                    {uploadForm.file ? uploadForm.file.name : 'Click to select a file to upload'}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">PDF, DOC, Images securely stored in AWS S3</p>
                 </div>
               </div>
               <div className="flex gap-4 mt-8">
                 <button
                   onClick={handleUpload}
-                  className={`flex-1 ${buttons.primary}`}
+                  disabled={isUploading}
+                  className={`flex-1 ${buttons.primary} ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
-                  Upload
+                  {isUploading ? 'Uploading to S3...' : 'Upload Securely'}
                 </button>
                 <button
                   onClick={() => setShowUploadModal(false)}
@@ -400,7 +476,7 @@ const DocumentManagement: React.FC = () => {
                   <div className="h-10 w-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
                     <DocumentTextIcon className="w-5 h-5 text-white" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">{selectedDocument.name}</h2>
+                  <h2 className="text-2xl font-bold text-gray-900">{selectedDocument.title}</h2>
                 </div>
                 <button
                   onClick={() => setShowDocumentDetails(false)}
@@ -424,7 +500,7 @@ const DocumentManagement: React.FC = () => {
                   <div className="space-y-4 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-500 font-medium">Type:</span>
-                      <span className="text-gray-900 font-semibold">{getFileTypeLabel(selectedDocument.type)}</span>
+                      <span className="text-gray-900 font-semibold">{getFileTypeLabel(selectedDocument.fileType?.includes('pdf') ? 'pdf' : 'other')}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500 font-medium">Category:</span>
@@ -432,7 +508,7 @@ const DocumentManagement: React.FC = () => {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500 font-medium">Size:</span>
-                      <span className="text-gray-900 font-semibold">{formatFileSize(selectedDocument.size)}</span>
+                      <span className="text-gray-900 font-semibold">{formatFileSize(selectedDocument.fileSize)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500 font-medium">Status:</span>
@@ -456,7 +532,7 @@ const DocumentManagement: React.FC = () => {
                     <div className="flex justify-between">
                       <span className="text-gray-500 font-medium">Upload Date:</span>
                       <span className="text-gray-900 font-semibold">
-                        {format(new Date(selectedDocument.uploadedAt), 'MMMM dd, yyyy HH:mm')}
+                        {format(new Date(selectedDocument.createdAt), 'MMMM dd, yyyy HH:mm')}
                       </span>
                     </div>
                   </div>
@@ -497,9 +573,9 @@ const DocumentManagement: React.FC = () => {
               </div>
 
               <div className="flex gap-4 pt-8 border-t border-gray-200/50">
-                <button className={`flex-1 ${buttons.primary}`}>
-                  Download
-                </button>
+                <a href={selectedDocument.s3Url} target="_blank" rel="noopener noreferrer" className={`flex-1 ${buttons.primary} text-center flex items-center justify-center`}>
+                  Open Document
+                </a>
                 <button className={`flex-1 ${buttons.secondary}`}>
                   Edit
                 </button>

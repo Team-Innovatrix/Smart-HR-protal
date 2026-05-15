@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if AWS S3 is configured (only if not strictly in local mode)
-    const isLocalMode = process.env.USE_LOCAL_MEM_DB === 'true' || env.AWS_ACCESS_KEY_ID === 'AKIARCBQR3FZLSKFJLGK'
+    const isLocalMode = process.env.USE_LOCAL_MEM_DB === 'true' && (!env.AWS_ACCESS_KEY_ID || !env.AWS_S3_BUCKET)
     if (!isLocalMode && (!env.AWS_ACCESS_KEY_ID || !env.AWS_SECRET_ACCESS_KEY || !env.AWS_REGION || !env.AWS_S3_BUCKET)) {
       return NextResponse.json(
         {

@@ -13,6 +13,7 @@ import SettingsService from '@/lib/settingsService';
 import { createLastDaysStringQuery } from '../../../lib/dateQueryUtils';
 import { CachedAttendanceService } from '../../../lib/cachedServices';
 import { EnhancedCache } from '../../../lib/enhancedCache';
+import { backupToS3 } from '../../../lib/s3';
 
 // Clock in/out
 export const POST = withJsonErrorHandling(async (request: NextRequest) => {
@@ -273,6 +274,12 @@ export const POST = withJsonErrorHandling(async (request: NextRequest) => {
         console.error('Google Sheets setup error:', e);
       }
       
+      // 🔄 Backup to AWS S3 (Dual-write for Attendance System)
+      backupToS3(
+        formattedAttendance, 
+        `attendance/clock-in/${userId}/${currentLocalDate}.json`
+      ).catch(err => console.error('AWS S3 backup error:', err));
+      
       const response = NextResponse.json({
         success: true,
         message: 'Successfully clocked in',
@@ -451,6 +458,12 @@ export const POST = withJsonErrorHandling(async (request: NextRequest) => {
       } catch (e) {
         console.error('Google Sheets setup error:', e);
       }
+      
+      // 🔄 Backup to AWS S3 (Dual-write for Attendance System)
+      backupToS3(
+        formattedAttendance, 
+        `attendance/clock-out/${userId}/${currentLocalDate}.json`
+      ).catch(err => console.error('AWS S3 backup error:', err));
       
       const response = NextResponse.json({
         success: true,

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Environment Configuration
  * Centralized configuration for different environments
  */
@@ -120,8 +120,8 @@ export const env = {
   CLERK_PUBLISHABLE_KEY: process.env.CLERK_PUBLISHABLE_KEY,
   AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
   AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
-  AWS_REGION: process.env.AWS_S3_REGION || process.env.AWS_REGION,
-  AWS_S3_BUCKET: process.env.AWS_S3_BUCKET || process.env.AWS_S3_BUCKET_NAME,
+  AWS_REGION: process.env.AWS_S3_REGION || process.env.AWS_REGION || 'ap-south-1',
+  AWS_S3_BUCKET: process.env.AWS_S3_BUCKET_NAME || process.env.AWS_S3_BUCKET || 'innovatrix-hr-assets-2026',
 } as const;
 
 // Validate required environment variables

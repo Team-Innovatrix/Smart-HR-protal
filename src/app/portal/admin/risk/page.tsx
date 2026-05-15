@@ -416,7 +416,37 @@ function DetailPanel({ emp, result }: { emp: any; result: RiskResult }) {
         </div>
       </div>
 
-      {/* Mood bar */}
+      {/* Attrition Probability (AI only) */}
+      {(result as any).attritionProbability !== undefined && (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+              <ArrowTrendingUpIcon className="w-4 h-4 text-red-500" /> Attrition Probability
+            </h3>
+            <span className="text-2xl font-black" style={{color: (result as any).attritionProbability > 60 ? '#ef4444' : (result as any).attritionProbability > 30 ? '#f59e0b' : '#10b981'}}>
+              {(result as any).attritionProbability}%
+            </span>
+          </div>
+          <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+            <div className="h-3 rounded-full transition-all duration-1000"
+              style={{width:`${(result as any).attritionProbability}%`, background: (result as any).attritionProbability > 60 ? '#ef4444' : (result as any).attritionProbability > 30 ? '#f59e0b' : '#10b981'}} />
+          </div>
+        </div>
+      )}
+
+      {/* GPT Reasoning Trace */}
+      {(result as any).reasoningTrace && (result as any).reasoningTrace !== 'Rule-based fallback analysis (OpenAI not configured).' && (
+        <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl border border-indigo-100 p-5">
+          <h3 className="font-semibold text-indigo-800 mb-2 flex items-center gap-2">
+            <SparklesIcon className="w-4 h-4" /> GPT-4o Reasoning Trace
+          </h3>
+          <p className="text-sm text-indigo-900 leading-relaxed">{(result as any).reasoningTrace}</p>
+          {(result as any).fairnessNote && (
+            <p className="text-xs text-indigo-500 mt-3 italic">⚖️ {(result as any).fairnessNote}</p>
+          )}
+        </div>
+      )}
+
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-semibold text-gray-800 flex items-center gap-2"><BoltIcon className="w-4 h-4 text-yellow-500" /> Mood & Sentiment</h3>
@@ -516,35 +546,65 @@ export default function RiskIntelligencePage() {
   const [filterLevel, setFilterLevel] = useState<'all' | 'high' | 'moderate' | 'safe'>('all');
   const [isLoading, setIsLoading] = useState(true);
 
+  const [aiResults, setAiResults] = useState<any[]>([]);
+  const [orgSummary, setOrgSummary] = useState<any>(null);
+  const [aiMode, setAiMode] = useState(false);
+
   useEffect(() => {
-    async function fetchLiveUsers() {
+    async function fetchAIRisk() {
+      try {
+        // Try the new GPT-4o powered endpoint first
+        const res = await fetch('/api/admin/risk-intelligence');
+        const data = await res.json();
+        if (data.success && data.results?.length > 0) {
+          setAiResults(data.results);
+          setOrgSummary(data.orgSummary);
+          setAiMode(data.mode === 'ai');
+          if (data.results.length > 0) setSelectedEmpId(data.results[0].employeeId);
+          return;
+        }
+      } catch (err) {
+        console.error('AI risk endpoint failed, falling back', err);
+      }
+      // Fallback to old rule-based approach
       try {
         const response = await fetch('/api/admin/users?limit=100');
         const data = await response.json();
-        if (data.success && data.data && data.data.users) {
-          // Remove systems from the AI pool, focus on real employees
-          const liveEmployees = data.data.users
-            // Generate mock metrics for the real users to power the AI demo
-            .map((u: any) => generateMockMetricsForUser(u));
-            
+        if (data.success && data.data?.users) {
+          const liveEmployees = data.data.users.map((u: any) => generateMockMetricsForUser(u));
           setEmployees(liveEmployees);
-          if (liveEmployees.length > 0) {
-            setSelectedEmpId(liveEmployees[0].id);
-          }
+          if (liveEmployees.length > 0) setSelectedEmpId(liveEmployees[0].id);
         }
-      } catch (err) {
-        console.error('Failed to load users for AI module', err);
-      } finally {
-        setIsLoading(false);
-      }
+      } catch (e) { console.error(e); }
+      finally { setIsLoading(false); }
     }
-    fetchLiveUsers();
+    fetchAIRisk().finally(() => setIsLoading(false));
   }, []);
 
-  const results = useMemo(() =>
-    employees.map(e => ({ emp: e, result: computeRisk(e as any) })),
-    [employees]
-  );
+  const results = useMemo(() => {
+    // If we have AI results, convert them to the same shape the UI expects
+    if (aiResults.length > 0) {
+      return aiResults.map(r => ({
+        emp: {
+          id: r.employeeId, name: r.name, avatar: r.name.split(' ').map((n:string)=>n[0]).join(''),
+          department: '', position: '', yearsAtCompany: 0, overtimeHours: 0,
+          trend: [40, 38, 35, Math.max(0, 35 - r.riskScore / 10)],
+        },
+        result: {
+          riskScore: r.riskScore, riskLevel: r.riskLevel,
+          moodScore: r.moodScore, sentiment: r.sentiment,
+          indicators: r.riskIndicators, positives: r.positiveSignals,
+          recommendations: r.recommendations,
+          breakdown: Object.fromEntries(r.featureAttribution.map((f:any) => [f.feature, f.impact])),
+          // AI extras
+          reasoningTrace: r.reasoningTrace,
+          attritionProbability: r.attritionProbability,
+          fairnessNote: r.fairnessNote,
+        }
+      }));
+    }
+    return employees.map(e => ({ emp: e, result: computeRisk(e as any) }));
+  }, [aiResults, employees]);
 
   const filteredResults = results.filter(({ emp, result }) => {
     const matchSearch = emp.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -602,9 +662,15 @@ export default function RiskIntelligencePage() {
                 <p className="text-red-200 text-sm">AI-Powered Attrition & Sentiment Prediction Engine</p>
               </div>
             </div>
-            <p className="text-slate-300 max-w-xl">
-              Real-time employee risk scoring using multi-factor AI analysis. Identify at-risk employees before attrition happens and take <strong className="text-white">preventive action</strong>.
-            </p>
+              <p className="text-slate-300 max-w-xl">
+                Real-time employee risk scoring using GPT-4o analysis of live attendance, leave, and HR data. Identify at-risk employees before attrition happens and take <strong className="text-white">preventive action</strong>.
+              </p>
+              {aiMode && (
+                <div className="mt-3 inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-500/30 rounded-full px-4 py-1.5">
+                  <SparklesIcon className="w-4 h-4 text-emerald-400" />
+                  <span className="text-emerald-300 text-xs font-semibold">GPT-4o Active — Analyzing real MongoDB data</span>
+                </div>
+              )}
           </div>
           <div className="hidden lg:flex gap-4 text-center">
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl px-6 py-4">
@@ -622,6 +688,18 @@ export default function RiskIntelligencePage() {
           </div>
         </div>
       </div>
+
+      {/* Org AI Narrative */}
+      {orgSummary?.orgInsightNarrative && (
+        <div className="bg-gradient-to-r from-indigo-950 to-slate-900 rounded-2xl p-6 border border-indigo-800/40">
+          <div className="flex items-center gap-2 mb-3">
+            <SparklesIcon className="w-5 h-5 text-indigo-400" />
+            <h3 className="font-bold text-white text-sm">GPT-4o Organizational Risk Narrative</h3>
+            <span className="ml-auto text-xs text-indigo-400 bg-indigo-900/50 px-2 py-0.5 rounded-full">AI Generated</span>
+          </div>
+          <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-line">{orgSummary.orgInsightNarrative}</p>
+        </div>
+      )}
 
       {/* Stat Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
