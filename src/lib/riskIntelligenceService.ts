@@ -237,22 +237,33 @@ Your task:
 3. Provide SHAP-style feature attribution mirroring IBM's top factors
 4. Generate actionable, fair HR recommendations
 
-Return ONLY valid JSON:
+Return ONLY valid JSON matching this schema exactly (no comments, just valid JSON):
+- riskScore: Integer 0-100 (Anchor close to IBM ibmRiskScore=${ctx.ibmRiskScore})
+- riskLevel: "safe", "moderate", or "high"
+- attritionProbability: Integer 0-100 (Anchor close to IBM=${ctx.ibmAttritionProbability})
+- moodScore: Integer 0-100
+- sentiment: "positive", "neutral", or "negative"
+- reasoningTrace: String (Detailed step-by-step reasoning referencing IBM benchmarks, min 120 words)
+- featureAttribution: Array of objects { "feature": string, "impact": number 0-100, "direction": "positive"|"negative" }
+- recommendations: Array of strings
+- riskIndicators: Array of strings
+- positiveSignals: Array of strings
+- feedbackSentiment: "positive", "neutral", "negative", or null
+- fairnessNote: String
+
 {
-  "riskScore": <0-100, anchor to IBM ibmRiskScore=${ctx.ibmRiskScore}>,
-  "riskLevel": "<safe|moderate|high>",
-  "attritionProbability": <0-100, anchor to IBM=${ctx.ibmAttritionProbability}>,
-  "moodScore": <0-100>,
-  "sentiment": "<positive|neutral|negative>",
-  "reasoningTrace": "<detailed step-by-step reasoning referencing IBM benchmarks, min 120 words>",
-  "featureAttribution": [
-    { "feature": "<IBM feature name>", "impact": <0-100>, "direction": "<positive|negative>" }
-  ],
-  "recommendations": ["<rec 1>", "<rec 2>", "<rec 3>"],
-  "riskIndicators": ["<indicator 1>", "<indicator 2>"],
-  "positiveSignals": ["<signal 1>", "<signal 2>"],
-  "feedbackSentiment": "<positive|neutral|negative|null>",
-  "fairnessNote": "<brief statement that analysis uses IBM dataset behavioral features only>"
+  "riskScore": ${ctx.ibmRiskScore},
+  "riskLevel": "${ctx.ibmRiskLevel}",
+  "attritionProbability": ${ctx.ibmAttritionProbability},
+  "moodScore": 50,
+  "sentiment": "neutral",
+  "reasoningTrace": "...",
+  "featureAttribution": [],
+  "recommendations": [],
+  "riskIndicators": [],
+  "positiveSignals": [],
+  "feedbackSentiment": null,
+  "fairnessNote": "..."
 }
 
 Risk scoring anchors (IBM XGBoost calibrated):
