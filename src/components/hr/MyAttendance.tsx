@@ -544,7 +544,7 @@ export default function MyAttendance({
                               {session.clockIn}
                             </span>
                           </div>
-                          <span className="text-gray-400">→</span>
+                          <span className="text-gray-400"></span>
                           <div className="flex items-center space-x-2">
                             <Clock3Icon className="h-4 w-4 text-green-500" />
                             <span className="text-sm font-medium text-gray-700">

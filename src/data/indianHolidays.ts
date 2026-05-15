@@ -1,5 +1,5 @@
 /**
- * Comprehensive Indian Holiday Calendar (2024–2027)
+ * Comprehensive Indian Holiday Calendar (20242027)
  * Includes National, State, Festival, and Company holidays
  * Used by the AI Leave Prediction Engine for risk analysis
  */
@@ -165,7 +165,7 @@ export function isHoliday(dateStr: string): IndianHoliday | undefined {
 }
 
 /**
- * Get festival season windows (±5 days around major festivals)
+ * Get festival season windows (5 days around major festivals)
  */
 export function getFestivalSeasons(year: number): Array<{ name: string; start: string; end: string; peakDate: string }> {
   const holidays = getHolidaysForYear(year).filter(h => h.isMajorFestival)

@@ -326,7 +326,7 @@ const UserProfileManagement = ({ userId }: UserProfileManagementProps) => {
                 <h2 className="text-xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">
                   {profile.firstName} {profile.lastName}
                 </h2>
-                <p className="text-sm sm:text-lg text-gray-600 mb-1">{profile.position} • {profile.department}</p>
+                <p className="text-sm sm:text-lg text-gray-600 mb-1">{profile.position}  {profile.department}</p>
                 <p className="text-xs sm:text-sm text-gray-500 mb-2 sm:mb-3">Employee ID: {profile.employeeId}</p>
                 <div className="space-y-1">
                   <p className="text-xs sm:text-sm text-gray-500">

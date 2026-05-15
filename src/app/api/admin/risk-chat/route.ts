@@ -1,6 +1,6 @@
 /**
  * API: /api/admin/risk-chat
- * HR Analytics Chatbot — powered by Gemini with full org risk context.
+ * HR Analytics Chatbot  powered by Gemini with full org risk context.
  * Allows HR managers to ask natural-language questions about risk analysis results.
  */
 export const dynamic = 'force-dynamic';
@@ -53,7 +53,7 @@ CURRENTLY SELECTED EMPLOYEE:
 ` : 'No employee selected.';
 
   const systemPrompt = `You are an expert HR Analytics AI Assistant integrated into a Smart HR Portal.
-You have been given real-time risk intelligence data powered by the IBM HR Analytics Dataset (XGBoost calibrated, AUC-ROC ≈ 0.87) and Gemini reasoning.
+You have been given real-time risk intelligence data powered by the IBM HR Analytics Dataset (XGBoost calibrated, AUC-ROC  0.87) and Gemini reasoning.
 
 ${orgCtxStr}
 
@@ -65,13 +65,13 @@ GUIDELINES:
 - If asked about an employee not in the context, say you only have data for the currently selected employee
 - Provide actionable, professional HR advice
 - Keep answers concise (2-4 sentences) unless a detailed breakdown is requested
-- Always ground your answers in the data provided — don't make up scores
+- Always ground your answers in the data provided  don't make up scores
 - Use IBM HR Dataset terminology where relevant (SHAP attribution, attrition probability, etc.)
-- Maintain confidentiality tone — remind users these are predictive insights, not certainties
+- Maintain confidentiality tone  remind users these are predictive insights, not certainties
 
 You are NOT a general chatbot. Focus exclusively on HR risk intelligence.`;
 
-  // ─── IBM-Context Fallback (no OpenAI needed) ─────────────────────────────
+  //  IBM-Context Fallback (no OpenAI needed) 
   function generateFallbackResponse(userMessage: string): string {
     const q = userMessage.toLowerCase();
     const emp = employeeContext;
@@ -98,18 +98,18 @@ You are NOT a general chatbot. Focus exclusively on HR risk intelligence.`;
     if (q.includes('attrition') || q.includes('driver') || q.includes('factor')) {
       if (org?.topRiskFactors?.length) {
         const factors = org.topRiskFactors.slice(0,3).map((f: any) => f.factor).join(', ');
-        return `The top IBM SHAP-derived attrition drivers in your organization are: **${factors}**. These match the IBM dataset's primary predictors — overtime burden (18%), salary level (12%), and tenure (9%).`;
+        return `The top IBM SHAP-derived attrition drivers in your organization are: **${factors}**. These match the IBM dataset's primary predictors  overtime burden (18%), salary level (12%), and tenure (9%).`;
       }
     }
     // Generic fallback
     if (org) {
-      return `Your organization has **${org.totalEmployees || 0}** employees analyzed — ${org.highRiskCount || 0} high risk, ${org.moderateRiskCount || 0} moderate, ${org.safeCount || 0} safe. Average attrition probability: **${org.avgAttritionRisk || 0}%** (IBM baseline: 16.1%). ${emp ? `Currently viewing: ${emp.name} (${emp.riskLevel} risk, ${emp.attritionProbability}% attrition probability).` : ''}`;
+      return `Your organization has **${org.totalEmployees || 0}** employees analyzed  ${org.highRiskCount || 0} high risk, ${org.moderateRiskCount || 0} moderate, ${org.safeCount || 0} safe. Average attrition probability: **${org.avgAttritionRisk || 0}%** (IBM baseline: 16.1%). ${emp ? `Currently viewing: ${emp.name} (${emp.riskLevel} risk, ${emp.attritionProbability}% attrition probability).` : ''}`;
     }
     return `I'm the HR Risk AI Assistant. I can answer questions about employee risk scores, IBM Dataset benchmarks, attrition drivers, and department analysis. Ask me something specific!`;
   }
 
   try {
-    const model = gemini.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const model = gemini.getGenerativeModel({ model: 'gemini-3.1-flash-lite' });
     
     const contents = [
       { role: 'user', parts: [{ text: systemPrompt }] },
@@ -132,7 +132,7 @@ You are NOT a general chatbot. Focus exclusively on HR risk intelligence.`;
 
     return NextResponse.json({
       success: true,
-      reply: fallbackReply + (isQuotaError ? '\n\n_ℹ️ Gemini rate limit reached — responding from IBM model data directly._' : ''),
+      reply: fallbackReply + (isQuotaError ? '\n\n_ Gemini rate limit reached  responding from IBM model data directly._' : ''),
     });
   }
 }

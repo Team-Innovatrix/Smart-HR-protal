@@ -61,16 +61,16 @@ export default function LeavesPage() {
     
     // Handle tab parameter for switching between 'my' and 'team' view
     if (tab === 'team') {
-      console.log('🔄 Auto-switching to team view from query params')
+      console.log(' Auto-switching to team view from query params')
       setActiveView('team')
     } else if (tab === 'my') {
-      console.log('🔄 Auto-switching to my view from query params')
+      console.log(' Auto-switching to my view from query params')
       setActiveView('my')
     }
     
     // Handle view mode and month for calendar display
     if (view === 'month') {
-      console.log('🔄 Auto-selecting month view from query params', { month })
+      console.log(' Auto-selecting month view from query params', { month })
       setViewMode('month')
       if (month) {
         setSelectedMonth(month)

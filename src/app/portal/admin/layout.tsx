@@ -30,12 +30,12 @@ export default function AdminLayout({
   const toggleSidebar = () => setIsSidebarCollapsed(p => !p);
   const handleSidebarHover = (isHovered: boolean) => setIsSidebarHovered(isHovered);
 
-  // ── Login page: render bare — no guard, no sidebar ──────────────
+  //  Login page: render bare  no guard, no sidebar 
   if (pathname === '/portal/admin/login') {
     return <>{children}</>;
   }
 
-  // ── All other admin pages: require auth + full shell ─────────────
+  //  All other admin pages: require auth + full shell 
   return (
     <AdminAuthGuard>
       <div className="min-h-screen relative" style={{ background: 'var(--bg-base)' }}>

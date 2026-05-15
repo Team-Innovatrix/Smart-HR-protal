@@ -1,31 +1,31 @@
 /**
  * AIPredictionsTab.tsx
- * ─────────────────────────────────────────────────────────────────────────────
- * Component : AIPredictionsTab  (Admin → Predictive AI Studio → AI Predictions tab)
+ * 
+ * Component : AIPredictionsTab  (Admin  Predictive AI Studio  AI Predictions tab)
  * Purpose   : Fetches real employee data, runs risk predictions, and displays
  *             four org-level prediction cards with live data.
  *
- * Data flow (Phase 2 — XGBoost active):
- *   1. Fetch all employees   → GET /api/admin/users
- *   2. Check ML health       → GET /api/ml/health
- *   3a. If XGBoost online    → POST /api/ml/attrition (batch)  → real SHAP values
- *   3b. If XGBoost offline   → fallback to computeRisk() from hrAIEngine.ts
- *   4. Aggregate results     → computeOrgInsights()
- *   5. Render 4 cards        → Turnover Risk · Performance · Leave Pattern · Capacity
+ * Data flow (Phase 2  XGBoost active):
+ *   1. Fetch all employees    GET /api/admin/users
+ *   2. Check ML health        GET /api/ml/health
+ *   3a. If XGBoost online     POST /api/ml/attrition (batch)   real SHAP values
+ *   3b. If XGBoost offline    fallback to computeRisk() from hrAIEngine.ts
+ *   4. Aggregate results      computeOrgInsights()
+ *   5. Render 4 cards         Turnover Risk  Performance  Leave Pattern  Capacity
  *
  * Prediction Cards:
- *   🔴 Turnover Risk       — attrition probability ring + high/moderate/safe count
- *   📈 Performance Forecast — org health ring + evaluation/satisfaction/mood bars
- *   📅 Leave Pattern       — absenteeism risk ring + overtime tracking
- *   👥 Workforce Capacity  — safe-employee ring + per-department risk bars
+ *    Turnover Risk        attrition probability ring + high/moderate/safe count
+ *    Performance Forecast  org health ring + evaluation/satisfaction/mood bars
+ *    Leave Pattern        absenteeism risk ring + overtime tracking
+ *    Workforce Capacity   safe-employee ring + per-department risk bars
  *
  * Banner states:
- *   🟢 Green  → "XGBoost ML Engine — Phase 2 Live"    (FastAPI running on :8000)
- *   🟡 Amber  → "Rule-based Engine (Fallback)"         (FastAPI offline)
+ *    Green   "XGBoost ML Engine  Phase 2 Live"    (FastAPI running on :8000)
+ *    Amber   "Rule-based Engine (Fallback)"         (FastAPI offline)
  *
  * Used by:
  *   src/app/portal/admin/predictive/page.tsx
- * ─────────────────────────────────────────────────────────────────────────────
+ * 
  */
 'use client';
 
@@ -62,7 +62,7 @@ function mlResponseToResults(
   }));
 }
 
-/* ── tiny helpers ── */
+/*  tiny helpers  */
 function Ring({ pct, color, size = 80 }: { pct: number; color: string; size?: number }) {
   const r = size * 0.38, c = 2 * Math.PI * r;
   return (
@@ -105,7 +105,7 @@ function StatPill({ label, value, trend }: { label: string; value: string | numb
   );
 }
 
-/* ── Prediction Card skeleton loader ── */
+/*  Prediction Card skeleton loader  */
 function CardSkeleton() {
   return (
     <div className="glass p-6 rounded-2xl animate-pulse space-y-4">
@@ -117,7 +117,7 @@ function CardSkeleton() {
   );
 }
 
-/* ── Main Component ── */
+/*  Main Component  */
 export default function AIPredictionsTab() {
   const [rawUsers, setRawUsers]     = useState<any[]>([]);
   const [isLoading, setIsLoading]   = useState(true);
@@ -172,7 +172,7 @@ export default function AIPredictionsTab() {
             setMlResults(mlResponseToResults(mlRes.predictions, profiles));
           }
         }
-      } catch { /* ML offline — use fallback */ }
+      } catch { /* ML offline  use fallback */ }
       setMlChecked(true);
       setIsLoading(false);
     }
@@ -215,7 +215,7 @@ export default function AIPredictionsTab() {
     </div>
   );
 
-  /* ── colour helpers ── */
+  /*  colour helpers  */
   const riskColor = (s: number) => s >= 70 ? '#ef4444' : s >= 30 ? '#f59e0b' : '#10b981';
   const attrColor = org.attritionRisk >= 40 ? '#ef4444' : org.attritionRisk >= 20 ? '#f59e0b' : '#10b981';
   const perfColor = org.performanceScore >= 70 ? '#10b981' : org.performanceScore >= 50 ? '#f59e0b' : '#ef4444';
@@ -223,7 +223,7 @@ export default function AIPredictionsTab() {
   return (
     <div className="space-y-6 animate-fade-in">
 
-      {/* ── Model banner ── */}
+      {/*  Model banner  */}
       <div className={`glass px-5 py-3 flex items-center gap-3 rounded-xl border ${
         mlOnline ? 'border-[rgba(52,211,153,0.25)]' : 'border-[rgba(99,102,241,0.35)]'
       }`}>
@@ -232,15 +232,15 @@ export default function AIPredictionsTab() {
           : <SparklesIcon className="w-4 h-4 text-indigo-400 flex-shrink-0 animate-pulse" />}
         <p className="text-xs text-[var(--text-secondary)]">
           {mlOnline
-            ? <><span className="font-semibold text-[var(--accent)]">XGBoost ML Engine</span> — live predictions for <span className="font-semibold text-[var(--text-primary)]">{org?.total} employees</span>. SHAP explainability active. <span className="text-[var(--accent)]">✓ Phase 2 Live</span></>
-            : <><span className="font-semibold text-indigo-400">Gemini Intelligence Engine</span> — Analyzing real HR data for <span className="font-semibold text-[var(--text-primary)]">{org?.total} employees</span>. {insightsLoading ? <span className="text-indigo-300 animate-pulse">⟳ Generating AI insights...</span> : <span className="text-indigo-300">✓ AI Insights Active</span>}</>}
+            ? <><span className="font-semibold text-[var(--accent)]">XGBoost ML Engine</span>  live predictions for <span className="font-semibold text-[var(--text-primary)]">{org?.total} employees</span>. SHAP explainability active. <span className="text-[var(--accent)]"> Phase 2 Live</span></>
+            : <><span className="font-semibold text-indigo-400">Gemini Intelligence Engine</span>  Analyzing real HR data for <span className="font-semibold text-[var(--text-primary)]">{org?.total} employees</span>. {insightsLoading ? <span className="text-indigo-300 animate-pulse"> Generating AI insights...</span> : <span className="text-indigo-300"> AI Insights Active</span>}</>}
         </p>
       </div>
 
-      {/* ── 4 Prediction Cards grid ── */}
+      {/*  4 Prediction Cards grid  */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-        {/* Card 1 — Turnover Risk */}
+        {/* Card 1  Turnover Risk */}
         <div className="glass p-6 rounded-2xl space-y-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -250,7 +250,7 @@ export default function AIPredictionsTab() {
               <div>
                 <h3 className="font-bold text-[var(--text-primary)]">Turnover Risk Prediction</h3>
                 <p className="text-[11px] text-[var(--text-muted)]">
-                  {mlOnline ? '⚡ XGBoost · AUC-ROC trained model' : '✨ Gemini · Live HR data analysis'}
+                  {mlOnline ? ' XGBoost  AUC-ROC trained model' : ' Gemini  Live HR data analysis'}
                 </p>
               </div>
             </div>
@@ -276,16 +276,16 @@ export default function AIPredictionsTab() {
                 ? <span className="animate-pulse">Gemini analyzing retention patterns...</span>
                 : gptInsights.turnoverInsight || (
                   org.attritionRisk >= 40
-                    ? `⚠️ Attrition risk is elevated at ${org.attritionRisk}%. Prioritize retention 1-on-1s for ${org.high} high-risk employees immediately.`
+                    ? ` Attrition risk is elevated at ${org.attritionRisk}%. Prioritize retention 1-on-1s for ${org.high} high-risk employees immediately.`
                     : org.attritionRisk >= 20
                     ? `Moderate attrition risk (${org.attritionRisk}%). Schedule check-ins for ${org.moderate} watch-list employees this sprint.`
-                    : `✅ Org retention looks healthy. ${org.safe} of ${org.total} employees are in the safe zone.`
+                    : ` Org retention looks healthy. ${org.safe} of ${org.total} employees are in the safe zone.`
                 )}
             </p>
           </div>
         </div>
 
-        {/* Card 2 — Performance Forecast */}
+        {/* Card 2  Performance Forecast */}
         <div className="glass p-6 rounded-2xl space-y-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -319,16 +319,16 @@ export default function AIPredictionsTab() {
                 ? <span className="animate-pulse">Gemini forecasting performance trends...</span>
                 : gptInsights.performanceInsight || (
                   org.performanceScore >= 70
-                    ? `✅ Strong performance outlook. Average evaluation at ${org.avgEval}% suggests a productive quarter ahead.`
+                    ? ` Strong performance outlook. Average evaluation at ${org.avgEval}% suggests a productive quarter ahead.`
                     : org.performanceScore >= 50
                     ? `Performance is average at ${org.performanceScore}/100. Focus on coaching low-evaluation employees to push the org forward.`
-                    : `⚠️ Performance indicators are below target. Review workload balance and re-evaluate KPIs this quarter.`
+                    : ` Performance indicators are below target. Review workload balance and re-evaluate KPIs this quarter.`
                 )}
             </p>
           </div>
         </div>
 
-        {/* Card 3 — Leave Pattern Analysis */}
+        {/* Card 3  Leave Pattern Analysis */}
         <div className="glass p-6 rounded-2xl space-y-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -362,16 +362,16 @@ export default function AIPredictionsTab() {
                 ? <span className="animate-pulse">Gemini analyzing leave patterns...</span>
                 : gptInsights.leaveInsight || (
                   org.leaveRiskPct >= 40
-                    ? `🚨 ${org.highAbsent} employees show elevated absenteeism. Cross-reference with holiday calendar to plan minimum coverage.`
+                    ? ` ${org.highAbsent} employees show elevated absenteeism. Cross-reference with holiday calendar to plan minimum coverage.`
                     : org.leaveRiskPct >= 20
-                    ? `Moderate leave risk — ${org.highAbsent} employees trending above average. Monitor around upcoming holiday clusters.`
-                    : `✅ Leave patterns are within healthy norms. Average ${org.avgAbsent} absent days/year is below warning threshold.`
+                    ? `Moderate leave risk  ${org.highAbsent} employees trending above average. Monitor around upcoming holiday clusters.`
+                    : ` Leave patterns are within healthy norms. Average ${org.avgAbsent} absent days/year is below warning threshold.`
                 )}
             </p>
           </div>
         </div>
 
-        {/* Card 4 — Workforce Capacity */}
+        {/* Card 4  Workforce Capacity */}
         <div className="glass p-6 rounded-2xl space-y-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -391,7 +391,7 @@ export default function AIPredictionsTab() {
               <div key={dept}>
                 <div className="flex justify-between text-xs mb-1">
                   <span className="text-[var(--text-secondary)] truncate max-w-[140px]">{dept}</span>
-                  <span className="text-[10px] text-[var(--text-muted)]">{count} emp · risk {avg}</span>
+                  <span className="text-[10px] text-[var(--text-muted)]">{count} emp  risk {avg}</span>
                 </div>
                 <div className="h-2 rounded-full bg-[rgba(255,255,255,0.06)] overflow-hidden">
                   <div className="h-2 rounded-full transition-all duration-1000" style={{ width: `${avg}%`, background: riskColor(avg) }} />
@@ -407,7 +407,7 @@ export default function AIPredictionsTab() {
                 ? <span className="animate-pulse">Gemini mapping department capacity...</span>
                 : gptInsights.capacityInsight || (
                   org.deptRisk[0]
-                    ? `⚠️ ${org.deptRisk[0].dept} is the highest-risk department (avg score ${org.deptRisk[0].avg}). Prioritize HR interventions there. ${org.deptRisk[org.deptRisk.length-1]?.dept} is the healthiest at ${org.deptRisk[org.deptRisk.length-1]?.avg}.`
+                    ? ` ${org.deptRisk[0].dept} is the highest-risk department (avg score ${org.deptRisk[0].avg}). Prioritize HR interventions there. ${org.deptRisk[org.deptRisk.length-1]?.dept} is the healthiest at ${org.deptRisk[org.deptRisk.length-1]?.avg}.`
                     : 'No department data available.'
                 )}
             </p>
@@ -415,7 +415,7 @@ export default function AIPredictionsTab() {
         </div>
       </div>
 
-      {/* ── Top Risk Factors ── */}
+      {/*  Top Risk Factors  */}
       {org.topFactors.length > 0 && (
         <div className="glass p-6 rounded-2xl space-y-4">
           <div className="flex items-center gap-3">
@@ -441,13 +441,13 @@ export default function AIPredictionsTab() {
           </div>
           <p className="text-[10px] text-[var(--text-muted)]">
             {mlOnline
-              ? '* Real SHAP values from XGBoost — showing which features most pushed attrition probability up per employee.'
-              : '* Gemini feature attribution — natural language reasoning from real attendance, leave & profile data.'}
+              ? '* Real SHAP values from XGBoost  showing which features most pushed attrition probability up per employee.'
+              : '* Gemini feature attribution  natural language reasoning from real attendance, leave & profile data.'}
           </p>
         </div>
       )}
 
-      {/* ── Org Health Summary ── */}
+      {/*  Org Health Summary  */}
       <div className="glass p-5 rounded-2xl flex items-start gap-3">
         <SparklesIcon className="w-5 h-5 text-[var(--accent)] shrink-0 mt-0.5" />
         <div>
@@ -462,8 +462,8 @@ export default function AIPredictionsTab() {
               </p>
               <p className="text-[11px] text-[var(--text-muted)] mt-1">
                 {mlOnline
-                  ? '✅ XGBoost (Phase 2 active) · Prophet leave forecast ready · Gemini insights active'
-                  : '✅ Gemini Intelligence Active · Real MongoDB data · Live organizational analysis'}
+                  ? ' XGBoost (Phase 2 active)  Prophet leave forecast ready  Gemini insights active'
+                  : ' Gemini Intelligence Active  Real MongoDB data  Live organizational analysis'}
               </p>
             </div>
           </div>

@@ -16,7 +16,7 @@ const ProfileContext = createContext<ProfileContextType | undefined>(undefined)
 export function useProfile() {
   const context = useContext(ProfileContext)
   if (context === undefined) {
-    // Return safe defaults instead of throwing — prevents crash when
+    // Return safe defaults instead of throwing  prevents crash when
     // a component renders outside the provider tree on initial hydration.
     return {
       profile: null,
@@ -50,11 +50,11 @@ export function ProfileSyncStatus() {
   // Log status changes to console only
   useEffect(() => {
     if (loading) {
-      console.log('🔄 Profile sync in progress...')
+      console.log(' Profile sync in progress...')
     } else if (error) {
-      console.log('❌ Profile sync error:', error)
+      console.log(' Profile sync error:', error)
     } else if (profile) {
-      console.log(`✅ Profile synced: ${profile.firstName} ${profile.lastName}`)
+      console.log(` Profile synced: ${profile.firstName} ${profile.lastName}`)
     }
   }, [loading, error, profile])
 

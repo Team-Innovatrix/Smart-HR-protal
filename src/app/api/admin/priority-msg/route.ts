@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
       recipientId: u.clerkUserId,
       senderId: userId,
       type: 'system',
-      title: '🚨 Priority Announcement',
+      title: ' Priority Announcement',
       message: message.trim(),
       priority: 'urgent',
       expiresAt

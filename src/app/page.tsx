@@ -83,20 +83,20 @@ export default async function Home() {
 
       <div style={{ minHeight: '100vh', background: '#0a0a1a', overflowX: 'hidden' }}>
 
-        {/* ── NAV ─────────────────────────────────────────────────── */}
+        {/*  NAV  */}
         <nav style={{ position: 'sticky', top: 0, zIndex: 50, background: 'rgba(10,10,26,0.85)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.06)', padding: '0 24px' }}>
           <div style={{ maxWidth: 1200, margin: '0 auto', height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ width: 32, height: 32, borderRadius: 10, background: 'linear-gradient(135deg, #34d399, #10b981)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, boxShadow: '0 0 16px rgba(52,211,153,0.3)' }}>⚡</div>
+              <div style={{ width: 32, height: 32, borderRadius: 10, background: 'linear-gradient(135deg, #34d399, #10b981)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, boxShadow: '0 0 16px rgba(52,211,153,0.3)' }}></div>
               <span style={{ fontWeight: 700, fontSize: 15, color: '#f8fafc' }}>Smart HR Portal</span>
             </div>
             <Link href="/portal/auth" className="btn-signin" style={{ padding: '8px 20px', fontSize: 13 }}>
-              Sign In →
+              Sign In 
             </Link>
           </div>
         </nav>
 
-        {/* ── HERO ────────────────────────────────────────────────── */}
+        {/*  HERO  */}
         <section style={{ position: 'relative', padding: '80px 24px 100px', textAlign: 'center', overflow: 'hidden' }}>
           <div className="blob" style={{ width: 500, height: 500, background: 'rgba(52,211,153,0.12)', top: -100, left: '50%', transform: 'translateX(-50%)' }} />
           <div className="blob" style={{ width: 300, height: 300, background: 'rgba(96,165,250,0.08)', top: 50, right: '10%' }} />
@@ -118,9 +118,9 @@ export default async function Home() {
 
             <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
               <Link href="/portal/auth" className="btn-signin">
-                🚀 Get Started
+                 Get Started
               </Link>
-              <a href="#openings" className="btn-outline">View Openings ↓</a>
+              <a href="#openings" className="btn-outline">View Openings </a>
             </div>
           </div>
 
@@ -139,7 +139,7 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* ── OPEN POSITIONS ──────────────────────────────────────── */}
+        {/*  OPEN POSITIONS  */}
         <section id="openings" style={{ padding: '60px 24px 100px', maxWidth: 1200, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
             <h2 style={{ fontSize: 'clamp(24px, 4vw, 40px)', fontWeight: 800, color: '#f8fafc', marginBottom: 12 }}>
@@ -148,18 +148,18 @@ export default async function Home() {
             <p style={{ color: '#64748b', fontSize: 15 }}>
               {vacancies.length > 0
                 ? `${vacancies.length} opening${vacancies.length > 1 ? 's' : ''} available right now`
-                : 'Check back soon — new positions coming!'}
+                : 'Check back soon  new positions coming!'}
             </p>
           </div>
 
           <HomeJobList vacancies={vacancies} />
         </section>
 
-        {/* ── FOOTER ──────────────────────────────────────────────── */}
+        {/*  FOOTER  */}
         <footer style={{ borderTop: '1px solid rgba(255,255,255,0.06)', padding: '32px 24px', textAlign: 'center' }}>
           <p style={{ color: '#334155', fontSize: 13 }}>
-            © {new Date().getFullYear()} Smart HR Portal · Built by Innovatrix
-            <span style={{ margin: '0 12px', color: '#1e293b' }}>·</span>
+             {new Date().getFullYear()} Smart HR Portal  Built by Innovatrix
+            <span style={{ margin: '0 12px', color: '#1e293b' }}></span>
             <Link href="/portal/auth" style={{ color: '#34d399', textDecoration: 'none' }}>Employee Login</Link>
           </p>
         </footer>

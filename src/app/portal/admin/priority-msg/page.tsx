@@ -80,7 +80,7 @@ export default function PriorityMsgPage() {
               {loading ? (
                 <div className="w-5 h-5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
               ) : (
-                'Broadcast Now 🚨'
+                'Broadcast Now '
               )}
             </button>
           </div>

@@ -1,4 +1,4 @@
-﻿import Navigation from '@/components/Navigation'
+import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
 import { getCareersJobModel } from '@/models/careers/Job'
 import Script from 'next/script'
@@ -34,7 +34,7 @@ function sanitizeQuery(q?: string): string | undefined {
   if (!q) return undefined
   const trimmed = q.trim()
   if (!trimmed) return undefined
-  // basic sanitization – strip angle brackets and limit length
+  // basic sanitization  strip angle brackets and limit length
   return trimmed.replace(/[<>]/g, '').slice(0, 120)
 }
 
@@ -247,7 +247,7 @@ export default async function JobsPage({ searchParams }: { searchParams: SearchP
                       title="Clear filters"
                       className="inline-flex items-center justify-center h-11 w-11 rounded-lg border border-gray-300 text-gray-600 bg-white hover:bg-gray-100"
                     >
-                      <span className="text-xl leading-none">×</span>
+                      <span className="text-xl leading-none"></span>
                     </a>
                   )}
                 </div>
@@ -279,11 +279,11 @@ export default async function JobsPage({ searchParams }: { searchParams: SearchP
                         <h2 className="text-xl font-bold text-gray-900">{job.title}</h2>
                         <div className="mt-2 flex flex-wrap gap-2 text-sm text-gray-600">
                           <span className="inline-flex items-center gap-1">{job.department}</span>
-                          <span>•</span>
+                          <span></span>
                           <span>{job.location}</span>
-                          <span>•</span>
+                          <span></span>
                           <span className="capitalize">{job.type.replace('-', ' ')}</span>
-                          <span>•</span>
+                          <span></span>
                           <span className="capitalize">{job.experience}</span>
                         </div>
                         <div className="mt-1 text-xs text-gray-500">Posted {formatDisplayDate(job.postedDate)}</div>

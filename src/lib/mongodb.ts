@@ -19,19 +19,19 @@ declare global {
 
 // Enhanced environment validation with detailed logging
 if (!MONGODB_URI) {
-  console.warn('⚠️ MONGODB_URI environment variable is not set');
+  console.warn(' MONGODB_URI environment variable is not set');
 } else {
   const isValidMongoUri = MONGODB_URI.startsWith('mongodb://') || MONGODB_URI.startsWith('mongodb+srv://');
   if (!isValidMongoUri) {
-    console.warn('⚠️ Invalid MongoDB URI format');
+    console.warn(' Invalid MongoDB URI format');
   }
 
   if (process.env.NODE_ENV === 'production' && (MONGODB_URI.includes('localhost') || MONGODB_URI.includes('127.0.0.1'))) {
-    console.warn('⚠️ WARNING: Using localhost MongoDB URI in production environment!');
+    console.warn(' WARNING: Using localhost MongoDB URI in production environment!');
   }
 }
 
-console.log('🔍 MongoDB Configuration:', {
+console.log(' MongoDB Configuration:', {
   hasUri: !!MONGODB_URI,
   dbName: DB_NAME,
   environment: process.env.NODE_ENV,
@@ -73,11 +73,11 @@ async function connectDB() {
     // Create new connection if none exists
     if (!typedCached.promise) {
       if (process.env.USE_LOCAL_MEM_DB === 'true' && !global.__MONGO_MEM_URI__) {
-        console.log('📦 Starting MongoDB Memory Server...');
+        console.log(' Starting MongoDB Memory Server...');
         const { MongoMemoryServer } = await import('mongodb-memory-server');
         const memoryServer = await MongoMemoryServer.create();
         global.__MONGO_MEM_URI__ = memoryServer.getUri();
-        console.log('🚀 Memory Server Running at:', global.__MONGO_MEM_URI__);
+        console.log(' Memory Server Running at:', global.__MONGO_MEM_URI__);
       }
       
       const activeUri = global.__MONGO_MEM_URI__ || MONGODB_URI;
@@ -107,24 +107,24 @@ async function connectDB() {
     }
 
     const duration = Date.now() - startTime;
-    console.log(`✅ MongoDB connected (${duration}ms)`);
+    console.log(` MongoDB connected (${duration}ms)`);
 
 
     // Set up connection event listeners for production monitoring
     if (process.env.NODE_ENV === 'production') {
       typedCached.conn.connection.on('disconnected', () => {
-        console.warn(`⚠️ MongoDB disconnected`);
+        console.warn(` MongoDB disconnected`);
       });
 
       typedCached.conn.connection.on('error', (error) => {
-        console.error(`❌ MongoDB error:`, error);
+        console.error(` MongoDB error:`, error);
       });
     }
 
     return typedCached.conn;
   } catch (error) {
     const duration = Date.now() - startTime;
-    console.error(`❌ MongoDB connection error (${duration}ms):`, error instanceof Error ? error.message : 'Unknown error');
+    console.error(` MongoDB connection error (${duration}ms):`, error instanceof Error ? error.message : 'Unknown error');
 
     // Reset the promise so we can retry
     typedCached.promise = null;
@@ -185,12 +185,12 @@ export async function connectCareersDB(): Promise<Connection> {
     careersCached!.conn = await careersCached!.promise!;
     
     const duration = Date.now() - startTime;
-    console.log(`✅ Careers DB connected (${duration}ms)`);
+    console.log(` Careers DB connected (${duration}ms)`);
     
     return careersCached!.conn as Connection;
   } catch (error) {
     const duration = Date.now() - startTime;
-    console.error(`❌ Careers DB connection error:`, {
+    console.error(` Careers DB connection error:`, {
       error: error instanceof Error ? error.message : 'Unknown error',
       duration
     });

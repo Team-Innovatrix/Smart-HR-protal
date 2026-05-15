@@ -212,7 +212,7 @@ export function useProfileSync(): UseProfileSyncReturn {
         setProfile(data.data)
         // Production logging - only in development
         if (process.env.NODE_ENV === 'development') {
-          console.log('✅ Profile synced successfully from Clerk')
+          console.log(' Profile synced successfully from Clerk')
         }
       } else {
         throw new ProfileSyncError(
@@ -233,7 +233,7 @@ export function useProfileSync(): UseProfileSyncReturn {
       
       // Production logging - only in development
       if (process.env.NODE_ENV === 'development') {
-        console.error('❌ Error syncing profile:', err)
+        console.error(' Error syncing profile:', err)
       }
     } finally {
       if (isMountedRef.current) {
@@ -260,7 +260,7 @@ export function useProfileSync(): UseProfileSyncReturn {
         setProfile(data.data)
         // Production logging - only in development
         if (process.env.NODE_ENV === 'development') {
-          console.log('✅ Profile refreshed successfully')
+          console.log(' Profile refreshed successfully')
         }
         return true
       } else {
@@ -282,7 +282,7 @@ export function useProfileSync(): UseProfileSyncReturn {
       
       // Production logging - only in development
       if (process.env.NODE_ENV === 'development') {
-        console.error('❌ Error refreshing profile:', err)
+        console.error(' Error refreshing profile:', err)
       }
       return false
     } finally {

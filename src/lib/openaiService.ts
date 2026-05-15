@@ -49,7 +49,7 @@ export class OpenAIService {
     }
 
     try {
-      const model = this.gemini.getGenerativeModel({ model: 'gemini-2.5-flash' });
+      const model = this.gemini.getGenerativeModel({ model: 'gemini-3.1-flash-lite' });
       
       const buffer = await audioBlob.arrayBuffer();
       const base64Audio = Buffer.from(buffer).toString('base64');
@@ -164,7 +164,7 @@ Output: {"isRelevant": true, "intent": "view_attendance_history", "confidence": 
 
     try {
       const model = this.gemini.getGenerativeModel({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-3.1-flash-lite',
         generationConfig: { responseMimeType: 'application/json' }
       });
       
@@ -221,7 +221,7 @@ Output: {"isRelevant": true, "intent": "view_attendance_history", "confidence": 
   // Method to validate API key (optional - can be used to test connectivity)
   async validateAPIKey(): Promise<boolean> {
     try {
-      const model = this.gemini.getGenerativeModel({ model: "gemini-2.5-flash" });
+      const model = this.gemini.getGenerativeModel({ model: "gemini-3.1-flash-lite" });
       await model.generateContent("test");
       return true;
     } catch (error) {
@@ -277,7 +277,7 @@ Examples of BAD responses (avoid these patterns):
 Generate a response now:`;
 
     try {
-      const model = this.gemini.getGenerativeModel({ model: "gemini-2.5-flash" });
+      const model = this.gemini.getGenerativeModel({ model: "gemini-3.1-flash-lite" });
       const result = await model.generateContent(prompt);
       return result.response.text() || "I need some additional information to process your request.";
     } catch (error) {
@@ -313,10 +313,10 @@ CONTEXT: Today is ${context.dayOfWeek}, ${context.currentDate.split('T')[0]}
 INPUT: ${JSON.stringify(data)}
 
 RULES:
-- "tomorrow" → next day (YYYY-MM-DD)
-- "today" → current date (YYYY-MM-DD)  
-- "next Friday" → next Friday (YYYY-MM-DD)
-- "this Friday" → this week's Friday (YYYY-MM-DD)
+- "tomorrow"  next day (YYYY-MM-DD)
+- "today"  current date (YYYY-MM-DD)  
+- "next Friday"  next Friday (YYYY-MM-DD)
+- "this Friday"  this week's Friday (YYYY-MM-DD)
 - Keep existing YYYY-MM-DD dates unchanged
 - Return ALL fields, preserve non-date fields
 
@@ -324,11 +324,11 @@ OUTPUT: Valid JSON only
 
 Example:
 {"startDate": "next Friday", "endDate": "next Friday"} 
-→ {"startDate": "2025-10-10", "endDate": "2025-10-10"}`;
+ {"startDate": "2025-10-10", "endDate": "2025-10-10"}`;
 
     try {
       const model = this.gemini.getGenerativeModel({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-3.1-flash-lite',
         generationConfig: { responseMimeType: 'application/json' }
       });
       const result = await model.generateContent(prompt);
@@ -444,7 +444,7 @@ Return JSON:
 
     try {
       const model = this.gemini.getGenerativeModel({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-3.1-flash-lite',
         generationConfig: { responseMimeType: 'application/json' }
       });
       
@@ -498,8 +498,8 @@ Recent Conversation:
 ${formattedHistory}
 
 Your ONLY jobs:
-1) Is this the SAME intent? → set "isSame": true/false
-2) If SAME, extract ONLY the NEW parameters from the current message → put them in "newData"
+1) Is this the SAME intent?  set "isSame": true/false
+2) If SAME, extract ONLY the NEW parameters from the current message  put them in "newData"
 
 CRITICAL RULES:
 - The already collected data above will be PRESERVED automatically
@@ -517,9 +517,9 @@ Return STRICT JSON:
 }
 
 Examples:
-Current: "Apply sick leave for me" (previous collected: startDate, endDate) → {"isSame": true, "newData": {"leaveType": "sick"}}
-Current: "for tomorrow" → {"isSame": true, "newData": {"startDate": "tomorrow", "endDate": "tomorrow"}}
-Current: "clock me in" (different intent) → {"isSame": false, "newData": {}}
+Current: "Apply sick leave for me" (previous collected: startDate, endDate)  {"isSame": true, "newData": {"leaveType": "sick"}}
+Current: "for tomorrow"  {"isSame": true, "newData": {"startDate": "tomorrow", "endDate": "tomorrow"}}
+Current: "clock me in" (different intent)  {"isSame": false, "newData": {}}
 `;
 
     if (this.isMockMode) {
@@ -531,7 +531,7 @@ Current: "clock me in" (different intent) → {"isSame": false, "newData": {}}
 
     try {
       const model = this.gemini.getGenerativeModel({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-3.1-flash-lite',
         generationConfig: { responseMimeType: 'application/json' }
       });
       

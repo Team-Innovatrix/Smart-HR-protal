@@ -13,7 +13,7 @@ const RealTimeUpdateContext = createContext<RealTimeUpdateContextType | undefine
 export const useRealTimeUpdates = () => {
   const context = useContext(RealTimeUpdateContext)
   if (!context) {
-    // Return safe no-ops instead of throwing — prevents full React tree crash
+    // Return safe no-ops instead of throwing  prevents full React tree crash
     // if a component using this hook renders outside the provider tree.
     return {
       triggerAttendanceUpdate: () => {},

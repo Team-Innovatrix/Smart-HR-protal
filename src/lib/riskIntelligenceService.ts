@@ -1,6 +1,6 @@
 /**
  * riskIntelligenceService.ts
- * ─────────────────────────────────────────────────────────────────────────────
+ * 
  * Gemini Powered Risk Intelligence Engine
  *
  * Architecture (based on literature review):
@@ -11,9 +11,9 @@
  *   - Acts as a LangGraph-style agentic workflow with sequential reasoning
  *
  * Data Sources:
- *   MongoDB → Attendance, Leave, UserProfile (primary)
+ *   MongoDB  Attendance, Leave, UserProfile (primary)
  *   Rule-based hrAIEngine (fallback when API unavailable)
- * ─────────────────────────────────────────────────────────────────────────────
+ * 
  */
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
@@ -45,10 +45,10 @@ export interface EmployeeRiskContext {
   joinDate: string;
   recentFeedback?: string;
   // IBM Model pre-computed (attached by aggregateEmployeeData)
-  ibmAttritionProbability: number;  // IBM XGBoost calibrated score 0–100
-  ibmRiskScore: number;             // IBM composite risk 0–100
+  ibmAttritionProbability: number;  // IBM XGBoost calibrated score 0100
+  ibmRiskScore: number;             // IBM composite risk 0100
   ibmRiskLevel: 'safe' | 'moderate' | 'high';
-  ibmBenchmarkLabel: string;        // e.g. "2.4× higher than IBM baseline"
+  ibmBenchmarkLabel: string;        // e.g. "2.4 higher than IBM baseline"
   ibmTopFactors: string[];          // SHAP top contributing features
   ibmPositiveFactors: string[];     // Protective factors
 }
@@ -56,10 +56,10 @@ export interface EmployeeRiskContext {
 export interface AIRiskResult {
   employeeId: string;
   name: string;
-  riskScore: number;             // 0–100
+  riskScore: number;             // 0100
   riskLevel: 'safe' | 'moderate' | 'high';
-  attritionProbability: number;  // 0–100%
-  moodScore: number;             // 0–100
+  attritionProbability: number;  // 0100%
+  moodScore: number;             // 0100
   sentiment: 'positive' | 'neutral' | 'negative';
 
   // LangGraph-style reasoning trace (Explainable AI)
@@ -94,7 +94,7 @@ export interface OrgRiskSummary {
   recommendations: string[];
 }
 
-// ─── Gemini Client (singleton) ───────────────────────────────────────────────
+//  Gemini Client (singleton) 
 let geminiClient: GoogleGenerativeAI | null = null;
 
 function getGemini(): GoogleGenerativeAI {
@@ -107,7 +107,7 @@ function getGemini(): GoogleGenerativeAI {
   return geminiClient;
 }
 
-// ─── Data Aggregator: Pull real MongoDB data for one employee ─────────────
+//  Data Aggregator: Pull real MongoDB data for one employee 
 export async function aggregateEmployeeData(userId: string): Promise<EmployeeRiskContext | null> {
   await connectDB();
 
@@ -119,7 +119,7 @@ export async function aggregateEmployeeData(userId: string): Promise<EmployeeRis
 
   if (!profile) return null;
 
-  // ── Compute attendance metrics (last 30 working days) ──
+  //  Compute attendance metrics (last 30 working days) 
   const last30 = attendanceRecords.slice(0, 30);
   const presentDays = last30.filter((a: any) => a.status !== 'absent').length;
   const attendanceRate = last30.length > 0 ? Math.round((presentDays / last30.length) * 100) : 100;
@@ -129,7 +129,7 @@ export async function aggregateEmployeeData(userId: string): Promise<EmployeeRis
   const absentDaysLast30 = last30.filter((a: any) => a.status === 'absent').length;
   const lateClockInsLast30 = last30.filter((a: any) => a.status === 'half-day').length;
 
-  // ── Compute leave metrics (current year) ──
+  //  Compute leave metrics (current year) 
   const currentYear = new Date().getFullYear();
   const yearLeaves = (leaveRecords as any[]).filter((l: any) => {
     const d = new Date(l.startDate || l.createdAt);
@@ -145,13 +145,13 @@ export async function aggregateEmployeeData(userId: string): Promise<EmployeeRis
     ? Math.round((sickLeaves.length / yearLeaves.length) * 100)
     : 0;
 
-  // ── Compute tenure ──
+  //  Compute tenure 
   const joinDate = (profile as any).joinDate || (profile as any).createdAt;
   const yearsAtCompany = joinDate
     ? +((Date.now() - new Date(joinDate).getTime()) / (1000 * 60 * 60 * 24 * 365.25)).toFixed(1)
     : 0;
 
-  // ── IBM HR Dataset Model Scoring ──────────────────────────────────────────
+  //  IBM HR Dataset Model Scoring 
   // Map our real data to IBM feature vector and compute calibrated risk score
   const ibmInput: EmployeeDataInput = {
     salary: (profile as any).salary,
@@ -206,14 +206,14 @@ export async function aggregateEmployeeData(userId: string): Promise<EmployeeRis
 
 export async function analyzeEmployeeRiskWithAI(ctx: EmployeeRiskContext): Promise<AIRiskResult> {
   const gemini = getGemini();
-  const model = gemini.getGenerativeModel({ model: 'gemini-2.5-flash' });
+  const model = gemini.getGenerativeModel({ model: 'gemini-3.1-flash-lite' });
 
   const systemPrompt = `
 You are an expert HR Risk Intelligence Agent powered by the IBM HR Analytics Dataset (WA_Fn-UseC_-HR-Employee-Attrition, N=1,470).
 
 YOU HAVE ACCESS TO A PRE-CALIBRATED IBM XGBOOST MODEL:
 - IBM Dataset: 1,470 employees, 16.1% historical attrition rate
-- Model: XGBoost (AUC-ROC ≈ 0.87) with SMOTE class balancing
+- Model: XGBoost (AUC-ROC  0.87) with SMOTE class balancing
 - Pre-computed IBM Score for this employee (use as anchor):
   * IBM Attrition Probability: ${ctx.ibmAttritionProbability}%
   * IBM Risk Level: ${ctx.ibmRiskLevel}
@@ -221,7 +221,7 @@ YOU HAVE ACCESS TO A PRE-CALIBRATED IBM XGBOOST MODEL:
   * Top IBM SHAP Factors: ${ctx.ibmTopFactors.join(', ') || 'None triggered'}
   * Protective Factors: ${ctx.ibmPositiveFactors.join(', ') || 'None'}
 
-IMPORTANT: Your attritionProbability output should be CLOSE to the IBM pre-computed value (±15 points max).
+IMPORTANT: Your attritionProbability output should be CLOSE to the IBM pre-computed value (15 points max).
 You may adjust based on the qualitative context (feedback, role seniority) but must not deviate wildly.
 This ensures scientific calibration to the IBM dataset benchmark.
 
@@ -267,9 +267,9 @@ Return ONLY valid JSON matching this schema exactly (no comments, just valid JSO
 
 Risk scoring anchors (IBM XGBoost calibrated):
 - IBM population base rate: ${IBM_POPULATION.attritionRate * 100}% attrition
-- 0–29: Safe (attendance strong, no IBM risk factors)
-- 30–64: Moderate (1–3 IBM risk factors present)
-- 65–100: High (overtime + low satisfaction + multiple IBM factors)
+- 029: Safe (attendance strong, no IBM risk factors)
+- 3064: Moderate (13 IBM risk factors present)
+- 65100: High (overtime + low satisfaction + multiple IBM factors)
 `;
 
   const userPrompt = `
@@ -305,7 +305,7 @@ IBM XGBOOST PRE-SCORE (anchor your output to this):
 
 ${ctx.recentFeedback ? `RECENT FEEDBACK: "${ctx.recentFeedback}"` : ''}
 
-Provide your IBM-calibrated risk analysis. Your attritionProbability must be within ±15 of the IBM score.
+Provide your IBM-calibrated risk analysis. Your attritionProbability must be within 15 of the IBM score.
 `;
 
   try {
@@ -359,7 +359,7 @@ Provide your IBM-calibrated risk analysis. Your attritionProbability must be wit
   }
 }
 
-// ─── Org-Level Narrative Generator ───────────────────────────────────────────
+//  Org-Level Narrative Generator 
 export async function generateOrgRiskNarrative(
   results: AIRiskResult[],
   totalEmployees: number
@@ -403,7 +403,7 @@ Be direct, data-driven, and professional. No bullet points. Plain text only.
 `;
 
   try {
-    const model = gemini.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const model = gemini.getGenerativeModel({ model: 'gemini-3.1-flash-lite' });
     const result = await model.generateContent(prompt);
     return result.response.text() || 'Narrative unavailable.';
   } catch {

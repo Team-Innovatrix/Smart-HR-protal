@@ -161,7 +161,7 @@ export default function HRHomePage() {
                 </li>
                 <li className="flex items-center text-sm text-gray-600">
                   <CheckCircleIcon className="h-4 w-4 text-green-500 mr-2" />
-                  360° feedback system
+                  360 feedback system
                 </li>
                 <li className="flex items-center text-sm text-gray-600">
                   <CheckCircleIcon className="h-4 w-4 text-green-500 mr-2" />

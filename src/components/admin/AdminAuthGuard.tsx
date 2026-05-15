@@ -40,7 +40,7 @@ export default function AdminAuthGuard({ children }: AdminAuthGuardProps) {
             <div className="absolute inset-0 rounded-full border-4 border-[var(--glass-border)]" />
             <div className="absolute inset-0 rounded-full border-4 border-t-[var(--accent)] animate-spin" />
           </div>
-          <p className="text-[var(--accent)] font-bold text-sm">Verifying admin access…</p>
+          <p className="text-[var(--accent)] font-bold text-sm">Verifying admin access</p>
         </div>
       </div>
     );

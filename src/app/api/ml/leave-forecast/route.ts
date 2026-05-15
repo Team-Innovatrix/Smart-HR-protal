@@ -1,7 +1,7 @@
 /**
  * src/app/api/ml/leave-forecast/route.ts
- * ─────────────────────────────────────────────────────────────────────────────
- * Next.js API Route  →  GET /api/ml/leave-forecast?days=90
+ * 
+ * Next.js API Route    GET /api/ml/leave-forecast?days=90
  *
  * Purpose:
  *   Proxy to the Python FastAPI leave demand forecaster (sklearn Ridge + Fourier
@@ -9,7 +9,7 @@
  *   next N days (default 90), with risk levels and confidence intervals.
  *
  * Query params:
- *   days  (optional, default 90)  — number of days to forecast ahead
+ *   days  (optional, default 90)   number of days to forecast ahead
  *
  * Response (success):
  *   {
@@ -23,7 +23,7 @@
  *   { success: false, fallback: true }  (HTTP 503)
  *
  * FastAPI target: GET http://<ML_API_URL>/predict/leave-forecast?days=N
- * ─────────────────────────────────────────────────────────────────────────────
+ * 
  */
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -31,7 +31,7 @@ const ML_API = process.env.ML_API_URL ?? 'http://localhost:8000';
 
 /**
  * GET /api/ml/leave-forecast?days=90
- * Calls Python FastAPI → /predict/leave-forecast
+ * Calls Python FastAPI  /predict/leave-forecast
  */
 export async function GET(req: NextRequest) {
   const days = req.nextUrl.searchParams.get('days') ?? '90';

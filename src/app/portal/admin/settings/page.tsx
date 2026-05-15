@@ -805,7 +805,7 @@ export default function SettingsPage() {
                           value={settings.integrations.email.smtpPassword || ''}
                           onChange={(e) => updateSetting('integrations', 'email', { ...settings.integrations.email, smtpPassword: e.target.value })}
                           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="••••••••"
+                          placeholder=""
                         />
                       </div>
                     </div>

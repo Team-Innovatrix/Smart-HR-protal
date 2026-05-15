@@ -134,7 +134,7 @@ class LangGraphLogger {
     
     this.log({
       level: 'info',
-      message: `→ ${nodeId}`,
+      message: ` ${nodeId}`,
       context: { sessionId, workflow, nodeId, step, timestamp: new Date().toISOString() },
       data: essentialData,
     });
@@ -154,7 +154,7 @@ class LangGraphLogger {
     
     this.log({
       level: 'info',
-      message: `✓ ${nodeId}`,
+      message: ` ${nodeId}`,
       context: { sessionId, workflow, nodeId, step, timestamp: new Date().toISOString() },
       data: Object.keys(essentialData).length > 0 ? essentialData : undefined,
     });
@@ -173,7 +173,7 @@ class LangGraphLogger {
   workflowStart(sessionId: string, workflow: string, userId?: string): void {
     this.log({
       level: 'info',
-      message: `→ ${workflow} started`,
+      message: ` ${workflow} started`,
       context: { sessionId, userId, workflow, timestamp: new Date().toISOString() },
     });
   }
@@ -191,7 +191,7 @@ class LangGraphLogger {
     
     this.log({
       level: 'info',
-      message: `✓ ${workflow} completed`,
+      message: ` ${workflow} completed`,
       context: { sessionId, userId, workflow, timestamp: new Date().toISOString() },
       data: Object.keys(status).length > 0 ? status : undefined,
     });

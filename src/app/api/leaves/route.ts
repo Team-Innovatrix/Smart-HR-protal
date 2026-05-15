@@ -1,4 +1,4 @@
-﻿export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '../../../lib/mongodb';
@@ -218,7 +218,7 @@ export async function POST(request: NextRequest) {
         const employeeEmail = userProfile.email;
         console.log('[Leaves:POST] Manager/Employee emails', { managerEmail, employeeEmail });
         if (managerEmail && employeeEmail) {
-          const subject = `Leave Request: ${userProfile.firstName} ${userProfile.lastName} · ${leave.leaveType} · ${leave.totalDays} day(s)`;
+          const subject = `Leave Request: ${userProfile.firstName} ${userProfile.lastName}  ${leave.leaveType}  ${leave.totalDays} day(s)`;
           const html = `<p>Hello ${managerProfile.firstName || 'Manager'},</p>
                         <p><strong>${userProfile.firstName} ${userProfile.lastName}</strong> has requested leave.</p>
                         <ul>

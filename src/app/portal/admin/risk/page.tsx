@@ -24,9 +24,9 @@ import {
 } from '@heroicons/react/24/outline';
 import RiskChatbot from '@/components/admin/RiskChatbot';
 
-// ──────────────────────────────────────────────────────────────────────────────
-// AI ENGINE — Rule-based risk scoring + sentiment engine
-// ──────────────────────────────────────────────────────────────────────────────
+// 
+// AI ENGINE  Rule-based risk scoring + sentiment engine
+// 
 
 interface EmployeeRiskInput {
   satisfactionLevel: number;      // 0-1
@@ -62,7 +62,7 @@ function computeRisk(input: EmployeeRiskInput): RiskResult {
   const positives: string[] = [];
   const breakdown: Record<string, number> = {};
 
-  // — Satisfaction
+  //  Satisfaction
   if (input.satisfactionLevel < 0.35) {
     const pts = 28; riskScore += pts; breakdown['Low Satisfaction'] = pts;
     indicators.push('Very low satisfaction score detected');
@@ -76,7 +76,7 @@ function computeRisk(input: EmployeeRiskInput): RiskResult {
     moodScore += 10;
   }
 
-  // — Overtime
+  //  Overtime
   if (input.overtimeHours > 30) {
     const pts = 22; riskScore += pts; breakdown['Extreme Overtime'] = pts;
     indicators.push('Extreme overtime hours (>30 hrs/mo above baseline)');
@@ -89,10 +89,10 @@ function computeRisk(input: EmployeeRiskInput): RiskResult {
     positives.push('Balanced working hours');
   }
 
-  // — Salary growth
+  //  Salary growth
   if (input.salaryGrowthPercent === 0) {
     const pts = 20; riskScore += pts; breakdown['No Salary Growth'] = pts;
-    indicators.push('Zero salary growth — retention risk elevated');
+    indicators.push('Zero salary growth  retention risk elevated');
     moodScore -= 12;
   } else if (input.salaryGrowthPercent < 3) {
     const pts = 10; riskScore += pts; breakdown['Low Salary Growth'] = pts;
@@ -103,7 +103,7 @@ function computeRisk(input: EmployeeRiskInput): RiskResult {
     moodScore += 5;
   }
 
-  // — Promotion
+  //  Promotion
   if (!input.promotionLast5Years && input.yearsAtCompany > 3) {
     const pts = 15; riskScore += pts; breakdown['No Promotion'] = pts;
     indicators.push('No promotion in 5 years despite tenure');
@@ -113,7 +113,7 @@ function computeRisk(input: EmployeeRiskInput): RiskResult {
     moodScore += 8;
   }
 
-  // — Sentiment
+  //  Sentiment
   if (input.recentFeedbackSentiment === 'negative') {
     const pts = 20; riskScore += pts; breakdown['Negative Sentiment'] = pts;
     indicators.push('Negative feedback sentiment in recent reviews');
@@ -126,7 +126,7 @@ function computeRisk(input: EmployeeRiskInput): RiskResult {
     moodScore += 15;
   }
 
-  // — Absenteeism
+  //  Absenteeism
   if (input.absenteeismDays > 12) {
     const pts = 15; riskScore += pts; breakdown['High Absenteeism'] = pts;
     indicators.push('Unusually high absenteeism rate');
@@ -139,7 +139,7 @@ function computeRisk(input: EmployeeRiskInput): RiskResult {
     moodScore += 5;
   }
 
-  // — Evaluation performance
+  //  Evaluation performance
   if (input.lastEvaluation < 0.45) {
     const pts = 10; riskScore += pts; breakdown['Low Performance'] = pts;
     indicators.push('Recent performance evaluation below expectations');
@@ -149,13 +149,13 @@ function computeRisk(input: EmployeeRiskInput): RiskResult {
     moodScore += 10;
   }
 
-  // — Workload stress (too many or too few projects)
+  //  Workload stress (too many or too few projects)
   if (input.numberProjects > 6) {
     const pts = 8; riskScore += pts; breakdown['Overloaded Projects'] = pts;
     indicators.push('Overloaded with too many simultaneous projects');
   } else if (input.numberProjects < 2) {
     const pts = 5; riskScore += pts; breakdown['Underutilized'] = pts;
-    indicators.push('Very few projects — possible disengagement signal');
+    indicators.push('Very few projects  possible disengagement signal');
   }
 
   // Clamp
@@ -185,9 +185,9 @@ function computeRisk(input: EmployeeRiskInput): RiskResult {
   return { riskScore, riskLevel, moodScore, sentiment, indicators, positives, recommendations, breakdown };
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
+// 
 // PSEUDO-RANDOM GENERATOR FOR MOCK AI METRICS (Based on ID)
-// ──────────────────────────────────────────────────────────────────────────────
+// 
 function hashString(str: string) {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
@@ -243,9 +243,9 @@ function generateMockMetricsForUser(user: any) {
   };
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
+// 
 // MINI SPARKLINE
-// ──────────────────────────────────────────────────────────────────────────────
+// 
 function Sparkline({ values, color }: { values: number[]; color: string }) {
   const min = Math.min(...values);
   const max = Math.max(...values);
@@ -264,9 +264,9 @@ function Sparkline({ values, color }: { values: number[]; color: string }) {
   );
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
+// 
 // SCORE RING
-// ──────────────────────────────────────────────────────────────────────────────
+// 
 function RiskRing({ score, level }: { score: number; level: string }) {
   const r = 40, c = 2 * Math.PI * r;
   const dash = (score / 100) * c;
@@ -285,9 +285,9 @@ function RiskRing({ score, level }: { score: number; level: string }) {
   );
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
+// 
 // RISK CARD
-// ──────────────────────────────────────────────────────────────────────────────
+// 
 function EmployeeRiskCard({ emp, result, onClick, selected }: {
   emp: any;
   result: RiskResult;
@@ -314,7 +314,7 @@ function EmployeeRiskCard({ emp, result, onClick, selected }: {
         </div>
         <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${col.badge}`}>
           <span className={`w-2 h-2 rounded-full ${col.dot} animate-pulse`}></span>
-          {result.riskLevel === 'high' ? '🚨 High Risk' : result.riskLevel === 'moderate' ? '⚠️ Moderate' : '✅ Safe'}
+          {result.riskLevel === 'high' ? ' High Risk' : result.riskLevel === 'moderate' ? ' Moderate' : ' Safe'}
         </div>
       </div>
 
@@ -340,16 +340,16 @@ function EmployeeRiskCard({ emp, result, onClick, selected }: {
 
       <div className="mt-3 flex flex-wrap gap-1">
         {result.indicators.slice(0, 2).map((ind, i) => (
-          <span key={i} className="text-xs bg-white/70 px-2 py-0.5 rounded-full text-gray-600 border border-gray-200">⚠ {ind.slice(0, 30)}...</span>
+          <span key={i} className="text-xs bg-white/70 px-2 py-0.5 rounded-full text-gray-600 border border-gray-200"> {ind.slice(0, 30)}...</span>
         ))}
       </div>
     </div>
   );
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
+// 
 // STAT CARD
-// ──────────────────────────────────────────────────────────────────────────────
+// 
 function StatCard({ icon, label, value, sub, color }: { icon: React.ReactNode; label: string; value: string | number; sub: string; color: string }) {
   return (
     <div className={`bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow`}>
@@ -361,9 +361,9 @@ function StatCard({ icon, label, value, sub, color }: { icon: React.ReactNode; l
   );
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
+// 
 // DETAIL PANEL
-// ──────────────────────────────────────────────────────────────────────────────
+// 
 function DetailPanel({ emp, result }: { emp: any; result: RiskResult }) {
   const maxBreakdown = Math.max(...Object.values(result.breakdown), 1);
 
@@ -390,7 +390,7 @@ function DetailPanel({ emp, result }: { emp: any; result: RiskResult }) {
             </div>
             <div>
               <h2 className="text-2xl font-bold">{emp.name}</h2>
-              <p className="text-indigo-200">{emp.position} · {emp.department}</p>
+              <p className="text-indigo-200">{emp.position}  {emp.department}</p>
             </div>
           </div>
           <div className="text-right">
@@ -443,7 +443,7 @@ function DetailPanel({ emp, result }: { emp: any; result: RiskResult }) {
           </h3>
           <p className="text-sm text-indigo-900 leading-relaxed">{(result as any).reasoningTrace}</p>
           {(result as any).fairnessNote && (
-            <p className="text-xs text-indigo-500 mt-3 italic">⚖️ {(result as any).fairnessNote}</p>
+            <p className="text-xs text-indigo-500 mt-3 italic"> {(result as any).fairnessNote}</p>
           )}
         </div>
       )}
@@ -452,16 +452,16 @@ function DetailPanel({ emp, result }: { emp: any; result: RiskResult }) {
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-semibold text-gray-800 flex items-center gap-2"><BoltIcon className="w-4 h-4 text-yellow-500" /> Mood & Sentiment</h3>
           <span className={`text-sm font-semibold px-3 py-1 rounded-full ${result.sentiment === 'positive' ? 'bg-emerald-100 text-emerald-700' : result.sentiment === 'negative' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>
-            {result.sentiment === 'positive' ? '😊 Positive' : result.sentiment === 'negative' ? '😠 Negative' : '😐 Neutral'}
+            {result.sentiment === 'positive' ? ' Positive' : result.sentiment === 'negative' ? ' Negative' : ' Neutral'}
           </span>
         </div>
         <div className="w-full bg-gray-100 rounded-full h-4 overflow-hidden">
           <div className={`h-4 rounded-full transition-all duration-1000 ${moodBarColor}`} style={{ width: `${result.moodScore}%` }} />
         </div>
         <div className="flex justify-between text-xs text-gray-400 mt-1">
-          <span>😠 Negative</span>
+          <span> Negative</span>
           <span>{result.moodScore}/100</span>
-          <span>😊 Positive</span>
+          <span> Positive</span>
         </div>
       </div>
 
@@ -497,7 +497,7 @@ function DetailPanel({ emp, result }: { emp: any; result: RiskResult }) {
           <ul className="space-y-2">
             {result.indicators.map((ind, i) => (
               <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
-                <span className="text-red-500 mt-0.5">❌</span> {ind}
+                <span className="text-red-500 mt-0.5"></span> {ind}
               </li>
             ))}
           </ul>
@@ -513,7 +513,7 @@ function DetailPanel({ emp, result }: { emp: any; result: RiskResult }) {
           <ul className="space-y-2">
             {result.positives.map((p, i) => (
               <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
-                <span className="text-emerald-500 mt-0.5">✅</span> {p}
+                <span className="text-emerald-500 mt-0.5"></span> {p}
               </li>
             ))}
           </ul>
@@ -537,9 +537,9 @@ function DetailPanel({ emp, result }: { emp: any; result: RiskResult }) {
   );
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
+// 
 // MAIN PAGE
-// ──────────────────────────────────────────────────────────────────────────────
+// 
 export default function RiskIntelligencePage() {
   const [employees, setEmployees] = useState<any[]>([]);
   const [selectedEmpId, setSelectedEmpId] = useState<string>('');
@@ -669,7 +669,7 @@ export default function RiskIntelligencePage() {
               {aiMode && (
                 <div className="mt-3 inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-500/30 rounded-full px-4 py-1.5">
                   <SparklesIcon className="w-4 h-4 text-emerald-400" />
-                  <span className="text-emerald-300 text-xs font-semibold">Gemini Active — Analyzing real MongoDB data</span>
+                  <span className="text-emerald-300 text-xs font-semibold">Gemini Active  Analyzing real MongoDB data</span>
                 </div>
               )}
           </div>
@@ -731,9 +731,9 @@ export default function RiskIntelligencePage() {
               className="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 bg-white"
             >
               <option value="all">All Levels</option>
-              <option value="high">🚨 High</option>
-              <option value="moderate">⚠️ Moderate</option>
-              <option value="safe">✅ Safe</option>
+              <option value="high"> High</option>
+              <option value="moderate"> Moderate</option>
+              <option value="safe"> Safe</option>
             </select>
           </div>
 
@@ -774,7 +774,7 @@ export default function RiskIntelligencePage() {
           <h3 className="font-bold text-gray-900 flex items-center gap-2">
             <ChartBarIcon className="w-5 h-5 text-indigo-600" /> Organisation-Wide Risk Overview
           </h3>
-          <span className="text-xs text-gray-400 bg-gray-50 px-3 py-1 rounded-full">AI-generated · Updated live</span>
+          <span className="text-xs text-gray-400 bg-gray-50 px-3 py-1 rounded-full">AI-generated  Updated live</span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -814,7 +814,7 @@ export default function RiskIntelligencePage() {
                     </td>
                     <td className="px-5 py-4 capitalize">
                       <span className={`font-medium ${sCol}`}>
-                        {result.sentiment === 'positive' ? '😊' : result.sentiment === 'negative' ? '😠' : '😐'} {result.sentiment}
+                        {result.sentiment === 'positive' ? '' : result.sentiment === 'negative' ? '' : ''} {result.sentiment}
                       </span>
                     </td>
                     <td className="px-5 py-4">
@@ -841,15 +841,15 @@ export default function RiskIntelligencePage() {
         </div>
       </div>
 
-      {/* Footer — IBM HR Dataset + Gemini attribution */}
+      {/* Footer  IBM HR Dataset + Gemini attribution */}
       <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 rounded-2xl p-5 flex items-start gap-3">
         <SparklesIcon className="w-5 h-5 text-indigo-600 flex-shrink-0 mt-0.5" />
         <div className="flex-1">
-          <p className="text-sm font-semibold text-indigo-900">IBM HR Analytics Dataset · XGBoost + Gemini Hybrid Engine</p>
+          <p className="text-sm font-semibold text-indigo-900">IBM HR Analytics Dataset  XGBoost + Gemini Hybrid Engine</p>
           <p className="text-sm text-indigo-700 mt-1">
             Attrition predictions are calibrated against the{' '}
             <strong>IBM HR Analytics Dataset</strong> (WA_Fn-UseC_-HR-Employee-Attrition, N=1,470)
-            using XGBoost feature importances (AUC-ROC ≈ 0.87) with SMOTE class balancing.
+            using XGBoost feature importances (AUC-ROC  0.87) with SMOTE class balancing.
             Gemini provides SHAP-style reasoning traces anchored to IBM population statistics
             (16.1% base attrition rate). Analysis is based strictly on behavioral data
             per Barocas et al. (2019) fairness framework.
@@ -857,7 +857,7 @@ export default function RiskIntelligencePage() {
           <div className="flex flex-wrap gap-2 mt-3">
             {[
               'IBM HR Dataset (2021)',
-              'XGBoost · AUC-ROC 0.87',
+              'XGBoost  AUC-ROC 0.87',
               'SMOTE Class Balancing',
               'SHAP Explainability',
               'Gemini Reasoning',
@@ -871,7 +871,7 @@ export default function RiskIntelligencePage() {
         </div>
       </div>
 
-      {/* HR Risk AI Chatbot — floats over the page */}
+      {/* HR Risk AI Chatbot  floats over the page */}
       <RiskChatbot
         orgContext={orgSummary}
         employeeContext={selectedData ? {

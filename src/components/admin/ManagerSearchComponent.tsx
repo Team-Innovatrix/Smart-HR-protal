@@ -248,7 +248,7 @@ export default function ManagerSearchComponent({
                         {employee.firstName} {employee.lastName}
                       </p>
                       <p className="text-sm text-gray-500 truncate">
-                        {employee.employeeId} • {employee.department} • {employee.position}
+                        {employee.employeeId}  {employee.department}  {employee.position}
                       </p>
                     </div>
                   </div>

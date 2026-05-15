@@ -220,7 +220,7 @@ export default function UserEditModal({ isOpen, onClose, userId, onUserUpdated }
       errors.emergencyContact = 'Please enter a valid emergency contact phone number';
     }
 
-    // Only require roleId if roles have loaded — if they haven't, skip this check
+    // Only require roleId if roles have loaded  if they haven't, skip this check
     if (roles.length > 0 && !formData.roleId?.trim()) {
       errors.roleId = 'User role is required';
     }
@@ -290,8 +290,8 @@ export default function UserEditModal({ isOpen, onClose, userId, onUserUpdated }
     } else {
       setFilteredPositions([]);
     }
-    // NOTE: intentionally NOT resetting position here — position is a free-text field
-    // NOTE: do NOT add formData.position to deps — it would clear the field every keystroke
+    // NOTE: intentionally NOT resetting position here  position is a free-text field
+    // NOTE: do NOT add formData.position to deps  it would clear the field every keystroke
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.department, departmentPositions]);
 
@@ -430,7 +430,7 @@ export default function UserEditModal({ isOpen, onClose, userId, onUserUpdated }
                     list="department-suggestions"
                     value={formData.department || ''}
                     onChange={(e) => handleInputChange('department', e.target.value)}
-                    placeholder="e.g. Engineering, Marketing, Sales…"
+                    placeholder="e.g. Engineering, Marketing, Sales"
                     className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       validationErrors.department ? 'border-red-500' : 'border-gray-300'
                     }`}
@@ -454,7 +454,7 @@ export default function UserEditModal({ isOpen, onClose, userId, onUserUpdated }
                     list="position-suggestions"
                     value={formData.position || ''}
                     onChange={(e) => handleInputChange('position', e.target.value)}
-                    placeholder="e.g. Software Engineer, Product Manager…"
+                    placeholder="e.g. Software Engineer, Product Manager"
                     className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       validationErrors.position ? 'border-red-500' : 'border-gray-300'
                     }`}
@@ -836,12 +836,12 @@ export default function UserEditModal({ isOpen, onClose, userId, onUserUpdated }
               </div>
             </div>
 
-            {/* Validation error summary + API error — visible right at the Save button */}
+            {/* Validation error summary + API error  visible right at the Save button */}
             {(Object.keys(validationErrors).some(k => validationErrors[k]) || error) && (
               <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                {error && <p className="text-red-700 text-sm font-semibold mb-1">⚠️ {error}</p>}
+                {error && <p className="text-red-700 text-sm font-semibold mb-1"> {error}</p>}
                 {Object.entries(validationErrors).filter(([, v]) => v).map(([field, msg]) => (
-                  <p key={field} className="text-red-600 text-xs">• {msg}</p>
+                  <p key={field} className="text-red-600 text-xs"> {msg}</p>
                 ))}
               </div>
             )}
@@ -867,7 +867,7 @@ export default function UserEditModal({ isOpen, onClose, userId, onUserUpdated }
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
                       </svg>
-                      Saving…
+                      Saving
                     </span>
                   : 'Save Changes'
                 }

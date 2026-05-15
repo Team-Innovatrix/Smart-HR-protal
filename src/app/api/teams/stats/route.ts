@@ -40,11 +40,11 @@ export async function GET(req: NextRequest) {
     
     if (isHRManager) {
       // HR Managers can see all teams
-      console.log('🔍 Team Stats: HR Manager - fetching all teams');
+      console.log(' Team Stats: HR Manager - fetching all teams');
       teams = await Team.find({ isActive: true });
     } else {
       // Regular users can only see teams they are part of
-      console.log('🔍 Team Stats: Regular user - fetching user teams for userId:', authUser.userId);
+      console.log(' Team Stats: Regular user - fetching user teams for userId:', authUser.userId);
       teams = await Team.find({
         $or: [
           { members: authUser.userId },
@@ -52,7 +52,7 @@ export async function GET(req: NextRequest) {
         ],
         isActive: true
       });
-      console.log('✅ Team Stats: Found', teams.length, 'teams for user');
+      console.log(' Team Stats: Found', teams.length, 'teams for user');
     }
 
     if (!teams || teams.length === 0) {
@@ -187,8 +187,8 @@ export async function GET(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error('❌ Error fetching team stats:', error);
-    console.error('❌ Error details:', {
+    console.error(' Error fetching team stats:', error);
+    console.error(' Error details:', {
       message: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined,
       name: error instanceof Error ? error.name : 'Unknown'

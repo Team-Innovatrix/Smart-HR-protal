@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
-/* ── Types ─────────────────────────────────────────────────────────── */
+/*  Types  */
 interface Vacancy {
   _id: string;
   title: string;
@@ -29,7 +29,7 @@ const emptyForm = {
   salaryMin: '', salaryMax: '', salaryCurrency: 'INR', deadline: '',
 };
 
-/* ── Vacancy Card ───────────────────────────────────────────────────── */
+/*  Vacancy Card  */
 function VacancyCard({
   v, onToggle, onDelete,
 }: { v: Vacancy; onToggle: (id: string, active: boolean) => void; onDelete: (id: string) => void }) {
@@ -55,7 +55,7 @@ function VacancyCard({
             </span>
           </div>
           <p className="text-[12px] text-[var(--text-secondary)]">
-            {v.department} · {v.location}
+            {v.department}  {v.location}
           </p>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
@@ -95,19 +95,19 @@ function VacancyCard({
 
       <div className="flex items-center gap-4 text-[11px] text-[var(--text-muted)]">
         {(v.salaryMin || v.salaryMax) && (
-          <span>💰 {v.salaryMin && `${v.salaryCurrency} ${v.salaryMin.toLocaleString()}`}
-            {v.salaryMin && v.salaryMax && ' – '}
+          <span> {v.salaryMin && `${v.salaryCurrency} ${v.salaryMin.toLocaleString()}`}
+            {v.salaryMin && v.salaryMax && '  '}
             {v.salaryMax && `${v.salaryMax.toLocaleString()}`}
           </span>
         )}
-        {v.deadline && <span>📅 Deadline: {new Date(v.deadline).toLocaleDateString('en-IN')}</span>}
+        {v.deadline && <span> Deadline: {new Date(v.deadline).toLocaleDateString('en-IN')}</span>}
         <span className="ml-auto">Posted {new Date(v.createdAt).toLocaleDateString('en-IN')}</span>
       </div>
     </div>
   );
 }
 
-/* ── Main Page ──────────────────────────────────────────────────────── */
+/*  Main Page  */
 export default function RequirementsPage() {
   const [vacancies, setVacancies] = useState<Vacancy[]>([]);
   const [loading, setLoading] = useState(true);
@@ -208,7 +208,7 @@ export default function RequirementsPage() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* ── Hero ─────────────────────────────────────────────────── */}
+      {/*  Hero  */}
       <div className="page-hero relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 rounded-full blur-[100px] opacity-20 pointer-events-none"
           style={{ background: 'radial-gradient(circle, rgba(52,211,153,0.4), transparent)' }} />
@@ -229,30 +229,30 @@ export default function RequirementsPage() {
             onClick={() => setShowForm(p => !p)}
             className="btn-primary flex items-center gap-2 whitespace-nowrap"
           >
-            <span className="text-lg">{showForm ? '✕' : '+'}</span>
+            <span className="text-lg">{showForm ? '' : '+'}</span>
             {showForm ? 'Cancel' : 'Post Vacancy'}
           </button>
         </div>
       </div>
 
-      {/* ── Flash messages ───────────────────────────────────────── */}
+      {/*  Flash messages  */}
       {success && (
         <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-[rgba(52,211,153,0.2)] bg-[rgba(52,211,153,0.08)] text-[var(--color-success)] text-[13px] font-medium animate-fade-in">
-          <span>✅</span> {success}
+          <span></span> {success}
         </div>
       )}
       {error && (
         <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-[rgba(248,113,113,0.2)] bg-[rgba(248,113,113,0.08)] text-[var(--color-danger)] text-[13px] font-medium animate-fade-in">
-          <span>⚠️</span> {error}
+          <span></span> {error}
         </div>
       )}
 
-      {/* ── Create Form ──────────────────────────────────────────── */}
+      {/*  Create Form  */}
       {showForm && (
         <div className="glass p-6 animate-fade-in">
           <h2 className="text-[15px] font-bold text-[var(--text-primary)] mb-5 flex items-center gap-2">
             <span className="w-8 h-8 rounded-lg flex items-center justify-center text-sm"
-              style={{ background: 'var(--accent-muted)', border: '1px solid rgba(52,211,153,0.15)' }}>📋</span>
+              style={{ background: 'var(--accent-muted)', border: '1px solid rgba(52,211,153,0.15)' }}></span>
             New Job Vacancy
           </h2>
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -371,14 +371,14 @@ export default function RequirementsPage() {
               <button type="submit" disabled={submitting} className="btn-primary flex items-center gap-2">
                 {submitting ? (
                   <><div className="w-4 h-4 rounded-full border-2 border-t-transparent border-current animate-spin" />Posting...</>
-                ) : '📢 Post Vacancy'}
+                ) : ' Post Vacancy'}
               </button>
             </div>
           </form>
         </div>
       )}
 
-      {/* ── Filter + Stats ───────────────────────────────────────── */}
+      {/*  Filter + Stats  */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-2">
           {(['all', 'active', 'inactive'] as const).map(f => (
@@ -395,11 +395,11 @@ export default function RequirementsPage() {
           ))}
         </div>
         <button onClick={fetchVacancies} className="text-[12px] text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors flex items-center gap-1">
-          🔄 Refresh
+           Refresh
         </button>
       </div>
 
-      {/* ── Vacancies List ───────────────────────────────────────── */}
+      {/*  Vacancies List  */}
       {loading ? (
         <div className="flex items-center justify-center py-16">
           <div className="relative w-10 h-10">
@@ -409,7 +409,7 @@ export default function RequirementsPage() {
         </div>
       ) : filtered.length === 0 ? (
         <div className="glass p-12 text-center">
-          <p className="text-4xl mb-3">📭</p>
+          <p className="text-4xl mb-3"></p>
           <p className="text-[var(--text-secondary)] font-medium">
             {vacancies.length === 0 ? 'No vacancies posted yet' : `No ${filter} vacancies`}
           </p>

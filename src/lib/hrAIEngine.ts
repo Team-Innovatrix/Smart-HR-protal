@@ -1,20 +1,20 @@
 /**
  * hrAIEngine.ts
- * ─────────────────────────────────────────────────────────────────────────────
- * Shared HR AI Engine — single source of truth for all risk computation.
+ * 
+ * Shared HR AI Engine  single source of truth for all risk computation.
  *
  * Purpose:
  *   Rule-based ML fallback engine used when the Python FastAPI/XGBoost service
  *   is offline. Produces deterministic employee risk scores from 14 input features.
  *
  * Key Exports:
- *   EmployeeRiskInput        — interface: 14 risk features (satisfaction, overtime, etc.)
- *   RiskResult               — interface: score, level, indicators, SHAP-like breakdown
- *   EmployeeProfile          — interface: RiskInput + display fields (name, avatar, trend)
- *   hashString()             — deterministic hash for seeding mock data (no random flicker)
- *   generateMockMetricsForUser() — maps MongoDB user document → EmployeeProfile
- *   computeRisk()            — PHASE 1 rule-based scorer (replaced by XGBoost in Phase 2)
- *   computeOrgInsights()     — aggregates employee results → org-level KPIs + dept ranking
+ *   EmployeeRiskInput         interface: 14 risk features (satisfaction, overtime, etc.)
+ *   RiskResult                interface: score, level, indicators, SHAP-like breakdown
+ *   EmployeeProfile           interface: RiskInput + display fields (name, avatar, trend)
+ *   hashString()              deterministic hash for seeding mock data (no random flicker)
+ *   generateMockMetricsForUser()  maps MongoDB user document  EmployeeProfile
+ *   computeRisk()             PHASE 1 rule-based scorer (replaced by XGBoost in Phase 2)
+ *   computeOrgInsights()      aggregates employee results  org-level KPIs + dept ranking
  *
  * Used by:
  *   src/components/admin/AIPredictionsTab.tsx  (AI Predictions tab)
@@ -23,12 +23,12 @@
  * Phase 2 note:
  *   When the FastAPI ML service is running on :8000, AIPredictionsTab bypasses
  *   computeRisk() entirely and uses XGBoost predictions with real SHAP values.
- * ─────────────────────────────────────────────────────────────────────────────
+ * 
  */
 
 export interface EmployeeRiskInput {
-  satisfactionLevel: number;      // 0–1
-  lastEvaluation: number;         // 0–1
+  satisfactionLevel: number;      // 01
+  lastEvaluation: number;         // 01
   numberProjects: number;
   averageMonthlyHours: number;
   yearsAtCompany: number;
@@ -121,7 +121,7 @@ export function generateMockMetricsForUser(user: {
   };
 }
 
-/** Core risk computation — will be replaced by XGBoost API call in Phase 2 */
+/** Core risk computation  will be replaced by XGBoost API call in Phase 2 */
 export function computeRisk(input: EmployeeRiskInput): RiskResult {
   let riskScore = 0, moodScore = 50;
   const indicators: string[] = [], positives: string[] = [];
@@ -145,7 +145,7 @@ export function computeRisk(input: EmployeeRiskInput): RiskResult {
 
   if (input.salaryGrowthPercent === 0) {
     const p = 20; riskScore += p; breakdown['No Salary Growth'] = p;
-    indicators.push('Zero salary growth — retention risk elevated'); moodScore -= 12;
+    indicators.push('Zero salary growth  retention risk elevated'); moodScore -= 12;
   } else if (input.salaryGrowthPercent < 3) {
     const p = 10; riskScore += p; breakdown['Low Salary Growth'] = p;
     indicators.push('Below-inflation salary growth'); moodScore -= 5;
@@ -180,7 +180,7 @@ export function computeRisk(input: EmployeeRiskInput): RiskResult {
     indicators.push('Too many simultaneous projects');
   } else if (input.numberProjects < 2) {
     const p = 5; riskScore += p; breakdown['Underutilized'] = p;
-    indicators.push('Very few projects — disengagement signal');
+    indicators.push('Very few projects  disengagement signal');
   }
 
   riskScore = Math.min(100, Math.max(0, riskScore));

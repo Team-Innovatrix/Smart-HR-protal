@@ -65,10 +65,10 @@ export async function backupToS3(data: any, key: string, contentType: string = '
     });
 
     const response = await s3Client.send(command);
-    console.log(`✅ Successfully backed up data to S3: ${key}`);
+    console.log(` Successfully backed up data to S3: ${key}`);
     return response;
   } catch (error) {
-    console.error(`❌ Failed to backup to S3: ${key}`, error);
+    console.error(` Failed to backup to S3: ${key}`, error);
     return null;
   }
 }

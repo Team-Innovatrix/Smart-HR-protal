@@ -64,7 +64,7 @@ const GaugeChartComponent: React.FC<GaugeChartProps> = ({
     
     const startX = centerX - radius
     const startY = centerY
-    const angle = Math.PI * percentage // 0 to π
+    const angle = Math.PI * percentage // 0 to 
     const endX = centerX - radius * Math.cos(angle)
     const endY = centerY - radius * Math.sin(angle)
     

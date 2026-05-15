@@ -28,14 +28,14 @@ export const POST = withJsonErrorHandling(async (request: NextRequest) => {
     await connectDB();
     
     const body = await request.json();
-    console.log('📥 Attendance API received request body:', JSON.stringify(body, null, 2));
+    console.log(' Attendance API received request body:', JSON.stringify(body, null, 2));
     
     const { userId, action, notes, location } = body;
     
-    console.log('🔍 Parsed fields:', { userId, action, notes, location });
+    console.log(' Parsed fields:', { userId, action, notes, location });
     
     if (!userId || !action) {
-      console.error('❌ Missing required fields:', { hasUserId: !!userId, hasAction: !!action });
+      console.error(' Missing required fields:', { hasUserId: !!userId, hasAction: !!action });
       return NextResponse.json(
         { success: false, message: 'User ID and action are required' },
         { status: 400 }
@@ -235,9 +235,9 @@ export const POST = withJsonErrorHandling(async (request: NextRequest) => {
         const todayGenericKey = `attendance:${userId}:today`;
         await EnhancedCache.invalidate(todayKey);
         await EnhancedCache.invalidate(todayGenericKey);
-        console.log('✅ Cache invalidated for clock-in:', { userId, currentLocalDate });
+        console.log(' Cache invalidated for clock-in:', { userId, currentLocalDate });
       } catch (cacheError) {
-        console.warn('⚠️ Cache invalidation failed for clock-in:', cacheError);
+        console.warn(' Cache invalidation failed for clock-in:', cacheError);
         // Don't fail the request if cache invalidation fails
       }
       
@@ -275,7 +275,7 @@ export const POST = withJsonErrorHandling(async (request: NextRequest) => {
         console.error('Google Sheets setup error:', e);
       }
       
-      // 🔄 Backup to AWS S3 (Dual-write for Attendance System)
+      //  Backup to AWS S3 (Dual-write for Attendance System)
       backupToS3(
         formattedAttendance, 
         `attendance/clock-in/${userId}/${currentLocalDate}.json`
@@ -424,9 +424,9 @@ export const POST = withJsonErrorHandling(async (request: NextRequest) => {
         const todayGenericKey = `attendance:${userId}:today`;
         await EnhancedCache.invalidate(todayKey);
         await EnhancedCache.invalidate(todayGenericKey);
-        console.log('✅ Cache invalidated for clock-out:', { userId, currentLocalDate });
+        console.log(' Cache invalidated for clock-out:', { userId, currentLocalDate });
       } catch (cacheError) {
-        console.warn('⚠️ Cache invalidation failed for clock-out:', cacheError);
+        console.warn(' Cache invalidation failed for clock-out:', cacheError);
         // Don't fail the request if cache invalidation fails
       }
       
@@ -461,7 +461,7 @@ export const POST = withJsonErrorHandling(async (request: NextRequest) => {
         console.error('Google Sheets setup error:', e);
       }
       
-      // 🔄 Backup to AWS S3 (Dual-write for Attendance System)
+      //  Backup to AWS S3 (Dual-write for Attendance System)
       backupToS3(
         formattedAttendance, 
         `attendance/clock-out/${userId}/${currentLocalDate}.json`
@@ -533,7 +533,7 @@ export const GET = withJsonErrorHandling(async (request: NextRequest) => {
     const query: Record<string, unknown> = { userId };
     
     if (date) {
-      console.log('🕐 Attendance API received date:', date, 'for userId:', userId);
+      console.log(' Attendance API received date:', date, 'for userId:', userId);
       
       // Get user profile to determine timezone
       const userProfile = await UserProfile.findOne({ clerkUserId: userId });
@@ -544,12 +544,12 @@ export const GET = withJsonErrorHandling(async (request: NextRequest) => {
         );
       }
 
-      console.log('🕐 User timezone:', userProfile.timezone);
+      console.log(' User timezone:', userProfile.timezone);
 
       // Server-authoritative date calculation: Always use user's profile timezone
       // This ensures consistency with how dates are calculated during writes
       const targetDate = TimezoneService.getTodayDateStringInTimezone(userProfile.timezone);
-      console.log('🕐 Server calculated date as:', targetDate, 'for timezone:', userProfile.timezone);
+      console.log(' Server calculated date as:', targetDate, 'for timezone:', userProfile.timezone);
       
       // Search for attendance record for the specific date
       const attendance = await Attendance.findOne({
@@ -557,7 +557,7 @@ export const GET = withJsonErrorHandling(async (request: NextRequest) => {
         date: targetDate
       });
       
-      console.log('🕐 Found attendance record:', attendance ? 'YES' : 'NO', 'for date:', targetDate);
+      console.log(' Found attendance record:', attendance ? 'YES' : 'NO', 'for date:', targetDate);
       
       
       if (!attendance) {

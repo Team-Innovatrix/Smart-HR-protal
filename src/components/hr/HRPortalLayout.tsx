@@ -229,7 +229,7 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
         onMouseEnter={() => setSidebarHovered(true)}
       />
 
-      {/* ═══ FLOATING LEFT SIDEBAR ═══ */}
+      {/*  FLOATING LEFT SIDEBAR  */}
       <aside 
         className={`fixed z-50 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hidden lg:flex flex-col w-[260px] shadow-2xl glass ${
           (sidebarHovered || sidebarPinned) ? 'translate-x-0' : '-translate-x-[300px]'
@@ -260,7 +260,7 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
                   boxShadow: '0 0 20px rgba(52, 211, 153, 0.1)',
                 }}
               >
-                ⚡
+                
               </div>
             )}
             <div className="leading-tight animate-fade-in">
@@ -302,7 +302,7 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
         </div>
       </aside>
 
-      {/* ═══ MOBILE SIDEBAR OVERLAY ═══ */}
+      {/*  MOBILE SIDEBAR OVERLAY  */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
@@ -327,7 +327,7 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
                       background: 'linear-gradient(135deg, rgba(52, 211, 153, 0.25), rgba(52, 211, 153, 0.08))',
                       border: '1px solid rgba(52, 211, 153, 0.2)',
                     }}
-                  >⚡</div>
+                  ></div>
                 )}
                 <div className="leading-tight">
                   <div className="text-[12px] font-bold text-[var(--text-primary)]">{companyName}</div>
@@ -376,11 +376,11 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
         </div>
       )}
 
-      {/* ═══ MAIN CONTENT AREA ═══ */}
+      {/*  MAIN CONTENT AREA  */}
       <div className={`relative z-10 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
         sidebarPinned ? 'lg:ml-[290px]' : 'lg:ml-0'
       }`}>
-        {/* ═══ TOP NAVBAR ═══ */}
+        {/*  TOP NAVBAR  */}
         <div className="sticky top-0 z-30 pt-5 px-5 pb-2">
           <header className="glass flex items-center h-[60px] px-5 gap-4"
             style={{ 
@@ -410,7 +410,7 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
                       boxShadow: '0 0 15px rgba(52, 211, 153, 0.1)',
                     }}
                   >
-                    ⚡
+                    
                   </div>
                 )}
                 <div className="leading-tight hidden sm:block">
@@ -461,7 +461,7 @@ const HRPortalLayout = ({ children, currentPage = 'home', showSidebar = true }: 
           </header>
         </div>
 
-        {/* ═══ PAGE CONTENT ═══ */}
+        {/*  PAGE CONTENT  */}
         <main className="p-5">
           <div className="max-w-[1600px] mx-auto animate-fade-in pb-20">
             {children}

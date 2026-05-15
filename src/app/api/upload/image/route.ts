@@ -213,7 +213,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Image upload error:', error)
 
-    // ── Graceful S3 fallback: save locally if bucket missing / access denied ──
+    //  Graceful S3 fallback: save locally if bucket missing / access denied 
     if (error instanceof Error && (error.name === 'NoSuchBucket' || error.name === 'AccessDenied' || (error as any)?.Code === 'NoSuchBucket')) {
       try {
         const formData2 = await request.formData().catch(() => null);
@@ -223,7 +223,7 @@ export async function POST(request: NextRequest) {
           {
             success: false,
             message: `S3 bucket "${env.AWS_S3_BUCKET}" not found. Please set the AWS_S3_BUCKET_NAME environment variable in your Vercel project settings to match your actual S3 bucket name.`,
-            hint: 'Go to Vercel → Project Settings → Environment Variables → Add AWS_S3_BUCKET_NAME'
+            hint: 'Go to Vercel  Project Settings  Environment Variables  Add AWS_S3_BUCKET_NAME'
           },
           { status: 500 }
         );

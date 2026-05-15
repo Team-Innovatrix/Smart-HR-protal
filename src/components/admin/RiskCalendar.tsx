@@ -1,29 +1,29 @@
 /**
  * RiskCalendar.tsx
- * ─────────────────────────────────────────────────────────────────────────────
- * Component : RiskCalendar  (Admin → Predictive AI Studio → Annual Risk Calendar tab)
+ * 
+ * Component : RiskCalendar  (Admin  Predictive AI Studio  Annual Risk Calendar tab)
  * Purpose   : Renders a full 12-month visual calendar where each day is
  *             colour-coded by its leave/bridge-leave risk score.
  *
  * Colour key:
- *   🔴 Red    → High risk  (score ≥ 70)  — holiday near weekend or holiday cluster
- *   🟡 Amber  → Medium risk (25–69)      — bridge-leave day or adjacent holiday
- *   🟢 Green  → Holiday, Low risk
- *   ⬛ Slate  → Weekend (not a holiday)
- *   🔵 Indigo → Today
- *   White dot → Public holiday marker overlaid on any cell
+ *    Red     High risk  (score  70)   holiday near weekend or holiday cluster
+ *    Amber   Medium risk (2569)       bridge-leave day or adjacent holiday
+ *    Green   Holiday, Low risk
+ *    Slate   Weekend (not a holiday)
+ *    Indigo  Today
+ *   White dot  Public holiday marker overlaid on any cell
  *
  * Exports:
- *   - HolidayEntry          (interface)   — shape of an Indian public holiday
- *   - DayRisk               (interface)   — computed risk data for a single date
- *   - calcDayRisk()                       — pure function: date + holidays → DayRisk
- *   - buildYearRiskMap()                  — pre-computes all 365 days for a year
- *   - RiskCalendar          (default)     — the 12-month grid component
+ *   - HolidayEntry          (interface)    shape of an Indian public holiday
+ *   - DayRisk               (interface)    computed risk data for a single date
+ *   - calcDayRisk()                        pure function: date + holidays  DayRisk
+ *   - buildYearRiskMap()                   pre-computes all 365 days for a year
+ *   - RiskCalendar          (default)      the 12-month grid component
  *
  * Used by:
  *   src/app/portal/admin/predictive/page.tsx  (Annual Risk Calendar tab)
  *   src/components/admin/DateSearch.tsx       (imports calcDayRisk)
- * ─────────────────────────────────────────────────────────────────────────────
+ * 
  */
 'use client';
 
@@ -37,7 +37,7 @@ export interface HolidayEntry {
 
 export interface DayRisk {
   dateStr: string;       // YYYY-MM-DD
-  riskScore: number;     // 0–100
+  riskScore: number;     // 0100
   riskLevel: 'low' | 'medium' | 'high' | 'weekend' | 'holiday';
   isHoliday: boolean;
   holidayName?: string;
@@ -46,7 +46,7 @@ export interface DayRisk {
   reason: string;
 }
 
-/* ── helpers ── */
+/*  helpers  */
 function toYMD(d: Date) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
@@ -83,8 +83,8 @@ export function calcDayRisk(dateStr: string, allHolidays: HolidayEntry[]): DayRi
     let score = 0;
     let reason = 'Normal working day';
     if (nearby && (dow === 1 || dow === 5)) { score = 55; reason = 'Likely bridge leave day (adjacent to holiday + weekend)'; }
-    else if (nearbyTwo.length >= 2) { score = 35; reason = 'Near holiday cluster — some unplanned leaves expected'; }
-    else if (nearby) { score = 25; reason = 'Adjacent to a holiday — minor leave risk'; }
+    else if (nearbyTwo.length >= 2) { score = 35; reason = 'Near holiday cluster  some unplanned leaves expected'; }
+    else if (nearby) { score = 25; reason = 'Adjacent to a holiday  minor leave risk'; }
 
     const level = score >= 50 ? 'high' : score >= 25 ? 'medium' : 'low';
     return { dateStr, riskScore: score, riskLevel: level, isHoliday: false, isWeekend, reason };
@@ -92,13 +92,13 @@ export function calcDayRisk(dateStr: string, allHolidays: HolidayEntry[]): DayRi
 
   // It IS a holiday
   let score = 40;
-  let reason = 'Public holiday — standard absence expected.';
+  let reason = 'Public holiday  standard absence expected.';
 
-  if (dow === 1) { score += 30; reason = 'Monday holiday → bridge leaves likely on Friday.'; }
-  else if (dow === 5) { score += 30; reason = 'Friday holiday → bridge leaves likely on Monday.'; }
-  else if (dow === 2) { score += 15; reason = 'Tuesday holiday → some may take Monday off.'; }
-  else if (dow === 4) { score += 15; reason = 'Thursday holiday → some may take Friday off.'; }
-  else if (dow === 3) { score += 5; reason = 'Mid-week holiday — minimal bridge-leave risk.'; }
+  if (dow === 1) { score += 30; reason = 'Monday holiday  bridge leaves likely on Friday.'; }
+  else if (dow === 5) { score += 30; reason = 'Friday holiday  bridge leaves likely on Monday.'; }
+  else if (dow === 2) { score += 15; reason = 'Tuesday holiday  some may take Monday off.'; }
+  else if (dow === 4) { score += 15; reason = 'Thursday holiday  some may take Friday off.'; }
+  else if (dow === 3) { score += 5; reason = 'Mid-week holiday  minimal bridge-leave risk.'; }
 
   const nearby = allHolidays.filter(h => {
     const hd = parseYMD(h.date);
@@ -118,7 +118,7 @@ export function calcDayRisk(dateStr: string, allHolidays: HolidayEntry[]): DayRi
   };
 }
 
-/* ── build full-year risk map ── */
+/*  build full-year risk map  */
 export function buildYearRiskMap(year: number, holidays: HolidayEntry[]): Map<string, DayRisk> {
   const map = new Map<string, DayRisk>();
   const start = new Date(year, 0, 1);
@@ -130,7 +130,7 @@ export function buildYearRiskMap(year: number, holidays: HolidayEntry[]): Map<st
   return map;
 }
 
-/* ── colour helpers ── */
+/*  colour helpers  */
 function cellBg(r: DayRisk, isToday: boolean) {
   if (isToday) return 'bg-indigo-500 text-white font-bold ring-2 ring-indigo-300';
   if (r.isWeekend && !r.isHoliday) return 'bg-slate-800/40 text-slate-500';
@@ -141,7 +141,7 @@ function cellBg(r: DayRisk, isToday: boolean) {
   return 'text-slate-300 hover:bg-slate-700/40';
 }
 
-/* ── Month grid ── */
+/*  Month grid  */
 function MonthGrid({ year, month, riskMap, onDayClick, today }: {
   year: number; month: number;
   riskMap: Map<string, DayRisk>;
@@ -186,7 +186,7 @@ function MonthGrid({ year, month, riskMap, onDayClick, today }: {
   );
 }
 
-/* ── Main Export ── */
+/*  Main Export  */
 interface RiskCalendarProps {
   holidays: HolidayEntry[];
   year: number;
@@ -218,8 +218,8 @@ export default function RiskCalendar({ holidays, year }: RiskCalendarProps) {
       {/* Legend */}
       <div className="flex flex-wrap gap-4 text-xs text-slate-400">
         {[
-          { color: 'bg-red-500', label: 'High Risk (≥70)' },
-          { color: 'bg-amber-400', label: 'Medium Risk (25–69)' },
+          { color: 'bg-red-500', label: 'High Risk (70)' },
+          { color: 'bg-amber-400', label: 'Medium Risk (2569)' },
           { color: 'bg-emerald-500', label: 'Holiday (Low Risk)' },
           { color: 'bg-slate-700', label: 'Weekend' },
           { color: 'bg-indigo-500', label: 'Today' },
@@ -259,7 +259,7 @@ export default function RiskCalendar({ holidays, year }: RiskCalendarProps) {
                 {parseYMD(selected.dateStr).toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
               </p>
               {selected.isHoliday && (
-                <p className="text-sm text-[var(--accent)] font-semibold mt-0.5">🏛️ {selected.holidayName} ({selected.holidayType})</p>
+                <p className="text-sm text-[var(--accent)] font-semibold mt-0.5"> {selected.holidayName} ({selected.holidayType})</p>
               )}
               <p className="text-sm text-[var(--text-secondary)] mt-2">{selected.reason}</p>
             </div>
@@ -274,7 +274,7 @@ export default function RiskCalendar({ holidays, year }: RiskCalendarProps) {
               </div>
             </div>
           </div>
-          <button onClick={() => setSelected(null)} className="mt-3 text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors">✕ Close</button>
+          <button onClick={() => setSelected(null)} className="mt-3 text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"> Close</button>
         </div>
       )}
     </div>

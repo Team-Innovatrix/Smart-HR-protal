@@ -22,7 +22,7 @@ interface DashboardData {
   };
 }
 
-/* ── Animated counter ─────────────────────────────────────────────── */
+/*  Animated counter  */
 function useCountUp(target: number, duration = 1000, delay = 0) {
   const [val, setVal] = useState(0);
   useEffect(() => {
@@ -41,7 +41,7 @@ function useCountUp(target: number, duration = 1000, delay = 0) {
   return val;
 }
 
-/* ── Stat Card ────────────────────────────────────────────────────── */
+/*  Stat Card  */
 function StatCard({ label, value, icon, delay, sub }: {
   label: string; value: number; icon: string; delay: number; sub: string;
 }) {
@@ -78,7 +78,7 @@ function StatCard({ label, value, icon, delay, sub }: {
   );
 }
 
-/* ── Quick Action Card ────────────────────────────────────────────── */
+/*  Quick Action Card  */
 function ActionCard({ href, icon, label, description, badgeText }: {
   href: string; icon: string; label: string; description: string; badgeText?: string;
 }) {
@@ -106,7 +106,7 @@ function ActionCard({ href, icon, label, description, badgeText }: {
   );
 }
 
-/* ── Department Row ───────────────────────────────────────────────── */
+/*  Department Row  */
 function DeptRow({ name, count, max }: { name: string; count: number; max: number }) {
   const pct = max > 0 ? Math.round((count / max) * 100) : 0;
   return (
@@ -122,7 +122,7 @@ function DeptRow({ name, count, max }: { name: string; count: number; max: numbe
   );
 }
 
-/* ── Main Page ────────────────────────────────────────────────────── */
+/*  Main Page  */
 export default function AdminDashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -166,7 +166,7 @@ export default function AdminDashboard() {
           <div className="absolute inset-0 rounded-full border-2 border-[var(--glass-border)]" />
           <div className="absolute inset-0 rounded-full border-2 border-t-[var(--accent)] animate-spin" />
         </div>
-        <p className="text-[var(--accent)] font-medium text-sm">Loading command centre…</p>
+        <p className="text-[var(--accent)] font-medium text-sm">Loading command centre</p>
       </div>
     </div>
   );
@@ -174,7 +174,7 @@ export default function AdminDashboard() {
   if (error) return (
     <div className="flex items-center justify-center min-h-[40vh]">
       <div className="glass p-8 max-w-md text-center">
-        <div className="text-4xl mb-3">⚠️</div>
+        <div className="text-4xl mb-3"></div>
         <h3 className="text-[var(--color-danger)] font-bold mb-2">Failed to load dashboard</h3>
         <p className="text-[var(--text-secondary)] text-[13px] mb-4">{error}</p>
         <button onClick={fetchData} className="btn-primary">Retry</button>
@@ -188,27 +188,27 @@ export default function AdminDashboard() {
   const maxDept = Math.max(...departmentStats.map(d => d.count), 1);
 
   const stats = [
-    { label: 'Employees', value: overview.totalUsers, icon: '👥', delay: 0, sub: 'Active headcount' },
-    { label: 'Pending Leaves', value: overview.pendingLeaves, icon: '📅', delay: 120, sub: 'Awaiting review' },
-    { label: "Today's Attendance", value: overview.todayAttendance, icon: '✅', delay: 240, sub: 'Clocked in today' },
-    { label: 'Active Teams', value: overview.totalTeams, icon: '🏢', delay: 360, sub: 'Teams configured' },
+    { label: 'Employees', value: overview.totalUsers, icon: '', delay: 0, sub: 'Active headcount' },
+    { label: 'Pending Leaves', value: overview.pendingLeaves, icon: '', delay: 120, sub: 'Awaiting review' },
+    { label: "Today's Attendance", value: overview.todayAttendance, icon: '', delay: 240, sub: 'Clocked in today' },
+    { label: 'Active Teams', value: overview.totalTeams, icon: '', delay: 360, sub: 'Teams configured' },
   ];
 
   const quickActions = [
-    { href: '/portal/admin/users', icon: '👤', label: 'Manage Employees', description: 'Add, edit, and manage your team', badgeText: `${overview.totalUsers} total` },
-    { href: '/portal/admin/leaves', icon: '📋', label: 'Leave Requests', description: 'Review and approve leave applications', badgeText: overview.pendingLeaves > 0 ? `${overview.pendingLeaves} pending` : undefined },
-    { href: '/portal/admin/attendance', icon: '🕐', label: 'Attendance Log', description: 'Track daily attendance records' },
-    { href: '/portal/admin/teams', icon: '🏢', label: 'Team Management', description: 'Organise departments and teams' },
-    { href: '/portal/admin/analytics', icon: '📊', label: 'Analytics & Reports', description: 'Performance insights and trends' },
-    { href: '/portal/admin/predictive', icon: '🤖', label: 'AI Predictions', description: 'ML-powered workforce forecasting', badgeText: 'BETA' },
-    { href: '/portal/admin/risk', icon: '🛡️', label: 'Risk Intelligence', description: 'Attrition and compliance monitoring' },
-    { href: '/portal/admin/settings', icon: '⚙️', label: 'Settings', description: 'System configuration and preferences' },
+    { href: '/portal/admin/users', icon: '', label: 'Manage Employees', description: 'Add, edit, and manage your team', badgeText: `${overview.totalUsers} total` },
+    { href: '/portal/admin/leaves', icon: '', label: 'Leave Requests', description: 'Review and approve leave applications', badgeText: overview.pendingLeaves > 0 ? `${overview.pendingLeaves} pending` : undefined },
+    { href: '/portal/admin/attendance', icon: '', label: 'Attendance Log', description: 'Track daily attendance records' },
+    { href: '/portal/admin/teams', icon: '', label: 'Team Management', description: 'Organise departments and teams' },
+    { href: '/portal/admin/analytics', icon: '', label: 'Analytics & Reports', description: 'Performance insights and trends' },
+    { href: '/portal/admin/predictive', icon: '', label: 'AI Predictions', description: 'ML-powered workforce forecasting', badgeText: 'BETA' },
+    { href: '/portal/admin/risk', icon: '', label: 'Risk Intelligence', description: 'Attrition and compliance monitoring' },
+    { href: '/portal/admin/settings', icon: '', label: 'Settings', description: 'System configuration and preferences' },
   ];
 
   return (
     <div className="space-y-8 animate-fade-in">
 
-      {/* ── HERO BANNER ───────────────────────────────────────── */}
+      {/*  HERO BANNER  */}
       <div className="page-hero relative overflow-hidden">
         {/* Ambient glow */}
         <div className="absolute top-0 right-0 w-80 h-80 rounded-full blur-[120px] opacity-25 pointer-events-none"
@@ -230,8 +230,8 @@ export default function AdminDashboard() {
             </h1>
             <p className="text-[var(--text-secondary)] text-[14px]">{dateStr}</p>
             <div className="flex items-center gap-2 mt-4">
-              <span className="badge badge-green">👑 Chief Executive Officer</span>
-              <span className="badge badge-gray">🛡️ Administrator</span>
+              <span className="badge badge-green"> Chief Executive Officer</span>
+              <span className="badge badge-gray"> Administrator</span>
             </div>
           </div>
 
@@ -246,17 +246,17 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* ── STAT CARDS ────────────────────────────────────────── */}
+      {/*  STAT CARDS  */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {stats.map(s => <StatCard key={s.label} {...s} />)}
       </div>
 
-      {/* ── QUICK ACTIONS ─────────────────────────────────────── */}
+      {/*  QUICK ACTIONS  */}
       <div>
         <div className="flex items-center gap-3 mb-4 mt-2">
           <div className="w-9 h-9 rounded-xl flex items-center justify-center text-sm"
             style={{ background: 'var(--accent-muted)', border: '1px solid rgba(52,211,153,0.15)', boxShadow: '0 0 15px rgba(52,211,153,0.08)' }}
-          >⚡</div>
+          ></div>
           <h2 className="text-lg font-bold text-[var(--text-primary)]">Command Centre</h2>
           <span className="ml-auto text-[11px] font-medium text-[var(--text-muted)] bg-[rgba(255,255,255,0.04)] border border-[var(--glass-border)] px-2.5 py-1 rounded-lg">{quickActions.length} modules</span>
         </div>
@@ -265,14 +265,14 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* ── DEPARTMENTS + RECENT LEAVES ───────────────────────── */}
+      {/*  DEPARTMENTS + RECENT LEAVES  */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-2">
         {/* Department Distribution */}
         <div className="glass p-6">
           <div className="flex items-center gap-3 mb-5">
             <div className="w-9 h-9 rounded-xl flex items-center justify-center text-sm"
               style={{ background: 'var(--accent-muted)', border: '1px solid rgba(52,211,153,0.12)' }}
-            >🏛️</div>
+            ></div>
             <div>
               <h3 className="font-bold text-[13px] text-[var(--text-primary)]">Department Distribution</h3>
               <p className="text-[11px] text-[var(--text-muted)]">Employees per department</p>
@@ -295,13 +295,13 @@ export default function AdminDashboard() {
           <div className="flex items-center gap-3 mb-5">
             <div className="w-9 h-9 rounded-xl flex items-center justify-center text-sm"
               style={{ background: 'var(--accent-muted)', border: '1px solid rgba(52,211,153,0.12)' }}
-            >📋</div>
+            ></div>
             <div>
               <h3 className="font-bold text-[13px] text-[var(--text-primary)]">Recent Leave Requests</h3>
               <p className="text-[11px] text-[var(--text-muted)]">Latest applications</p>
             </div>
             <Link href="/portal/admin/leaves" className="ml-auto text-[11px] font-medium text-[var(--accent)] hover:underline flex items-center gap-1 transition-colors">
-              View all →
+              View all 
             </Link>
           </div>
           {recentLeaves.length === 0 ? (

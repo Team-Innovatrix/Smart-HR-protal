@@ -112,7 +112,7 @@ export default function AdminLoginPage() {
             ) : (
               <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-2xl"
                 style={{ background: 'linear-gradient(135deg,#4f46e5,#6366f1)' }}>
-                🛡️
+                
               </div>
             )}
             <div className="text-left">
@@ -120,7 +120,7 @@ export default function AdminLoginPage() {
               <div className="text-white font-black text-lg leading-none">{companyName}</div>
             </div>
           </div>
-          <p className="text-white/40 text-sm">Restricted access — Admins only</p>
+          <p className="text-white/40 text-sm">Restricted access  Admins only</p>
         </div>
 
         {/* Form card */}
@@ -173,7 +173,7 @@ export default function AdminLoginPage() {
                   autoComplete="current-password"
                   value={password}
                   onChange={e => { setPassword(e.target.value); setError(''); }}
-                  placeholder="••••••••"
+                  placeholder=""
                   className="w-full pl-11 pr-12 py-3.5 rounded-2xl text-white placeholder-white/20 text-sm font-medium outline-none transition-all duration-200 focus:ring-2 focus:ring-indigo-500/50"
                   style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}
                 />
@@ -223,7 +223,7 @@ export default function AdminLoginPage() {
                   Verifying...
                 </span>
               ) : (
-                'Sign In to Admin Portal →'
+                'Sign In to Admin Portal '
               )}
             </button>
           </form>
@@ -231,7 +231,7 @@ export default function AdminLoginPage() {
 
         {/* Footer */}
         <p className="text-center text-white/20 text-xs mt-6">
-          🔒 Secured · {companyName} · {new Date().getFullYear()}
+           Secured  {companyName}  {new Date().getFullYear()}
         </p>
       </div>
     </div>

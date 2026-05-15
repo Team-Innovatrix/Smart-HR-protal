@@ -1,7 +1,7 @@
 /**
  * src/app/api/ml/health/route.ts
- * ─────────────────────────────────────────────────────────────────────────────
- * Next.js API Route  →  GET /api/ml/health
+ * 
+ * Next.js API Route    GET /api/ml/health
  *
  * Purpose:
  *   Lightweight health check that pings the FastAPI ML service and reports
@@ -9,9 +9,9 @@
  *   loaded and ready.
  *
  * Called by:
- *   AIPredictionsTab.tsx — on page load, with a 5-second timeout.
- *   If online → switches to XGBoost predictions (Phase 2 mode).
- *   If offline → stays on rule-based computeRisk() fallback (Phase 1 mode).
+ *   AIPredictionsTab.tsx  on page load, with a 5-second timeout.
+ *   If online  switches to XGBoost predictions (Phase 2 mode).
+ *   If offline  stays on rule-based computeRisk() fallback (Phase 1 mode).
  *
  * Response (ML online):
  *   { online: true, attrition_model: "loaded", leave_model: "loaded", version: "2.0.0" }
@@ -20,7 +20,7 @@
  *   { online: false, attrition_model: "offline", leave_model: "offline" }
  *
  * FastAPI target: GET http://<ML_API_URL>/health
- * ─────────────────────────────────────────────────────────────────────────────
+ * 
  */
 import { NextResponse } from 'next/server';
 

@@ -520,7 +520,7 @@ export default function LeaveManagementPage() {
         throw new Error(data.error || 'Failed to fetch holidays');
       }
     } catch (error) {
-      console.error('💥 Holidays fetch error:', error);
+      console.error(' Holidays fetch error:', error);
       setHolidaysError(error instanceof Error ? error.message : 'Failed to fetch holidays');
     } finally {
       setHolidaysLoading(false);
@@ -616,7 +616,7 @@ export default function LeaveManagementPage() {
         setEditingHoliday(null);
         fetchHolidays();
       } else {
-        console.error('❌ Holiday API returned success: false', data.error);
+        console.error(' Holiday API returned success: false', data.error);
         // Show error message
         const errorMessage = data.error || 'Unable to save holiday. Please try again.';
         const notification = document.createElement('div');
@@ -635,7 +635,7 @@ export default function LeaveManagementPage() {
         }, 5000);
       }
     } catch (error) {
-      console.error('💥 Holiday save error:', error);
+      console.error(' Holiday save error:', error);
       // Show error message
       const notification = document.createElement('div');
       notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center space-x-2';
@@ -1216,7 +1216,7 @@ export default function LeaveManagementPage() {
                             {selectedUser.firstName as string || 'Unknown'} {selectedUser.lastName as string || 'User'}
                           </p>
                           <p className="text-sm text-gray-500">{selectedUser.employeeId as string || 'N/A'}</p>
-                          <p className="text-sm text-gray-500">{selectedUser.department as string || 'N/A'} • {selectedUser.position as string || 'N/A'}</p>
+                          <p className="text-sm text-gray-500">{selectedUser.department as string || 'N/A'}  {selectedUser.position as string || 'N/A'}</p>
                         </div>
                       </div>
                       <button

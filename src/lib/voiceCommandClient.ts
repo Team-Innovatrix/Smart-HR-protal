@@ -73,12 +73,12 @@ export class VoiceCommandClient {
     try {
       // Check if location permission is already granted and get location proactively
       if (!location) {
-        console.log('🔍 Checking for existing location permission...');
+        console.log(' Checking for existing location permission...');
         
         // Try to get location silently if permission was previously granted
         const existingLocation = await this.checkExistingLocationPermission();
         if (existingLocation) {
-          console.log('✅ Location permission already granted, using existing location');
+          console.log(' Location permission already granted, using existing location');
           location = existingLocation;
         }
       }
@@ -92,10 +92,10 @@ export class VoiceCommandClient {
       }
       
       if (location) {
-        console.log('📍 CLIENT: Sending location with request:', location);
+        console.log(' CLIENT: Sending location with request:', location);
         formData.append('location', JSON.stringify(location));
       } else {
-        console.log('📍 CLIENT: No location to send with request');
+        console.log(' CLIENT: No location to send with request');
       }
       
       const response = await fetch(`${this.baseUrl}/api/voice-commands/langgraph/process`, {
@@ -124,18 +124,18 @@ export class VoiceCommandClient {
       
       // Handle location requirement after execution
       if (result.executionResult?.error === 'LOCATION_REQUIRED' && !location) {
-        console.log('🌍 Location required! Requesting permission NOW...');
+        console.log(' Location required! Requesting permission NOW...');
         
         // Request location permission from browser
         const userLocation = await this.requestLocationPermission();
         
         if (userLocation) {
           // Got location! Now retry with location
-          console.log('✅ Location obtained, retrying command with location');
+          console.log(' Location obtained, retrying command with location');
           return this.processVoiceCommand(audioBlob, userLocation);
         } else {
           // Location denied - return error with clear message
-          console.error('❌ Location permission denied by user');
+          console.error(' Location permission denied by user');
           return {
             ...result,
             success: false,
@@ -172,7 +172,7 @@ export class VoiceCommandClient {
         navigator.permissions.query({ name: 'geolocation' as PermissionName }).then((permissionStatus) => {
           if (permissionStatus.state === 'granted') {
             // Permission already granted, get location silently
-            console.log('🌍 Location permission previously granted, getting location...');
+            console.log(' Location permission previously granted, getting location...');
             navigator.geolocation.getCurrentPosition(
               (position) => {
                 resolve({
@@ -217,18 +217,18 @@ export class VoiceCommandClient {
         return;
       }
 
-      console.log('🌍 Requesting location permission...');
+      console.log(' Requesting location permission...');
       
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          console.log('✅ Location permission granted');
+          console.log(' Location permission granted');
           resolve({
             latitude: position.coords.latitude,
             longitude: position.coords.longitude
           });
         },
         (error) => {
-          console.error('❌ Location permission denied:', error.message);
+          console.error(' Location permission denied:', error.message);
           
           // Provide specific error messages based on error code
           let errorMessage = 'Location permission denied';

@@ -1,4 +1,4 @@
-﻿import Link from 'next/link'
+import Link from 'next/link'
 import { 
   UsersIcon, 
   TagIcon, 
@@ -24,7 +24,7 @@ export default function About() {
     {
       icon: TagIcon,
       title: 'Results-Driven',
-      description: 'We don\'t just work hard — we work smart. Every action is measured against its impact on your business goals.'
+      description: 'We don\'t just work hard  we work smart. Every action is measured against its impact on your business goals.'
     },
     {
       icon: ShieldCheckIcon,
@@ -34,7 +34,7 @@ export default function About() {
     {
       icon: UsersIcon,
       title: 'Partnership',
-      description: 'We\'re not just a vendor — we\'re your partner in growth. Your success is our success.'
+      description: 'We\'re not just a vendor  we\'re your partner in growth. Your success is our success.'
     }
   ]
 

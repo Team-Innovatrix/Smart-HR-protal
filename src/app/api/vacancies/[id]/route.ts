@@ -5,7 +5,7 @@ import { auth, currentUser } from '@clerk/nextjs/server';
 import connectDB from '@/lib/mongodb';
 import JobVacancy from '@/models/JobVacancy';
 
-/* ── helper: verify admin ──────────────────────────────────────────── */
+/*  helper: verify admin  */
 async function verifyAdmin() {
   const { userId } = await auth();
   const user = await currentUser();
@@ -15,7 +15,7 @@ async function verifyAdmin() {
   return userId;
 }
 
-/* ── PATCH: edit fields or toggle isActive ─────────────────────────── */
+/*  PATCH: edit fields or toggle isActive  */
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -47,7 +47,7 @@ export async function PATCH(
   }
 }
 
-/* ── DELETE: remove vacancy ────────────────────────────────────────── */
+/*  DELETE: remove vacancy  */
 export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

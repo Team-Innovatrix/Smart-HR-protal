@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
         const parsed = JSON.parse(locationString);
         if (parsed && typeof parsed.latitude === 'number' && typeof parsed.longitude === 'number') {
           location = parsed;
-          console.log('📍 Location data received:', { 
+          console.log(' Location data received:', { 
             latitude: parsed.latitude, 
             longitude: parsed.longitude 
           });
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
         console.error('Failed to parse location data:', e);
       }
     } else {
-      console.log('📍 No location data in request');
+      console.log(' No location data in request');
     }
     
     if (!audioFile) {
@@ -184,7 +184,7 @@ export async function POST(req: NextRequest) {
       conversationHistory: [],
     };
 
-    console.log('📍 Initial state created with location:', { 
+    console.log(' Initial state created with location:', { 
       hasLocation: !!initialState.requiredData.location,
       requiredDataKeys: Object.keys(initialState.requiredData)
     });

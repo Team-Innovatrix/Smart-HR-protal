@@ -200,7 +200,7 @@ export default function TeamManagementPage() {
       
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('❌ Frontend: Response not ok:', response.status, errorText);
+        console.error(' Frontend: Response not ok:', response.status, errorText);
         
         let errorMessage = 'Failed to fetch teams';
         try {
@@ -235,7 +235,7 @@ export default function TeamManagementPage() {
         throw new Error(data.error || 'Failed to fetch teams');
       }
     } catch (error) {
-      console.error('❌ Frontend: Teams fetch error:', error);
+      console.error(' Frontend: Teams fetch error:', error);
       setError(error instanceof Error ? error.message : 'Failed to fetch teams');
     } finally {
       setIsLoading(false);
@@ -359,7 +359,7 @@ export default function TeamManagementPage() {
   const handleCreateTeam = async () => {
     
     if (!createForm.name || !createForm.department || !createForm.teamLeaderId) {
-      console.error('❌ Validation failed:', {
+      console.error(' Validation failed:', {
         name: createForm.name,
         department: createForm.department,
         teamLeaderId: createForm.teamLeaderId
@@ -402,7 +402,7 @@ export default function TeamManagementPage() {
         fetchTeams();
       } else {
         const errorData = await response.json();
-        console.error('❌ Team creation failed:', errorData);
+        console.error(' Team creation failed:', errorData);
         throw new Error(errorData.error || 'Failed to create team');
       }
     } catch (error) {
@@ -902,7 +902,7 @@ export default function TeamManagementPage() {
                                   </div>
                                   <div>
                                     <div className="font-medium text-gray-900">{user.displayName}</div>
-                                    <div className="text-sm text-gray-600">{user.position} • {user.department}</div>
+                                    <div className="text-sm text-gray-600">{user.position}  {user.department}</div>
                                     <div className="text-xs text-gray-500">ID: {user.employeeId}</div>
                                   </div>
                                 </div>
@@ -921,7 +921,7 @@ export default function TeamManagementPage() {
                       {/* Quick Selection Hint */}
                       {!createForm.teamLeaderId && searchResults.length > 0 && (
                         <div className="text-xs text-gray-500">
-                          💡 Start typing to search for team leaders. You can search by name, position, or department.
+                           Start typing to search for team leaders. You can search by name, position, or department.
                         </div>
                       )}
                     </div>
@@ -947,7 +947,7 @@ export default function TeamManagementPage() {
                                 {allUsers.find(u => u.clerkUserId === createForm.teamLeaderId)?.displayName || 'Unknown User'}
                               </div>
                               <div className="text-sm text-green-700">
-                                {allUsers.find(u => u.clerkUserId === createForm.teamLeaderId)?.position} • {allUsers.find(u => u.clerkUserId === createForm.teamLeaderId)?.department}
+                                {allUsers.find(u => u.clerkUserId === createForm.teamLeaderId)?.position}  {allUsers.find(u => u.clerkUserId === createForm.teamLeaderId)?.department}
                               </div>
                             </div>
                           </div>
@@ -1058,7 +1058,7 @@ export default function TeamManagementPage() {
                                     </div>
                                     <div>
                                       <div className="font-medium text-gray-900">{user.displayName}</div>
-                                      <div className="text-sm text-gray-600">{user.position} • {user.department}</div>
+                                      <div className="text-sm text-gray-600">{user.position}  {user.department}</div>
                                       <div className="text-xs text-gray-500">ID: {user.employeeId}</div>
                                     </div>
                                   </div>
@@ -1092,7 +1092,7 @@ export default function TeamManagementPage() {
                       {/* Quick Selection Hint */}
                       {!memberSearch && createForm.members.length === 0 && (
                         <div className="text-xs text-gray-500">
-                          💡 Start typing to search for team members. You can search by name, position, or department.
+                           Start typing to search for team members. You can search by name, position, or department.
                         </div>
                       )}
                     </div>
@@ -1157,7 +1157,7 @@ export default function TeamManagementPage() {
                                         <p className={`text-sm truncate ${
                                           isLeader ? 'text-blue-700' : 'text-gray-600'
                                         }`}>
-                                          {user.position} • {user.department}
+                                          {user.position}  {user.department}
                                         </p>
                                       )}
                                     </div>
@@ -1437,7 +1437,7 @@ export default function TeamManagementPage() {
                                   </div>
                                   <div>
                                     <div className="font-medium text-gray-900">{user.displayName}</div>
-                                    <div className="text-sm text-gray-600">{user.position} • {user.department}</div>
+                                    <div className="text-sm text-gray-600">{user.position}  {user.department}</div>
                                     <div className="text-xs text-gray-500">ID: {user.employeeId}</div>
                                   </div>
                                 </div>
@@ -1488,7 +1488,7 @@ export default function TeamManagementPage() {
                               </div>
                               <div className="text-sm text-gray-600">
                                 {allUsers.find(u => u.clerkUserId === editForm.teamLeaderId) ? (
-                                  `${allUsers.find(u => u.clerkUserId === editForm.teamLeaderId)?.position} • ${allUsers.find(u => u.clerkUserId === editForm.teamLeaderId)?.department}`
+                                  `${allUsers.find(u => u.clerkUserId === editForm.teamLeaderId)?.position}  ${allUsers.find(u => u.clerkUserId === editForm.teamLeaderId)?.department}`
                                 ) : (
                                   <span className="italic">Loading user data...</span>
                                 )}
@@ -1599,7 +1599,7 @@ export default function TeamManagementPage() {
                                     </div>
                                     <div>
                                       <div className="font-medium text-gray-900">{user.displayName}</div>
-                                      <div className="text-sm text-gray-600">{user.position} • {user.department}</div>
+                                      <div className="text-sm text-gray-600">{user.position}  {user.department}</div>
                                       <div className="text-xs text-gray-500">ID: {user.employeeId}</div>
                                     </div>
                                   </div>
@@ -1702,7 +1702,7 @@ export default function TeamManagementPage() {
                                         <div className={`text-sm truncate ${
                                           isLeader ? 'text-blue-700' : 'text-gray-600'
                                         }`}>
-                                          {user.position} • {user.department}
+                                          {user.position}  {user.department}
                                         </div>
                                       ) : (
                                         <div className="text-sm text-gray-400 italic">
@@ -1790,7 +1790,7 @@ export default function TeamManagementPage() {
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-gray-900">{selectedTeam.name}</h3>
-                  <p className="text-sm text-gray-600">{selectedTeam.department} • {selectedTeam.members.length} members</p>
+                  <p className="text-sm text-gray-600">{selectedTeam.department}  {selectedTeam.members.length} members</p>
                 </div>
               </div>
                 <button
@@ -1891,7 +1891,7 @@ export default function TeamManagementPage() {
                                   </div>
                                   {isLeader && (
                                     <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                      👑 Team Leader
+                                       Team Leader
                                     </span>
                                   )}
                                 </div>
@@ -1899,7 +1899,7 @@ export default function TeamManagementPage() {
                                   <div className={`text-sm ${
                                     isLeader ? 'text-blue-700' : 'text-gray-600'
                                   }`}>
-                                    {user.position} • {user.department}
+                                    {user.position}  {user.department}
                                   </div>
                                 ) : (
                                   <div className="text-sm text-gray-400 italic">

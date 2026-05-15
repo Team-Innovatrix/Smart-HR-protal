@@ -207,7 +207,7 @@ const TeamLeavePlan = ({ onSelectLeave }: TeamLeavePlanProps) => {
                           className={`text-xs text-white px-2 py-1 rounded ${getLeaveStyle(l)}`}
                           title={`${safeFormatDate(l.startDate || '', 'MMM d, yyyy')} - ${safeFormatDate(l.endDate || '', 'MMM d, yyyy')} (${l.totalDays}d) - ${l.status}`}
                         >
-                          {l.leaveType} • {l.status}
+                          {l.leaveType}  {l.status}
                         </button>
                       ))}
                     </div>

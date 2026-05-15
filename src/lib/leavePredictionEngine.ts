@@ -13,7 +13,7 @@
 
 import { getHolidaysForYear, getFestivalSeasons, type IndianHoliday } from '../data/indianHolidays'
 
-// ─── Types ────────────────────────────────────────────────────────────────
+//  Types 
 
 export type RiskLevel = 'low' | 'medium' | 'high' | 'critical'
 
@@ -75,7 +75,7 @@ export interface AIInsight {
   category: 'bridge_holiday' | 'festival' | 'pattern' | 'staffing' | 'trend'
 }
 
-// ─── Core Engine ──────────────────────────────────────────────────────────
+//  Core Engine 
 
 /**
  * Get the day of the week (0 = Sunday, 6 = Saturday)
@@ -174,7 +174,7 @@ function detectBridgeHolidays(dateStr: string, holidayMap: Map<string, IndianHol
     if (tueHoliday && thuHoliday) {
       patterns.push({
         type: 'sandwich_leave',
-        description: `Sandwich day: ${tueHoliday.name} (Tue) and ${thuHoliday.name} (Thu) — Wednesday leave creates 5-day break`,
+        description: `Sandwich day: ${tueHoliday.name} (Tue) and ${thuHoliday.name} (Thu)  Wednesday leave creates 5-day break`,
         confidence: 92,
         historicalFrequency: 88,
       })
@@ -252,7 +252,7 @@ function detectFestivalTravel(dateStr: string, year: number, holidayMap: Map<str
     if (holiday?.travelLikely) {
       patterns.push({
         type: 'festival_travel',
-        description: `${festivalName} festival season — employees typically travel home, leave requests spike 40-60%`,
+        description: `${festivalName} festival season  employees typically travel home, leave requests spike 40-60%`,
         confidence: 78,
         historicalFrequency: 55,
       })
@@ -265,7 +265,7 @@ function detectFestivalTravel(dateStr: string, year: number, holidayMap: Map<str
   if (month === 12 && day >= 20) {
     patterns.push({
       type: 'year_end_spike',
-      description: 'Year-end holiday season — historically 35-50% higher leave requests as employees use remaining leave balance',
+      description: 'Year-end holiday season  historically 35-50% higher leave requests as employees use remaining leave balance',
       confidence: 73,
       historicalFrequency: 42,
     })
@@ -347,7 +347,7 @@ function generateAIInsight(
   holidayName?: string
 ): string {
   if (patterns.length === 0) {
-    return `${getDayName(dateStr)} — Normal working day with standard leave probability.`
+    return `${getDayName(dateStr)}  Normal working day with standard leave probability.`
   }
   
   const parts: string[] = []
@@ -359,7 +359,7 @@ function generateAIInsight(
   
   const festivalPattern = patterns.find(p => p.type === 'festival_travel')
   if (festivalPattern) {
-    parts.push(`Festival season increases leave probability — ${festivalPattern.description.toLowerCase()}.`)
+    parts.push(`Festival season increases leave probability  ${festivalPattern.description.toLowerCase()}.`)
   }
   
   const weekendExt = patterns.find(p => p.type === 'monday_after_weekend' || p.type === 'long_weekend_extension')
@@ -406,7 +406,7 @@ function generateRecommendations(
   return recs
 }
 
-// ─── Public API ───────────────────────────────────────────────────────────
+//  Public API 
 
 /**
  * Analyze risk for all dates in a given month
@@ -476,7 +476,7 @@ export function getMonthSummary(year: number, month: number): MonthRiskSummary {
   // Generate AI summary
   let aiSummary = ''
   if (criticalDays.length > 0) {
-    aiSummary = `⚠️ ${getMonthName(month)} ${year} has ${criticalDays.length} critical-risk day${criticalDays.length > 1 ? 's' : ''} and ${highRiskDays.length} high-risk day${highRiskDays.length > 1 ? 's' : ''}. `
+    aiSummary = ` ${getMonthName(month)} ${year} has ${criticalDays.length} critical-risk day${criticalDays.length > 1 ? 's' : ''} and ${highRiskDays.length} high-risk day${highRiskDays.length > 1 ? 's' : ''}. `
     const bridgeCount = criticalDays.filter(d => d.patterns.some(p => p.type === 'bridge_holiday')).length
     if (bridgeCount > 0) {
       aiSummary += `${bridgeCount} bridge holiday pattern${bridgeCount > 1 ? 's' : ''} detected. `

@@ -605,7 +605,7 @@ const TeamManagement: React.FC<TeamManagementProps> = ({ userId }) => {
                               {member.firstName} {member.lastName}
                             </p>
                             <p className="text-xs text-gray-600 truncate">
-                              {member.position} • {member.department}
+                              {member.position}  {member.department}
                             </p>
                           </div>
                         </div>

@@ -65,7 +65,7 @@ export default function AdminHeader({ onToggleSidebar }: AdminHeaderProps) {
             </button>
           )}
 
-          {/* Logo + Name — Dynamic from Settings */}
+          {/* Logo + Name  Dynamic from Settings */}
           <Link href="/portal/admin" className="flex items-center gap-2.5 group">
             {companyLogo ? (
               <div className="w-8 h-8 rounded-xl overflow-hidden flex-shrink-0 transition-transform duration-200 group-hover:scale-105 border border-[rgba(255,255,255,0.1)]">
@@ -79,7 +79,7 @@ export default function AdminHeader({ onToggleSidebar }: AdminHeaderProps) {
                   boxShadow: '0 0 15px rgba(52, 211, 153, 0.08)',
                 }}
               >
-                ⚡
+                
               </div>
             )}
             <div>

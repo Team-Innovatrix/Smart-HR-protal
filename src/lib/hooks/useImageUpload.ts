@@ -83,7 +83,7 @@ export const useImageUpload = (options: UseImageUploadOptions = {}): UseImageUpl
       const result = await uploadImage(file, config)
       
       if (result.success) {
-        showMessage('✓ Image uploaded successfully!', 'success')
+        showMessage(' Image uploaded successfully!', 'success')
         onUploadComplete?.(true, result)
       } else {
         const errorMsg = result.error || 'Upload failed'

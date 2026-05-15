@@ -53,7 +53,7 @@ export default function EmployeeDashboard() {
               <span className="text-xs font-semibold text-slate-600 tracking-wide uppercase">Employee Portal</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900">
-              {greeting}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">Sarah</span> 👋
+              {greeting}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">Sarah</span> 
             </h1>
             <p className="mt-2 text-slate-500 font-medium">Ready to conquer the day? Here is what is happening.</p>
           </div>
@@ -113,7 +113,7 @@ export default function EmployeeDashboard() {
                 <p className="text-slate-500 font-semibold text-sm">Tasks Completed</p>
                 <div className="flex items-baseline gap-2 mt-1">
                   <h3 className="text-3xl font-black text-slate-900">24</h3>
-                  <span className="text-sm font-medium text-emerald-500">↑ 12%</span>
+                  <span className="text-sm font-medium text-emerald-500"> 12%</span>
                 </div>
               </div>
             </div>

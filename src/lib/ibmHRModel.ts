@@ -1,13 +1,13 @@
 /**
  * ibmHRModel.ts
- * ─────────────────────────────────────────────────────────────────────────────
- * IBM HR Analytics Dataset — Calibrated Attrition Prediction Engine
+ * 
+ * IBM HR Analytics Dataset  Calibrated Attrition Prediction Engine
  *
  * Dataset:  WA_Fn-UseC_-HR-Employee-Attrition.csv
- *           1,470 employees · 35 features · 16.1% attrition rate
+ *           1,470 employees  35 features  16.1% attrition rate
  *
  * Model:    XGBoost (Chen & Guestrin, 2016)
- *           AUC-ROC ≈ 0.87 on IBM HR dataset (Verma et al., 2023)
+ *           AUC-ROC  0.87 on IBM HR dataset (Verma et al., 2023)
  *           SMOTE applied for class imbalance (16.1% attrition)
  *
  * Features: Mapped from real employee data (attendance, leave, profile)
@@ -15,13 +15,13 @@
  *
  * References:
  *   [1] IBM HR Analytics Dataset (2021)
- *   [4] Chen & Guestrin (2016) — XGBoost
- *   [3] Verma et al. (2023) — Random Forest + Feature Engineering
- *   [5] Lundberg & Lee (2017) — SHAP Values
- * ─────────────────────────────────────────────────────────────────────────────
+ *   [4] Chen & Guestrin (2016)  XGBoost
+ *   [3] Verma et al. (2023)  Random Forest + Feature Engineering
+ *   [5] Lundberg & Lee (2017)  SHAP Values
+ * 
  */
 
-// ─── IBM Dataset Population Statistics (N=1,470) ─────────────────────────────
+//  IBM Dataset Population Statistics (N=1,470) 
 // These baseline statistics allow z-score normalization matching the IBM dataset.
 export const IBM_POPULATION = {
   attritionRate:           0.161,   // 16.1%  (238/1,470 employees left)
@@ -41,7 +41,7 @@ export const IBM_POPULATION = {
   stockOption0Rate:        0.470,   // 47% have no stock options
 };
 
-// ─── XGBoost Feature Importance Weights ──────────────────────────────────────
+//  XGBoost Feature Importance Weights 
 // Source: Verma et al. (2023), confirmed by Jain et al. (2022)
 // These are normalized SHAP-derived importances from XGBoost trained on IBM HR.
 // Positive weight = increases attrition risk.
@@ -49,17 +49,17 @@ export const IBM_FEATURE_WEIGHTS = {
   overtime:             0.178,   // Largest single predictor (Verma, 2023)
   monthlyIncomeLow:     0.122,   // Below median salary is high-risk
   totalWorkingYearsLow: 0.089,   // Younger career = more likely to leave
-  ageLow:               0.085,   // 25–34 age band is highest risk
+  ageLow:               0.085,   // 2534 age band is highest risk
   yearsAtCompanyLow:    0.081,   // Honeymoon period < 2y or stagnation > 10y
-  jobSatisfactionLow:   0.074,   // IBM Job Satisfaction 1–4 scale
-  workLifeBalanceLow:   0.063,   // IBM WLB 1–4 scale
+  jobSatisfactionLow:   0.074,   // IBM Job Satisfaction 14 scale
+  workLifeBalanceLow:   0.063,   // IBM WLB 14 scale
   numCompaniesHigh:     0.058,   // > 3 companies = job-hopper signal
   distanceFromHomeHigh: 0.051,   // > 15km significantly increases risk
   noStockOptions:       0.044,   // Stock option level 0 = disengaged
   trainingLow:          0.035,   // < 2 training sessions/year = neglected
   yearsInRoleLow:       0.032,   // < 2 years in current role = unstable
-  maritalSingle:        0.028,   // Single employees 2.4× higher attrition
-  jobInvolvementLow:    0.025,   // IBM Job Involvement 1–4 scale
+  maritalSingle:        0.028,   // Single employees 2.4 higher attrition
+  jobInvolvementLow:    0.025,   // IBM Job Involvement 14 scale
   environmentSatLow:    0.022,   // Environmental satisfaction
   relationshipSatLow:   0.018,   // Relationship satisfaction with manager
   absenteeismHigh:      0.060,   // Mapped from attendance data
@@ -68,7 +68,7 @@ export const IBM_FEATURE_WEIGHTS = {
   pendingLeaveRejected: 0.030,   // Rejected leave = disengagement
 };
 
-// ─── IBM Feature Mapping ──────────────────────────────────────────────────────
+//  IBM Feature Mapping 
 // Maps our employee data fields to IBM HR Dataset features with calibrated
 // thresholds based on IBM population statistics above.
 
@@ -77,7 +77,7 @@ export interface IBMFeatureVector {
   overtime: boolean;              // Works overtime frequently
   monthlyIncomeLow: boolean;      // Below IBM median ($6,503)
   totalWorkingYearsLow: boolean;  // < 5 years total experience
-  ageLow: boolean;                // 20–34 (highest risk cohort)
+  ageLow: boolean;                // 2034 (highest risk cohort)
   yearsAtCompanyLow: boolean;     // < 2 years (honeymoon crisis) or stagnant
   jobSatisfactionLow: boolean;    // Inferred from leave + attendance patterns
   workLifeBalanceLow: boolean;    // Inferred from overtime + WLB signals
@@ -98,8 +98,8 @@ export interface IBMFeatureVector {
 }
 
 export interface IBMRiskScore {
-  attritionProbability: number;  // 0–100, calibrated to IBM 16.1% base rate
-  riskScore: number;             // 0–100 composite risk
+  attritionProbability: number;  // 0100, calibrated to IBM 16.1% base rate
+  riskScore: number;             // 0100 composite risk
   riskLevel: 'safe' | 'moderate' | 'high';
   shapContributions: { feature: string; weight: number; triggered: boolean; contribution: number }[];
   topFactors: string[];
@@ -111,17 +111,17 @@ export interface IBMRiskScore {
   };
 }
 
-// ─── Sigmoid Function (Logistic calibration) ─────────────────────────────────
+//  Sigmoid Function (Logistic calibration) 
 function sigmoid(x: number): number {
   return 1 / (1 + Math.exp(-x));
 }
 
-// ─── IBM-Calibrated Attrition Probability Engine ─────────────────────────────
-// Implements SHAP-additive scoring: P(attrition) = sigmoid(β₀ + Σ wᵢ·xᵢ)
-// Base intercept (β₀) calibrated to IBM dataset's 16.1% base attrition rate.
-// β₀ = logit(0.161) ≈ -1.658
+//  IBM-Calibrated Attrition Probability Engine 
+// Implements SHAP-additive scoring: P(attrition) = sigmoid( +  wx)
+// Base intercept () calibrated to IBM dataset's 16.1% base attrition rate.
+//  = logit(0.161)  -1.658
 
-const IBM_BASE_INTERCEPT = -1.658; // logit(0.161) — IBM population base rate
+const IBM_BASE_INTERCEPT = -1.658; // logit(0.161)  IBM population base rate
 const IBM_WEIGHT_SCALE   = 6.0;    // Scales feature weights into logit space
 
 export function computeIBMRiskScore(
@@ -145,11 +145,11 @@ export function computeIBMRiskScore(
   // Raw attrition probability
   const rawP = sigmoid(logitSum);
 
-  // Calibrate to 0–100 scale (clamp for display)
+  // Calibrate to 0100 scale (clamp for display)
   const attritionProbability = Math.min(99, Math.max(1, Math.round(rawP * 100)));
 
-  // Composite risk score (normalized to 0–100 for the UI)
-  // We map 0–60% attrition prob → 0–100 risk score with non-linear scaling
+  // Composite risk score (normalized to 0100 for the UI)
+  // We map 060% attrition prob  0100 risk score with non-linear scaling
   const riskScore = Math.min(100, Math.round(rawP * 160));
 
   const riskLevel: 'safe' | 'moderate' | 'high' =
@@ -158,9 +158,9 @@ export function computeIBMRiskScore(
   // IBM Benchmark
   const employeeRelativeRisk = rawP / IBM_POPULATION.attritionRate;
   const benchmarkLabel = employeeRelativeRisk >= 3
-    ? `${Math.round(employeeRelativeRisk)}× higher than IBM dataset average`
+    ? `${Math.round(employeeRelativeRisk)} higher than IBM dataset average`
     : employeeRelativeRisk >= 1.5
-    ? `${employeeRelativeRisk.toFixed(1)}× above IBM baseline`
+    ? `${employeeRelativeRisk.toFixed(1)} above IBM baseline`
     : employeeRelativeRisk >= 0.7
     ? 'Near IBM dataset baseline risk'
     : `${Math.round((1 - employeeRelativeRisk) * 100)}% below IBM baseline`;
@@ -192,13 +192,13 @@ export function computeIBMRiskScore(
   };
 }
 
-// ─── Feature Label Map ────────────────────────────────────────────────────────
+//  Feature Label Map 
 function featureLabel(key: string, positive = false): string {
   const riskLabels: Record<string, string> = {
     overtime:             'Frequent overtime burden (IBM #1 predictor)',
     monthlyIncomeLow:     'Compensation below IBM benchmark median',
-    totalWorkingYearsLow: 'Early career — high mobility phase',
-    ageLow:               'High-risk 25–34 age cohort',
+    totalWorkingYearsLow: 'Early career  high mobility phase',
+    ageLow:               'High-risk 2534 age cohort',
     yearsAtCompanyLow:    'Tenure below 2-year retention threshold',
     jobSatisfactionLow:   'Low job satisfaction signals (attendance pattern)',
     workLifeBalanceLow:   'Poor work-life balance indicators',
@@ -207,7 +207,7 @@ function featureLabel(key: string, positive = false): string {
     noStockOptions:       'No retention incentives (stock/equity)',
     trainingLow:          'Low training investment detected',
     yearsInRoleLow:       'Role stagnation (<2 years in current role)',
-    maritalSingle:        'Single status (2.4× IBM attrition multiplier)',
+    maritalSingle:        'Single status (2.4 IBM attrition multiplier)',
     jobInvolvementLow:    'Low job involvement signals',
     environmentSatLow:    'Low environmental satisfaction',
     relationshipSatLow:   'Manager relationship tension signals',
@@ -231,7 +231,7 @@ function featureLabel(key: string, positive = false): string {
     : (riskLabels[key]    || key);
 }
 
-// ─── Employee Data → IBM Feature Vector Mapper ────────────────────────────────
+//  Employee Data  IBM Feature Vector Mapper 
 // Maps our real MongoDB employee data to IBM HR Dataset features.
 // This is the "bridge" that makes our system academically equivalent to
 // running XGBoost on IBM data.
@@ -281,7 +281,7 @@ export function mapToIBMFeatures(input: EmployeeDataInput): IBMFeatureVector {
   // Work-life balance proxy
   const workLifeBalanceLow = overtimeDaysLast30 >= 8 || avgDailyHours > 10;
 
-  // Income mapping (salary band → IBM thresholds)
+  // Income mapping (salary band  IBM thresholds)
   const monthlyIncomeLow = salary === 'low' || (!salary && true); // default conservative
 
   return {

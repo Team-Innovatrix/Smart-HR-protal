@@ -1,4 +1,4 @@
-﻿export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
         teamRecipients.length > 0
           ? emailService.sendEmail({
               to: teamRecipients,
-              subject: `New Lead: ${leadName} • ${service}`,
+              subject: `New Lead: ${leadName}  ${service}`,
               html: `<p><strong>New inquiry received</strong></p>
                     <p><strong>Name:</strong> ${leadName}<br/>
                     <strong>Email:</strong> ${email}<br/>
@@ -110,10 +110,10 @@ export async function POST(request: NextRequest) {
           : Promise.resolve({ success: true }),
         emailService.sendEmail({
           to: email,
-          subject: 'We received your message – HR Dashboard',
+          subject: 'We received your message  HR Dashboard',
           html: `<p>Hi ${firstName},</p>
                  <p>Thanks for reaching out about <strong>${service}</strong>. Our team will get back to you within 4 business hours.</p>
-                 <p>Here’s a copy of your message:</p>
+                 <p>Heres a copy of your message:</p>
                  <blockquote>${(message || '').replace(/\n/g, '<br/>')}</blockquote>
                  <p>Best,<br/>The HR Dashboard Team</p>`,
           from: process.env.SENDGRID_FROM_EMAIL,

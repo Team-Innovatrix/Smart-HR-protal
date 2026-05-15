@@ -61,16 +61,16 @@ class Logger {
 
   // Specialized logging for timezone operations
   timezone(operation: string, context?: LogContext): void {
-    this.info(`🌍 [Timezone] ${operation}`, context);
+    this.info(` [Timezone] ${operation}`, context);
   }
 
 
   attendance(action: string, context?: LogContext): void {
-    this.info(`📊 [Attendance] ${action}`, context);
+    this.info(` [Attendance] ${action}`, context);
   }
 
   api(endpoint: string, action: string, context?: LogContext): void {
-    this.info(`🔌 [API] ${endpoint} - ${action}`, context);
+    this.info(` [API] ${endpoint} - ${action}`, context);
   }
 }
 

@@ -70,7 +70,7 @@ export default function LeaveRiskDashboard() {
 
   return (
     <div className="space-y-4">
-      {/* ─── Annual Overview Cards ─── */}
+      {/*  Annual Overview Cards  */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
           { label: 'Working Days', value: totalWorkingDays, icon: CalendarDaysIcon, color: 'text-blue-400', bg: 'rgba(96,165,250,0.1)', border: 'rgba(96,165,250,0.2)' },
@@ -89,7 +89,7 @@ export default function LeaveRiskDashboard() {
         ))}
       </div>
 
-      {/* ─── Annual Heatmap Bar Chart ─── */}
+      {/*  Annual Heatmap Bar Chart  */}
       <div className="glass-strong p-4 sm:p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
@@ -97,9 +97,9 @@ export default function LeaveRiskDashboard() {
             <h3 className="text-sm font-bold text-[var(--text-primary)]">Annual Risk Heatmap</h3>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={() => setSelectedYear(y => y - 1)} className="px-2 py-1 text-xs rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[rgba(255,255,255,0.06)] transition-all">←</button>
+            <button onClick={() => setSelectedYear(y => y - 1)} className="px-2 py-1 text-xs rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[rgba(255,255,255,0.06)] transition-all"></button>
             <span className="text-sm font-semibold text-[var(--text-primary)]">{selectedYear}</span>
-            <button onClick={() => setSelectedYear(y => y + 1)} className="px-2 py-1 text-xs rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[rgba(255,255,255,0.06)] transition-all">→</button>
+            <button onClick={() => setSelectedYear(y => y + 1)} className="px-2 py-1 text-xs rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[rgba(255,255,255,0.06)] transition-all"></button>
           </div>
         </div>
 
@@ -110,7 +110,7 @@ export default function LeaveRiskDashboard() {
               <div key={i} className="flex-1 flex flex-col items-center justify-end h-full group cursor-pointer">
                 <div className="relative w-full flex justify-center mb-1">
                   <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 px-2 py-1 rounded-lg text-[9px] font-medium text-[var(--text-primary)] whitespace-nowrap z-10" style={{ background: 'rgba(22,22,42,0.9)', border: '1px solid var(--glass-border)' }}>
-                    {m.avgRiskScore}% avg • {m.highRiskDays}H • {m.criticalRiskDays}C
+                    {m.avgRiskScore}% avg  {m.highRiskDays}H  {m.criticalRiskDays}C
                   </div>
                 </div>
                 <div className={`w-full max-w-[28px] rounded-t-lg transition-all duration-500 group-hover:opacity-80 ${getBarColor(m.avgRiskScore)}`} style={{ height: `${height}%`, minHeight: '8px' }} />
@@ -127,7 +127,7 @@ export default function LeaveRiskDashboard() {
         </div>
       </div>
 
-      {/* ─── Monthly Risk Breakdown ─── */}
+      {/*  Monthly Risk Breakdown  */}
       <div className="glass-strong p-4 sm:p-6">
         <div className="flex items-center gap-2 mb-4">
           <SparklesIcon className="w-5 h-5 text-orange-400" />

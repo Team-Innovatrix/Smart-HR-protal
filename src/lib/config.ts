@@ -130,7 +130,7 @@ export function validateEnvironment(): void {
   const missing = requiredVars.filter(varName => !env[varName as keyof typeof env]);
   
   if (missing.length > 0) {
-    console.error('❌ Missing required environment variables:', missing);
+    console.error(' Missing required environment variables:', missing);
     console.error('Environment check:', {
       NODE_ENV: env.NODE_ENV,
       MONGODB_URI_EXISTS: !!env.MONGODB_URI,

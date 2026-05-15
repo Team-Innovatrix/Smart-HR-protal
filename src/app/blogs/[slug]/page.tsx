@@ -57,7 +57,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
           inReferences = true;
           html += '<hr>';
           html += '<div class="references-section mt-16">';
-          html += '<h3><span class="mr-3">📚</span>References & Sources</h3>';
+          html += '<h3><span class="mr-3"></span>References & Sources</h3>';
           continue;
         }
       }
@@ -66,7 +66,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
               if (!inReferences && line.startsWith('[') && line.includes(']:')) {
           inReferences = true;
           html += '<div class="references-section mt-16">';
-          html += '<h3><span class="mr-3">📚</span>References & Sources</h3>';
+          html += '<h3><span class="mr-3"></span>References & Sources</h3>';
         }
       
       // Handle references section
