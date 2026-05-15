@@ -38,34 +38,39 @@ export async function GET(request: NextRequest) {
     const results: AIRiskResult[] = [];
 
     if (hasOpenAI) {
-      // ── AI MODE: Aggregate real data + Gemini analysis ──────────────────
-      // Vercel Hobby plan hard-caps at 10s — 1 employee per call ensures Gemini completes in time
-      const batchSize = Math.min(employees.length, 1);
+      // ── AI MODE: Parallel Gemini analysis for all employees ──────────────────
+      // Parallel calls: total time ~5s (slowest single call), fits Vercel 30s limit
+      const batchSize = Math.min(employees.length, 10);
       const batch = employees.slice(0, batchSize);
 
-      // Process sequentially to avoid hitting Gemini free-tier quota (15 req/min)
-      for (const emp of batch) {
+      const analysisPromises = batch.map(async (emp: any) => {
         try {
           const ctx = await aggregateEmployeeData(emp.clerkUserId || (emp._id as any).toString());
-          if (!ctx) continue;
-          const result = await analyzeEmployeeRiskWithAI(ctx);
-          if (result) {
-            const joinDate = emp.joinDate || emp.createdAt;
-            const yearsAtCompany = joinDate
-              ? +((Date.now() - new Date(joinDate).getTime()) / (1000 * 60 * 60 * 24 * 365.25)).toFixed(1)
-              : 0;
-            results.push({
-              ...result,
-              department: emp.department || 'Unassigned',
-              position: emp.position || 'Employee',
-              yearsAtCompany,
-              overtimeHours: 0,
-            } as AIRiskResult & { department: string; position: string; yearsAtCompany: number; overtimeHours: number });
-          }
+          if (!ctx) return null;
+          return await analyzeEmployeeRiskWithAI(ctx);
         } catch (err) {
           console.error(`[RiskAPI] Failed for ${emp.firstName}:`, err);
+          return null;
         }
-      }
+      });
+
+      const rawResults = await Promise.allSettled(analysisPromises);
+      rawResults.forEach((r, idx) => {
+        if (r.status === 'fulfilled' && r.value) {
+          const emp = batch[idx];
+          const joinDate = emp.joinDate || emp.createdAt;
+          const yearsAtCompany = joinDate
+            ? +((Date.now() - new Date(joinDate).getTime()) / (1000 * 60 * 60 * 24 * 365.25)).toFixed(1)
+            : 0;
+          results.push({
+            ...r.value,
+            department: emp.department || 'Unassigned',
+            position: emp.position || 'Employee',
+            yearsAtCompany,
+            overtimeHours: 0,
+          } as AIRiskResult & { department: string; position: string; yearsAtCompany: number; overtimeHours: number });
+        }
+      });
 
       // Generate org-level narrative via GPT
       const orgNarrative = await generateOrgRiskNarrative(results, employees.length);
