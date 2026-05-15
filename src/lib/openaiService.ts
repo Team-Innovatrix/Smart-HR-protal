@@ -276,6 +276,7 @@ Examples of BAD responses (avoid these patterns):
 
 Generate a response now:`;
 
+    try {
       const model = this.gemini.getGenerativeModel({ model: "gemini-2.5-flash" });
       const result = await model.generateContent(prompt);
       return result.response.text() || "I need some additional information to process your request.";
@@ -325,6 +326,7 @@ Example:
 {"startDate": "next Friday", "endDate": "next Friday"} 
 → {"startDate": "2025-10-10", "endDate": "2025-10-10"}`;
 
+    try {
       const model = this.gemini.getGenerativeModel({
         model: 'gemini-2.5-flash',
         generationConfig: { responseMimeType: 'application/json' }
@@ -440,26 +442,27 @@ Return JSON:
       };
     }
 
+    try {
       const model = this.gemini.getGenerativeModel({
         model: 'gemini-2.5-flash',
         generationConfig: { responseMimeType: 'application/json' }
       });
       
-      const result = await model.generateContent(relevancePrompt);
-      const content = result.response.text();
+      const geminiResult = await model.generateContent(relevancePrompt);
+      const content = geminiResult.response.text();
       
       if (!content) {
         console.error('[ERROR] Empty content in Gemini response.');
         throw new Error('No response content received from Gemini');
       }
 
-      const result = JSON.parse(content);
+      const parsed = JSON.parse(content);
 
       return {
-        isRelevant: result.isRelevant || false,
-        confidence: result.confidence || 0.5,
-        response: result.response,
-        reasoning: result.reasoning
+        isRelevant: parsed.isRelevant || false,
+        confidence: parsed.confidence || 0.5,
+        response: parsed.response,
+        reasoning: parsed.reasoning
       };
 
     } catch (error) {
@@ -526,6 +529,7 @@ Current: "clock me in" (different intent) → {"isSame": false, "newData": {}}
       };
     }
 
+    try {
       const model = this.gemini.getGenerativeModel({
         model: 'gemini-2.5-flash',
         generationConfig: { responseMimeType: 'application/json' }

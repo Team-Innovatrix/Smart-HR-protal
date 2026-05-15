@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
       // Process sequentially to avoid hitting Gemini free-tier quota (15 req/min)
       for (const emp of batch) {
         try {
-          const ctx = await aggregateEmployeeData(emp.clerkUserId || emp._id.toString());
+          const ctx = await aggregateEmployeeData(emp.clerkUserId || (emp._id as any).toString());
           if (!ctx) continue;
           const result = await analyzeEmployeeRiskWithAI(ctx);
           if (result) {
