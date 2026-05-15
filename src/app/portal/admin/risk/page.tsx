@@ -587,7 +587,7 @@ export default function RiskIntelligencePage() {
       return aiResults.map(r => ({
         emp: {
           id: r.employeeId, name: r.name, avatar: r.name.split(' ').map((n:string)=>n[0]).join(''),
-          department: '', position: '', yearsAtCompany: 0, overtimeHours: 0,
+          department: r.department || '', position: r.position || '', yearsAtCompany: r.yearsAtCompany || 0, overtimeHours: r.overtimeHours || 0,
           trend: [40, 38, 35, Math.max(0, 35 - r.riskScore / 10)],
         },
         result: {
@@ -631,7 +631,7 @@ export default function RiskIntelligencePage() {
     );
   }
 
-  if (employees.length === 0) {
+  if (results.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-[60vh] flex-col text-center">
         <div className="bg-slate-100 p-6 rounded-full inline-block mb-4">

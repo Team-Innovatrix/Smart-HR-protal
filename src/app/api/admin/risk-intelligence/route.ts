@@ -54,9 +54,18 @@ export async function GET(request: NextRequest) {
       });
 
       const rawResults = await Promise.allSettled(analysisPromises);
-      rawResults.forEach(r => {
+      rawResults.forEach((r, idx) => {
         if (r.status === 'fulfilled' && r.value) {
-          results.push(r.value);
+          const emp = batch[idx];
+          const joinDate = emp.joinDate || emp.createdAt;
+          const yearsAtCompany = joinDate ? +((Date.now() - new Date(joinDate).getTime()) / (1000 * 60 * 60 * 24 * 365.25)).toFixed(1) : 0;
+          results.push({
+            ...r.value,
+            department: emp.department || 'Unassigned',
+            position: emp.position || 'Employee',
+            yearsAtCompany,
+            overtimeHours: 0, // We don't have this readily available here without recalculating, default to 0
+          } as AIRiskResult & { department: string; position: string; yearsAtCompany: number; overtimeHours: number });
         }
       });
 
@@ -124,6 +133,10 @@ export async function GET(request: NextRequest) {
         return {
           employeeId: emp.clerkUserId || emp._id?.toString(),
           name: `${emp.firstName || ''} ${emp.lastName || ''}`.trim(),
+          department: emp.department || 'Unassigned',
+          position: emp.position || 'Employee',
+          yearsAtCompany: emp.joinDate ? +((Date.now() - new Date(emp.joinDate).getTime()) / (1000 * 60 * 60 * 24 * 365.25)).toFixed(1) : 0,
+          overtimeHours: 0,
           riskScore: risk.riskScore,
           riskLevel: risk.riskLevel,
           attritionProbability: risk.riskScore,
