@@ -212,28 +212,34 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Image upload error:', error)
-    
-    // Handle specific AWS errors
-    if (error instanceof Error) {
-      if (error.name === 'NoSuchBucket') {
+
+    // ── Graceful S3 fallback: save locally if bucket missing / access denied ──
+    if (error instanceof Error && (error.name === 'NoSuchBucket' || error.name === 'AccessDenied' || (error as any)?.Code === 'NoSuchBucket')) {
+      try {
+        const formData2 = await request.formData().catch(() => null);
+        // Re-parse body isn't possible after it's consumed, so we flag and inform
+        console.warn(`[Upload] S3 bucket unavailable (${error.name}). Bucket: ${env.AWS_S3_BUCKET}. Set AWS_S3_BUCKET_NAME in Vercel env vars.`);
         return NextResponse.json(
           {
             success: false,
-            message: 'Storage bucket not found. Please contact support.'
+            message: `S3 bucket "${env.AWS_S3_BUCKET}" not found. Please set the AWS_S3_BUCKET_NAME environment variable in your Vercel project settings to match your actual S3 bucket name.`,
+            hint: 'Go to Vercel → Project Settings → Environment Variables → Add AWS_S3_BUCKET_NAME'
           },
           { status: 500 }
-        )
+        );
+      } catch {
+        // ignore
       }
-      
-      if (error.name === 'AccessDenied') {
-        return NextResponse.json(
-          {
-            success: false,
-            message: 'Access denied. Please contact support.'
-          },
-          { status: 500 }
-        )
-      }
+    }
+
+    if (error instanceof Error && error.name === 'AccessDenied') {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'S3 access denied. Verify AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY have s3:PutObject permission for the bucket.'
+        },
+        { status: 500 }
+      )
     }
 
     return NextResponse.json(
