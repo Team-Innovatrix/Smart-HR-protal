@@ -77,10 +77,10 @@ export class TimezoneService {
         return 'Invalid Date'
       }
       
-      // Validate the timezone
+      // Validate the timezone — default to IST if missing
       if (!timezone || typeof timezone !== 'string') {
-        logger.error('Invalid timezone passed', { timezone })
-        return 'Invalid Date'
+        logger.error('Invalid timezone passed, defaulting to Asia/Kolkata', { timezone })
+        timezone = 'Asia/Kolkata'
       }
       
       const result = formatInTimeZone(date, timezone, formatString)
@@ -95,9 +95,9 @@ export class TimezoneService {
         error: error instanceof Error ? error.message : String(error)
       })
       
-      // Fallback to UTC formatting if timezone conversion fails
+      // Fallback to IST (Asia/Kolkata) formatting if timezone conversion fails
       try {
-        const fallbackResult = format(date, formatString)
+        const fallbackResult = formatInTimeZone(date, 'Asia/Kolkata', formatString)
         return fallbackResult
       } catch (fallbackError) {
         logger.error('Fallback formatting also failed', {

@@ -73,10 +73,11 @@ export const POST = withJsonErrorHandling(async (request: NextRequest) => {
 
       // Get current time in UTC for storage
       const currentTimeUTC = new Date();
+      // Default to IST if user has no timezone configured
+      const userTimezone = userProfile.timezone || 'Asia/Kolkata';
       
       // Calculate date based on the actual event time in user's timezone
-      // This ensures consistency even if timezone changes between requests
-      const currentLocalDate = TimezoneService.formatInTimezone(currentTimeUTC, userProfile.timezone, 'yyyy-MM-dd');
+      const currentLocalDate = TimezoneService.formatInTimezone(currentTimeUTC, userTimezone, 'yyyy-MM-dd');
       
       // Search for existing attendance record for this date
       let attendance = await Attendance.findOne({
@@ -240,15 +241,15 @@ export const POST = withJsonErrorHandling(async (request: NextRequest) => {
         // Don't fail the request if cache invalidation fails
       }
       
-      // Convert UTC times to local time for display
+      // Convert UTC times to local IST time for display
       const formattedAttendance = {
         ...attendance.toObject(),
-        clockIn: TimezoneService.formatInTimezone(attendance.clockIn, userProfile.timezone, 'hh:mm a'),
-        clockOut: attendance.clockOut ? TimezoneService.formatInTimezone(attendance.clockOut, userProfile.timezone, 'hh:mm a') : null,
+        clockIn: TimezoneService.formatInTimezone(attendance.clockIn, userTimezone, 'hh:mm a'),
+        clockOut: attendance.clockOut ? TimezoneService.formatInTimezone(attendance.clockOut, userTimezone, 'hh:mm a') : null,
         sessions: attendance.sessions.map((session: IAttendanceSession) => ({
           ...session,
-          clockIn: TimezoneService.formatInTimezone(session.clockIn, userProfile.timezone, 'hh:mm a'),
-          clockOut: session.clockOut ? TimezoneService.formatInTimezone(session.clockOut, userProfile.timezone, 'hh:mm a') : null
+          clockIn: TimezoneService.formatInTimezone(session.clockIn, userTimezone, 'hh:mm a'),
+          clockOut: session.clockOut ? TimezoneService.formatInTimezone(session.clockOut, userTimezone, 'hh:mm a') : null
         }))
       };
       
@@ -316,10 +317,11 @@ export const POST = withJsonErrorHandling(async (request: NextRequest) => {
 
       // Get current time in UTC for storage
       const currentTimeUTC = new Date();
+      // Default to IST if user has no timezone configured
+      const userTimezone = userProfile.timezone || 'Asia/Kolkata';
       
       // Calculate date based on the actual event time in user's timezone
-      // This ensures consistency even if timezone changes between requests
-      const currentLocalDate = TimezoneService.formatInTimezone(currentTimeUTC, userProfile.timezone, 'yyyy-MM-dd');
+      const currentLocalDate = TimezoneService.formatInTimezone(currentTimeUTC, userTimezone, 'yyyy-MM-dd');
       
       // Search for existing attendance record for this date
       const attendance = await Attendance.findOne({
@@ -428,15 +430,15 @@ export const POST = withJsonErrorHandling(async (request: NextRequest) => {
         // Don't fail the request if cache invalidation fails
       }
       
-      // Convert UTC times to local time for display
+      // Convert UTC times to local IST time for display
       const formattedAttendance = {
         ...attendance.toObject(),
-        clockIn: TimezoneService.formatInTimezone(attendance.clockIn, userProfile.timezone, 'hh:mm a'),
-        clockOut: attendance.clockOut ? TimezoneService.formatInTimezone(attendance.clockOut, userProfile.timezone, 'hh:mm a') : null,
+        clockIn: TimezoneService.formatInTimezone(attendance.clockIn, userTimezone, 'hh:mm a'),
+        clockOut: attendance.clockOut ? TimezoneService.formatInTimezone(attendance.clockOut, userTimezone, 'hh:mm a') : null,
         sessions: attendance.sessions.map((session: IAttendanceSession) => ({
           ...session,
-          clockIn: TimezoneService.formatInTimezone(session.clockIn, userProfile.timezone, 'hh:mm a'),
-          clockOut: session.clockOut ? TimezoneService.formatInTimezone(session.clockOut, userProfile.timezone, 'hh:mm a') : null
+          clockIn: TimezoneService.formatInTimezone(session.clockIn, userTimezone, 'hh:mm a'),
+          clockOut: session.clockOut ? TimezoneService.formatInTimezone(session.clockOut, userTimezone, 'hh:mm a') : null
         }))
       };
 
