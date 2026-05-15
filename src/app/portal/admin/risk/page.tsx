@@ -786,8 +786,8 @@ export default function RiskIntelligencePage() {
             </thead>
             <tbody className="divide-y divide-gray-50">
               {results.sort((a, b) => b.result.riskScore - a.result.riskScore).map(({ emp, result }) => {
-                const col = { high: 'text-red-700 bg-red-50', moderate: 'text-amber-700 bg-amber-50', safe: 'text-emerald-700 bg-emerald-50' }[result.riskLevel];
-                const sCol = { positive: 'text-emerald-600', neutral: 'text-amber-600', negative: 'text-red-600' }[result.sentiment];
+                const col = { high: 'text-red-700 bg-red-50', moderate: 'text-amber-700 bg-amber-50', safe: 'text-emerald-700 bg-emerald-50' }[result.riskLevel as 'high' | 'moderate' | 'safe'];
+                const sCol = { positive: 'text-emerald-600', neutral: 'text-amber-600', negative: 'text-red-600' }[result.sentiment as 'positive' | 'neutral' | 'negative'];
                 const trendUp = result.riskScore > (emp.trend[emp.trend.length - 2] ?? 0);
                 const topFactor = Object.keys(result.breakdown)[0] ?? 'None';
                 return (
