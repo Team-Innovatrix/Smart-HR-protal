@@ -44,6 +44,7 @@ const GlobalImageUpload: React.FC<GlobalImageUploadProps> = ({
   // Update previewUrl when currentImageUrl changes
   React.useEffect(() => {
     setPreviewUrl(currentImageUrl || '/api/image/logo.png')
+    setImageLoadError(false)
   }, [currentImageUrl])
   
   const {
@@ -60,6 +61,7 @@ const GlobalImageUpload: React.FC<GlobalImageUploadProps> = ({
     onUploadComplete: (success, result) => {
       if (success && result?.imageUrl) {
         setPreviewUrl(result.imageUrl)
+        setImageLoadError(false)
         onImageChange(result.imageUrl)
       }
       onUploadComplete?.(success, result)
