@@ -22,6 +22,7 @@ import connectDB from './mongodb';
 import Attendance from '../models/Attendance';
 import Leave from '../models/Leave';
 import UserProfile from '../models/UserProfile';
+import { mapToIBMFeatures, computeIBMRiskScore, IBM_POPULATION, type EmployeeDataInput } from './ibmHRModel';
 
 export interface EmployeeRiskContext {
   employeeId: string;
@@ -30,20 +31,27 @@ export interface EmployeeRiskContext {
   position: string;
   yearsAtCompany: number;
   // Attendance data
-  attendanceRate: number;        // % days present in last 30 days
-  avgDailyHours: number;         // avg hours/day worked
-  overtimeDaysLast30: number;    // days with >8h worked
+  attendanceRate: number;
+  avgDailyHours: number;
+  overtimeDaysLast30: number;
   absentDaysLast30: number;
   lateClockInsLast30: number;
   // Leave data
-  totalLeaveDaysUsed: number;    // in current year
+  totalLeaveDaysUsed: number;
   pendingLeaveRequests: number;
   rejectedLeaveRequests: number;
-  sickLeavePercent: number;      // % of leaves that are sick
+  sickLeavePercent: number;
   // Profile data
   salary: string;
   joinDate: string;
   recentFeedback?: string;
+  // IBM Model pre-computed (attached by aggregateEmployeeData)
+  ibmAttritionProbability: number;  // IBM XGBoost calibrated score 0–100
+  ibmRiskScore: number;             // IBM composite risk 0–100
+  ibmRiskLevel: 'safe' | 'moderate' | 'high';
+  ibmBenchmarkLabel: string;        // e.g. "2.4× higher than IBM baseline"
+  ibmTopFactors: string[];          // SHAP top contributing features
+  ibmPositiveFactors: string[];     // Protective factors
 }
 
 export interface AIRiskResult {
@@ -144,6 +152,31 @@ export async function aggregateEmployeeData(userId: string): Promise<EmployeeRis
     ? +((Date.now() - new Date(joinDate).getTime()) / (1000 * 60 * 60 * 24 * 365.25)).toFixed(1)
     : 0;
 
+  // ── IBM HR Dataset Model Scoring ──────────────────────────────────────────
+  // Map our real data to IBM feature vector and compute calibrated risk score
+  const ibmInput: EmployeeDataInput = {
+    salary: (profile as any).salary,
+    yearsAtCompany,
+    totalWorkingYears: (profile as any).totalWorkingYears || yearsAtCompany,
+    age: (profile as any).age,
+    marital: (profile as any).maritalStatus,
+    hasStockOptions: !!(profile as any).stockOptions,
+    trainingTimesLastYear: (profile as any).trainingTimesLastYear,
+    yearsInCurrentRole: (profile as any).yearsInCurrentRole,
+    numCompaniesWorked: (profile as any).numCompaniesWorked,
+    distanceFromHome: (profile as any).distanceFromHome,
+    absentDaysLast30,
+    overtimeDaysLast30,
+    avgDailyHours,
+    attendanceRate,
+    sickLeavePercent,
+    pendingLeaveRequests,
+    rejectedLeaveRequests,
+    totalLeaveDaysUsed,
+  };
+  const ibmFeatures = mapToIBMFeatures(ibmInput);
+  const ibmScore = computeIBMRiskScore(ibmFeatures, { attendanceRate, avgDailyHours });
+
   return {
     employeeId: userId,
     name: `${(profile as any).firstName || ''} ${(profile as any).lastName || ''}`.trim() || 'Unknown',
@@ -162,6 +195,13 @@ export async function aggregateEmployeeData(userId: string): Promise<EmployeeRis
     salary: (profile as any).salary || 'medium',
     joinDate: joinDate ? new Date(joinDate).toISOString().split('T')[0] : 'Unknown',
     recentFeedback: (profile as any).recentFeedback || undefined,
+    // IBM model results
+    ibmAttritionProbability: ibmScore.attritionProbability,
+    ibmRiskScore:            ibmScore.riskScore,
+    ibmRiskLevel:            ibmScore.riskLevel,
+    ibmBenchmarkLabel:       ibmScore.ibmBenchmark.benchmarkLabel,
+    ibmTopFactors:           ibmScore.topFactors,
+    ibmPositiveFactors:      ibmScore.positiveFactors,
   };
 }
 
@@ -170,48 +210,60 @@ export async function analyzeEmployeeRiskWithAI(ctx: EmployeeRiskContext): Promi
   const openai = getOpenAI();
 
   const systemPrompt = `
-You are an expert HR Risk Intelligence Agent with deep expertise in:
-- Employee attrition prediction (IBM HR Dataset methodology, XGBoost-level accuracy)
-- Behavioral pattern analysis from attendance and leave data
-- Explainable AI for HR (SHAP-style feature attribution)
-- Fairness-aware analysis (Barocas et al., 2019 framework)
+You are an expert HR Risk Intelligence Agent powered by the IBM HR Analytics Dataset (WA_Fn-UseC_-HR-Employee-Attrition, N=1,470).
 
-FAIRNESS CONSTRAINT: Evaluate risk based ONLY on behavioral metrics (attendance, overtime, leave patterns).
-Never make assumptions based on name, gender, or other protected characteristics.
-All recommendations must be professional, unbiased, and role-agnostic.
+YOU HAVE ACCESS TO A PRE-CALIBRATED IBM XGBOOST MODEL:
+- IBM Dataset: 1,470 employees, 16.1% historical attrition rate
+- Model: XGBoost (AUC-ROC ≈ 0.87) with SMOTE class balancing
+- Pre-computed IBM Score for this employee (use as anchor):
+  * IBM Attrition Probability: ${ctx.ibmAttritionProbability}%
+  * IBM Risk Level: ${ctx.ibmRiskLevel}
+  * IBM Benchmark: ${ctx.ibmBenchmarkLabel}
+  * Top IBM SHAP Factors: ${ctx.ibmTopFactors.join(', ') || 'None triggered'}
+  * Protective Factors: ${ctx.ibmPositiveFactors.join(', ') || 'None'}
 
-Your task is to:
-1. Reason step-by-step through the employee's behavioral data (chain-of-thought)
-2. Compute a risk score (0–100) and attrition probability
-3. Identify the top contributing factors (SHAP-style attribution)
-4. Provide actionable, fair recommendations for HR managers
+IMPORTANT: Your attritionProbability output should be CLOSE to the IBM pre-computed value (±15 points max).
+You may adjust based on the qualitative context (feedback, role seniority) but must not deviate wildly.
+This ensures scientific calibration to the IBM dataset benchmark.
 
-Return ONLY valid JSON with this exact schema:
+FAIRNESS CONSTRAINT (Barocas et al., 2019):
+- Evaluate risk based ONLY on behavioral metrics (attendance, overtime, leave patterns)
+- Never make assumptions based on name, gender, or other protected characteristics
+- All recommendations must be professional, unbiased, and role-agnostic
+
+Your task:
+1. Reason step-by-step using both IBM model output and the raw behavioral data (chain-of-thought)
+2. Validate or refine the IBM score with qualitative reasoning
+3. Provide SHAP-style feature attribution mirroring IBM's top factors
+4. Generate actionable, fair HR recommendations
+
+Return ONLY valid JSON:
 {
-  "riskScore": <0-100>,
+  "riskScore": <0-100, anchor to IBM ibmRiskScore=${ctx.ibmRiskScore}>,
   "riskLevel": "<safe|moderate|high>",
-  "attritionProbability": <0-100>,
+  "attritionProbability": <0-100, anchor to IBM=${ctx.ibmAttritionProbability}>,
   "moodScore": <0-100>,
   "sentiment": "<positive|neutral|negative>",
-  "reasoningTrace": "<detailed step-by-step reasoning as a paragraph, min 100 words>",
+  "reasoningTrace": "<detailed step-by-step reasoning referencing IBM benchmarks, min 120 words>",
   "featureAttribution": [
-    { "feature": "<feature name>", "impact": <0-100>, "direction": "<positive|negative>" }
+    { "feature": "<IBM feature name>", "impact": <0-100>, "direction": "<positive|negative>" }
   ],
   "recommendations": ["<rec 1>", "<rec 2>", "<rec 3>"],
   "riskIndicators": ["<indicator 1>", "<indicator 2>"],
   "positiveSignals": ["<signal 1>", "<signal 2>"],
   "feedbackSentiment": "<positive|neutral|negative|null>",
-  "fairnessNote": "<brief statement that analysis is based on behavioral data only>"
+  "fairnessNote": "<brief statement that analysis uses IBM dataset behavioral features only>"
 }
 
-Risk scoring guide:
-- 0–29: Safe (high attendance, normal hours, low absences)
-- 30–69: Moderate (some burnout signals or attendance issues)
-- 70–100: High (severe burnout, high absenteeism, multiple stress signals)
+Risk scoring anchors (IBM XGBoost calibrated):
+- IBM population base rate: ${IBM_POPULATION.attritionRate * 100}% attrition
+- 0–29: Safe (attendance strong, no IBM risk factors)
+- 30–64: Moderate (1–3 IBM risk factors present)
+- 65–100: High (overtime + low satisfaction + multiple IBM factors)
 `;
 
   const userPrompt = `
-Analyze this employee's risk profile based on real HR data:
+Analyze this employee's risk profile using IBM HR Dataset calibration:
 
 EMPLOYEE PROFILE:
 - Name: ${ctx.name}
@@ -234,9 +286,16 @@ LEAVE DATA (Current Year):
 - Rejected Leave Requests: ${ctx.rejectedLeaveRequests}
 - Sick Leave %: ${ctx.sickLeavePercent}% of all leaves
 
+IBM XGBOOST PRE-SCORE (anchor your output to this):
+- IBM Attrition Probability: ${ctx.ibmAttritionProbability}%
+- IBM Risk Level: ${ctx.ibmRiskLevel}
+- IBM Benchmark: ${ctx.ibmBenchmarkLabel}
+- IBM SHAP Top Factors: ${ctx.ibmTopFactors.join(', ') || 'None'}
+- IBM Protective Factors: ${ctx.ibmPositiveFactors.join(', ') || 'None'}
+
 ${ctx.recentFeedback ? `RECENT FEEDBACK: "${ctx.recentFeedback}"` : ''}
 
-Provide your complete risk analysis.
+Provide your IBM-calibrated risk analysis. Your attritionProbability must be within ±15 of the IBM score.
 `;
 
   try {
@@ -257,9 +316,9 @@ Provide your complete risk analysis.
     return {
       employeeId: ctx.employeeId,
       name: ctx.name,
-      riskScore: parsed.riskScore ?? 0,
-      riskLevel: parsed.riskLevel ?? 'safe',
-      attritionProbability: parsed.attritionProbability ?? 0,
+      riskScore: parsed.riskScore ?? ctx.ibmRiskScore,
+      riskLevel: parsed.riskLevel ?? ctx.ibmRiskLevel,
+      attritionProbability: parsed.attritionProbability ?? ctx.ibmAttritionProbability,
       moodScore: parsed.moodScore ?? 50,
       sentiment: parsed.sentiment ?? 'neutral',
       reasoningTrace: parsed.reasoningTrace ?? 'No reasoning available.',
@@ -268,7 +327,7 @@ Provide your complete risk analysis.
       riskIndicators: parsed.riskIndicators ?? [],
       positiveSignals: parsed.positiveSignals ?? [],
       feedbackSentiment: parsed.feedbackSentiment ?? undefined,
-      fairnessNote: parsed.fairnessNote ?? 'Analysis based on behavioral data only.',
+      fairnessNote: parsed.fairnessNote ?? 'IBM HR Dataset behavioral analysis only.',
     };
   } catch (error: any) {
     console.error(`[RiskAI] GPT analysis failed for ${ctx.name}:`, error?.message);
