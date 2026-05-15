@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     const results: AIRiskResult[] = [];
 
     if (hasOpenAI) {
-      //  AI MODE: Parallel Gemini analysis for all employees 
+      // ── AI MODE: Parallel Gemini analysis for all employees ──────────────────
       // Parallel calls: total time ~5s (slowest single call), fits Vercel 30s limit
       const batchSize = Math.min(employees.length, 10);
       const batch = employees.slice(0, batchSize);
@@ -129,7 +129,7 @@ export async function GET(request: NextRequest) {
       });
 
     } else {
-      //  FALLBACK MODE: Rule-based risk engine 
+      // ── FALLBACK MODE: Rule-based risk engine ──────────────────────────
       const fallbackResults = employees.map((emp: any) => {
         const profile = generateMockMetricsForUser(emp);
         const risk = computeRisk(profile);

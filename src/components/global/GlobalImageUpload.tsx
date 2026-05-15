@@ -149,11 +149,11 @@ const GlobalImageUpload: React.FC<GlobalImageUploadProps> = ({
               }}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               onLoad={() => {
-                console.log(' Company logo loaded successfully:', previewUrl);
+                console.log('✅ Company logo loaded successfully:', previewUrl);
                 setImageLoadError(false);
               }}
               onError={(e) => {
-                console.error(' Failed to load company logo:', previewUrl, e);
+                console.error('❌ Failed to load company logo:', previewUrl, e);
                 setImageLoadError(true);
               }}
             />

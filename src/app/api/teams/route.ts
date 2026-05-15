@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
       });
 
       if (teams.length === 0) {
-        // No teams in DB  return fallback so UI is always populated
+        // No teams in DB — return fallback so UI is always populated
         return NextResponse.json({ success: true, data: [] });
       }
 

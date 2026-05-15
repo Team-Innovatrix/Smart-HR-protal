@@ -22,7 +22,7 @@ import { VoiceCommandClient, VoiceCommandState } from '@/lib/voiceCommandClient'
 import { requestLocationPermission, showLocationPermissionMessage } from '@/lib/locationPermissionUtils'
 import VoiceCommandChat from '../VoiceCommandChat'
 
-/*  Quick action definition  */
+/* ─── Quick action definition ───────────────────────────────────── */
 interface QuickAction {
   id: string
   label: string
@@ -32,7 +32,7 @@ interface QuickAction {
   action: () => Promise<{ success: boolean; message: string }>
 }
 
-/*  Feedback toast  */
+/* ─── Feedback toast ────────────────────────────────────────────── */
 function Toast({ message, success, onDone }: { message: string; success: boolean; onDone: () => void }) {
   useEffect(() => {
     const t = setTimeout(onDone, 3000)
@@ -50,7 +50,7 @@ function Toast({ message, success, onDone }: { message: string; success: boolean
   )
 }
 
-/*  Main component  */
+/* ─── Main component ────────────────────────────────────────────── */
 const MicIcon = () => {
   const [mounted, setMounted] = useState(false)
   const [panelOpen, setPanelOpen] = useState(false)
@@ -111,7 +111,7 @@ const MicIcon = () => {
     chatTimeoutRef.current = setTimeout(() => setShowChat(false), 5000)
   }, [])
 
-  /*  Quick action executor  */
+  /* ── Quick action executor ──────────────────────────────────── */
   const execAction = useCallback(async (actionId: string, apiFn: () => Promise<{ success: boolean; message: string }>) => {
     if (runningAction) return
     setRunningAction(actionId)
@@ -131,7 +131,7 @@ const MicIcon = () => {
     }
   }, [runningAction])
 
-  /*  API helpers  */
+  /* ── API helpers ────────────────────────────────────────────── */
   const clockIn = useCallback(async () => {
     const locResult = await requestLocationPermission({ enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 })
     if (!locResult.granted) {
@@ -144,7 +144,7 @@ const MicIcon = () => {
       body: JSON.stringify({ userId: user?.id, location: locResult.location }),
     })
     const d = await res.json()
-    return { success: d.success, message: d.success ? ' Clocked in!' : (d.message || 'Already clocked in') }
+    return { success: d.success, message: d.success ? '✅ Clocked in!' : (d.message || 'Already clocked in') }
   }, [user])
 
   const clockOut = useCallback(async () => {
@@ -159,10 +159,10 @@ const MicIcon = () => {
       body: JSON.stringify({ userId: user?.id, location: locResult.location }),
     })
     const d = await res.json()
-    return { success: d.success, message: d.success ? ' Clocked out!' : (d.message || 'Not clocked in') }
+    return { success: d.success, message: d.success ? '👋 Clocked out!' : (d.message || 'Not clocked in') }
   }, [user])
 
-  /*  Quick actions list  */
+  /* ── Quick actions list ─────────────────────────────────────── */
   const quickActions: QuickAction[] = [
     {
       id: 'clock_in',
@@ -186,7 +186,7 @@ const MicIcon = () => {
       icon: <CalendarIcon className="w-5 h-5" />,
       color: 'from-violet-500 to-purple-600',
       glow: 'shadow-violet-500/40',
-      action: async () => { router.push('/portal/leaves'); return { success: true, message: 'Opening leaves ' } },
+      action: async () => { router.push('/portal/leaves'); return { success: true, message: 'Opening leaves →' } },
     },
     {
       id: 'attendance',
@@ -194,7 +194,7 @@ const MicIcon = () => {
       icon: <DocumentTextIcon className="w-5 h-5" />,
       color: 'from-sky-500 to-indigo-500',
       glow: 'shadow-sky-500/40',
-      action: async () => { router.push('/portal/attendance'); return { success: true, message: 'Opening attendance ' } },
+      action: async () => { router.push('/portal/attendance'); return { success: true, message: 'Opening attendance →' } },
     },
     {
       id: 'profile',
@@ -202,7 +202,7 @@ const MicIcon = () => {
       icon: <UserIcon className="w-5 h-5" />,
       color: 'from-pink-500 to-rose-500',
       glow: 'shadow-pink-500/40',
-      action: async () => { router.push('/portal/profile'); return { success: true, message: 'Opening profile ' } },
+      action: async () => { router.push('/portal/profile'); return { success: true, message: 'Opening profile →' } },
     },
     {
       id: 'team',
@@ -210,7 +210,7 @@ const MicIcon = () => {
       icon: <UsersIcon className="w-5 h-5" />,
       color: 'from-amber-500 to-orange-500',
       glow: 'shadow-amber-500/40',
-      action: async () => { router.push('/portal/team'); return { success: true, message: 'Opening team ' } },
+      action: async () => { router.push('/portal/team'); return { success: true, message: 'Opening team →' } },
     },
     {
       id: 'dashboard',
@@ -218,11 +218,11 @@ const MicIcon = () => {
       icon: <HomeIcon className="w-5 h-5" />,
       color: 'from-slate-500 to-gray-600',
       glow: 'shadow-slate-500/40',
-      action: async () => { router.push('/portal/dashboard'); return { success: true, message: 'Going home ' } },
+      action: async () => { router.push('/portal/dashboard'); return { success: true, message: 'Going home →' } },
     },
   ]
 
-  /*  Voice recording handlers  */
+  /* ── Voice recording handlers ───────────────────────────────── */
   const handleMouseDown = async () => {
     if (!user || !isLoaded || !voiceRecorderRef.current || !voiceCommandClientRef.current) return
     setIsPressed(true)
@@ -350,7 +350,7 @@ const MicIcon = () => {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="text-white font-black text-sm">Quick Actions</h3>
-                <p className="text-white/40 text-[10px] mt-0.5">or hold  to speak</p>
+                <p className="text-white/40 text-[10px] mt-0.5">or hold 🎙️ to speak</p>
               </div>
               <button
                 onClick={() => setPanelOpen(false)}

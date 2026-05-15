@@ -176,19 +176,19 @@ export default function UsersManagementPage() {
   // Positions functions
   const fetchPositions = useCallback(async () => {
     try {
-      console.log(' [Frontend] Starting positions fetch...');
+      console.log('🔍 [Frontend] Starting positions fetch...');
       setPositionsLoading(true);
       setPositionsError(null);
       
       const response = await fetch('/api/admin/orgstructure');
-      console.log(' [Frontend] Response status:', response.status);
-      console.log(' [Frontend] Response ok:', response.ok);
+      console.log('📡 [Frontend] Response status:', response.status);
+      console.log('📡 [Frontend] Response ok:', response.ok);
       
       const data = await response.json();
-      console.log(' [Frontend] Response data:', data);
+      console.log('📊 [Frontend] Response data:', data);
       
       if (data.success) {
-        console.log(' [Frontend] Positions fetched successfully');
+        console.log('✅ [Frontend] Positions fetched successfully');
         
         // Convert org structure to the expected format
         const departmentPositions: Record<string, Record<string, string[]>> = {};
@@ -211,12 +211,12 @@ export default function UsersManagementPage() {
         // Fetch employee counts for each position
         await fetchPositionEmployeeCounts(departmentPositions);
       } else {
-        console.error(' [Frontend] API returned error:', data.error);
+        console.error('❌ [Frontend] API returned error:', data.error);
         setPositionsError(data.error || 'Failed to fetch positions');
       }
     } catch (error) {
-      console.error(' [Frontend] Positions fetch error:', error);
-      console.error(' [Frontend] Error details:', {
+      console.error('❌ [Frontend] Positions fetch error:', error);
+      console.error('❌ [Frontend] Error details:', {
         name: error instanceof Error ? error.name : 'Unknown',
         message: error instanceof Error ? error.message : 'Unknown error',
         stack: error instanceof Error ? error.stack : 'No stack trace'
@@ -1154,7 +1154,7 @@ export default function UsersManagementPage() {
                               const totalEmployees = Object.values(seniorityGroups).flat().reduce((total, position) => {
                                 return total + (positionEmployeeCounts[position] || 0);
                               }, 0);
-                              return totalEmployees > 0 ? `  ${totalEmployees} employee${totalEmployees !== 1 ? 's' : ''}` : '';
+                              return totalEmployees > 0 ? ` • ${totalEmployees} employee${totalEmployees !== 1 ? 's' : ''}` : '';
                             })()}
                           </p>
                         </div>
@@ -1539,9 +1539,9 @@ export default function UsersManagementPage() {
                       Permissions are managed as simple strings in the format "resource:action". To add permissions, you can:
                     </p>
                     <ul className="text-sm text-gray-600 space-y-2">
-                      <li> Copy permissions from an existing role</li>
-                      <li> Manually add permissions in the format "resource:action"</li>
-                      <li> Use the role management interface to configure permissions</li>
+                      <li>• Copy permissions from an existing role</li>
+                      <li>• Manually add permissions in the format "resource:action"</li>
+                      <li>• Use the role management interface to configure permissions</li>
                     </ul>
                     <div className="mt-4">
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -1616,7 +1616,7 @@ export default function UsersManagementPage() {
       />
 
 
-      {/*  Import from Clerk Modal  */}
+      {/* ── Import from Clerk Modal ──────────────────────────────── */}
       {showClerkImportModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
           style={{ background: 'rgba(15,10,40,0.6)', backdropFilter: 'blur(6px)' }}>
@@ -1628,7 +1628,7 @@ export default function UsersManagementPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-11 h-11 rounded-2xl flex items-center justify-center shadow-lg text-xl"
-                    style={{ background: 'linear-gradient(135deg, #4f46e5, #6366f1)' }}></div>
+                    style={{ background: 'linear-gradient(135deg, #4f46e5, #6366f1)' }}>🔗</div>
                   <div>
                     <h2 className="text-lg font-black text-slate-900">Import from Clerk</h2>
                     <p className="text-xs text-slate-500">Select Clerk users to onboard as employees</p>
@@ -1649,7 +1649,7 @@ export default function UsersManagementPage() {
 
               {clerkImportResult && (
                 <div className="mb-4 bg-emerald-50 border border-emerald-200 rounded-xl px-5 py-4">
-                  <p className="font-bold text-emerald-800"> Import complete!</p>
+                  <p className="font-bold text-emerald-800">✅ Import complete!</p>
                   <p className="text-sm text-emerald-700 mt-1">{clerkImportResult.added} employee{clerkImportResult.added !== 1 ? 's' : ''} added{clerkImportResult.errors > 0 ? `, ${clerkImportResult.errors} skipped` : ''}.</p>
                 </div>
               )}
@@ -1660,11 +1660,11 @@ export default function UsersManagementPage() {
                     <div className="absolute inset-0 rounded-full border-4 border-indigo-100" />
                     <div className="absolute inset-0 rounded-full border-4 border-t-indigo-500 animate-spin" />
                   </div>
-                  <p className="text-slate-500 font-medium text-sm">Fetching users from Clerk</p>
+                  <p className="text-slate-500 font-medium text-sm">Fetching users from Clerk…</p>
                 </div>
               ) : clerkImportUsers.length === 0 && !clerkImportResult ? (
                 <div className="flex flex-col items-center justify-center py-16 text-center">
-                  <div className="text-5xl mb-4"></div>
+                  <div className="text-5xl mb-4">🎉</div>
                   <p className="text-slate-700 font-bold text-base">All Clerk users are already imported!</p>
                   <p className="text-slate-400 text-sm mt-1">Invite new members via the Clerk Dashboard to add them here.</p>
                 </div>
@@ -1716,10 +1716,10 @@ export default function UsersManagementPage() {
                             <p className="font-bold text-slate-900 text-sm truncate">{u.fullName}</p>
                             <p className="text-xs text-slate-500 truncate">{u.email}</p>
                           </div>
-                          <span className="text-xs font-semibold text-indigo-500 bg-indigo-100 px-2.5 py-1 rounded-full flex-shrink-0">Clerk </span>
+                          <span className="text-xs font-semibold text-indigo-500 bg-indigo-100 px-2.5 py-1 rounded-full flex-shrink-0">Clerk ✓</span>
                         </div>
 
-                        {/* Assignment fields  shown only when selected */}
+                        {/* Assignment fields — shown only when selected */}
                         {isSelected && (
                           <div className="px-5 pb-4 grid grid-cols-3 gap-3 border-t border-indigo-100 pt-3">
                             <div>
@@ -1729,7 +1729,7 @@ export default function UsersManagementPage() {
                                 onChange={e => setClerkImportAssignments(prev => ({ ...prev, [u.id]: { ...prev[u.id], department: e.target.value } }))}
                                 className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
                               >
-                                <option value="">Select</option>
+                                <option value="">Select…</option>
                                 {['Executive','Engineering','Product','Design','Marketing','Sales','Finance','Operations','Human Resources'].map(d => (
                                   <option key={d} value={d}>{d}</option>
                                 ))}
@@ -1807,7 +1807,7 @@ export default function UsersManagementPage() {
                         setClerkImportError(data.error || 'Import failed');
                       }
                     } catch {
-                      setClerkImportError('Network error  please try again');
+                      setClerkImportError('Network error — please try again');
                     } finally {
                       setClerkImportSaving(false);
                     }
@@ -1815,7 +1815,7 @@ export default function UsersManagementPage() {
                   className="px-6 py-2.5 rounded-xl text-sm font-bold text-white shadow-md transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100"
                   style={{ background: 'linear-gradient(135deg, #4f46e5, #6366f1)' }}
                 >
-                  {clerkImportSaving ? 'Importing' : `Import ${clerkImportSelected.size > 0 ? clerkImportSelected.size : ''} Employee${clerkImportSelected.size !== 1 ? 's' : ''}`}
+                  {clerkImportSaving ? 'Importing…' : `Import ${clerkImportSelected.size > 0 ? clerkImportSelected.size : ''} Employee${clerkImportSelected.size !== 1 ? 's' : ''}`}
                 </button>
               </div>
             </div>

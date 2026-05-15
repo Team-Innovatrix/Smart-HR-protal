@@ -5,7 +5,7 @@ import { auth, currentUser } from '@clerk/nextjs/server';
 import connectDB from '@/lib/mongodb';
 import JobVacancy from '@/models/JobVacancy';
 
-/*  Public GET: anyone can fetch active vacancies  */
+/* ── Public GET: anyone can fetch active vacancies ─────────────────── */
 export async function GET() {
   try {
     await connectDB();
@@ -20,7 +20,7 @@ export async function GET() {
   }
 }
 
-/*  Protected POST: admin only  */
+/* ── Protected POST: admin only ────────────────────────────────────── */
 export async function POST(req: NextRequest) {
   try {
     const { userId } = await auth();

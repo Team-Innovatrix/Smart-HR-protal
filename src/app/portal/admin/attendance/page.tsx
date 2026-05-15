@@ -751,7 +751,7 @@ export default function AttendanceManagementPage() {
                             {record.user?.firstName} {record.user?.lastName}
                           </div>
                           <div className="text-sm text-gray-500">
-                            {record.user?.employeeId}  {record.user?.department}
+                            {record.user?.employeeId} • {record.user?.department}
                           </div>
                         </div>
                       </div>
@@ -847,7 +847,7 @@ export default function AttendanceManagementPage() {
       <div className="mt-8 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden" style={{ height: '800px' }}>
         <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
           <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-            <span></span> Google Sheet Live Sync
+            <span>📊</span> Google Sheet Live Sync
           </h2>
         </div>
         <iframe

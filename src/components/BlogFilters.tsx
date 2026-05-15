@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useState, useMemo } from 'react';
 import { BlogPost } from '@/lib/blogUtils';
 
-// Simple date formatter  no timezone context needed on public pages
+// Simple date formatter — no timezone context needed on public pages
 function formatBlogDate(dateString: string): string {
   if (!dateString || dateString === 'Invalid Date') return ''
   try {

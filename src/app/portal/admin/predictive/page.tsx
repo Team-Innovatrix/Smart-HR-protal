@@ -46,21 +46,21 @@ export default function PredictiveAIPage() {
         activeItem={activeTab}
       />
 
-      {/*  TAB 1: AI Predictions  */}
+      {/* ══ TAB 1: AI Predictions ══ */}
       {activeTab === 'predictions' && (
         <div className="animate-fade-in">
           <AIPredictionsTab />
         </div>
       )}
 
-      {/*  TAB 2: Monthly Intelligence  */}
+      {/* ══ TAB 2: Monthly Intelligence ══ */}
       {activeTab === 'holidays' && (
         <div className="animate-fade-in">
           <LeaveRiskDashboard />
         </div>
       )}
 
-      {/*  TAB 3: Annual Risk Calendar  */}
+      {/* ══ TAB 3: Annual Risk Calendar ══ */}
       {activeTab === 'calendar' && (
         <div className="animate-fade-in">
           <SmartRiskCalendar />

@@ -51,7 +51,7 @@ function Ring({ pct, size = 64, stroke = 6, color = 'var(--accent)', bg = 'rgba(
   )
 }
 
-/*  Glass Card Wrapper  */
+/* ── Glass Card Wrapper ── */
 const GlassCard = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
   <div className={`glass transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${className}`}>
     {children}
@@ -170,7 +170,7 @@ export default function HRPortalDashboard() {
             <div className="absolute inset-0 rounded-full border-2 border-[var(--glass-border)]" />
             <div className="absolute inset-0 rounded-full border-2 border-t-[var(--accent)] animate-spin" />
           </div>
-          <p className="text-[var(--accent)] font-medium text-sm">Loading</p>
+          <p className="text-[var(--accent)] font-medium text-sm">Loading…</p>
         </div>
       </div>
     </HRPortalLayout>
@@ -195,7 +195,7 @@ export default function HRPortalDashboard() {
       <ProfileSyncStatus />
       <div className="min-h-screen transition-colors duration-500">
 
-        {/*  HERO BANNER  */}
+        {/* ━━ HERO BANNER ━━ */}
         <div className="mb-8 animate-fade-in">
           <div className="page-hero relative overflow-hidden">
             {/* Ambient glow inside hero */}
@@ -216,7 +216,7 @@ export default function HRPortalDashboard() {
                   Hey, <span className="text-gradient">{firstName}</span>!
                 </h1>
                 <p className="text-[var(--text-secondary)] text-[14px]">
-                  {now ? formatTime(now, 'EEEE, MMMM d') : ''}  Ready to make today productive?
+                  {now ? formatTime(now, 'EEEE, MMMM d') : ''} — Ready to make today productive?
                 </p>
               </div>
               <div className="flex items-center gap-4">
@@ -231,7 +231,7 @@ export default function HRPortalDashboard() {
           </div>
         </div>
 
-        {/*  PRIORITY MESSAGE  */}
+        {/* ━━ PRIORITY MESSAGE ━━ */}
         {priorityMsg && (
           <div className="mb-8 animate-fade-in-delay-1">
             <div className="relative overflow-hidden rounded-2xl p-6"
@@ -246,7 +246,7 @@ export default function HRPortalDashboard() {
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
                   style={{ background: 'rgba(248, 113, 113, 0.2)', border: '1px solid rgba(248, 113, 113, 0.4)' }}
                 >
-                  <span className="text-xl"></span>
+                  <span className="text-xl">🚨</span>
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-[var(--color-danger)] mb-1">PRIORITY ANNOUNCEMENT</h3>
@@ -258,13 +258,13 @@ export default function HRPortalDashboard() {
           </div>
         )}
 
-        {/*  STAT PILLS  */}
+        {/* ━━ STAT PILLS ━━ */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8 animate-fade-in-delay-1">
           {[
-            { l: 'Days Present', v: String(attendanceStats.present), icon: '', glow: false },
-            { l: 'Leave Balance', v: `${totalLeaveRemaining}d`, icon: '', glow: false },
-            { l: 'Attendance', v: `${attendanceStats.pct}%`, icon: '', glow: true },
-            { l: 'Notifications', v: String(notifCount), icon: '', glow: false },
+            { l: 'Days Present', v: String(attendanceStats.present), icon: '📅', glow: false },
+            { l: 'Leave Balance', v: `${totalLeaveRemaining}d`, icon: '🏖️', glow: false },
+            { l: 'Attendance', v: `${attendanceStats.pct}%`, icon: '✅', glow: true },
+            { l: 'Notifications', v: String(notifCount), icon: '🔔', glow: false },
           ].map(s => (
             <GlassCard key={s.l} className={`px-5 py-4 ${s.glow ? 'animate-glow' : ''}`}>
               <div className="flex items-center gap-2 mb-2">
@@ -276,7 +276,7 @@ export default function HRPortalDashboard() {
           ))}
         </div>
 
-        {/*  WIDGETS ROW  */}
+        {/* ━━ WIDGETS ROW ━━ */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8 animate-fade-in-delay-1">
           {/* Attendance Ring */}
           <GlassCard className="p-6">
@@ -352,7 +352,7 @@ export default function HRPortalDashboard() {
           </GlassCard>
         </div>
 
-        {/*  LEAVE SUMMARY + QUICK ACTIONS  */}
+        {/* ━━ LEAVE SUMMARY + QUICK ACTIONS ━━ */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-8 animate-fade-in-delay-2">
           {/* Leave Summary */}
           <GlassCard className="p-6">
@@ -412,12 +412,12 @@ export default function HRPortalDashboard() {
           </GlassCard>
         </div>
 
-        {/*  RECENT ACTIVITY  */}
+        {/* ━━ RECENT ACTIVITY ━━ */}
         <div className="mb-8 animate-fade-in-delay-3">
           <RecentActivityWidget userId={user?.id || ''} />
         </div>
 
-        {/*  EXPLORE MORE  */}
+        {/* ━━ EXPLORE MORE ━━ */}
         <div className="mb-10 animate-fade-in-delay-3">
           <GlassCard className="p-6">
             <div className="flex items-center gap-3 mb-5">

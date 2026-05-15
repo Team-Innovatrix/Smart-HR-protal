@@ -151,7 +151,7 @@ export default function RegularizationModal({
             </p>
             {getFormattedDate() === 'Invalid Date' && (
               <p className="text-sm text-red-600 mt-2">
-                 Unable to display the date. Please contact support if this issue persists.
+                ⚠️ Unable to display the date. Please contact support if this issue persists.
               </p>
             )}
           </div>

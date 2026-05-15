@@ -82,7 +82,7 @@ export async function PUT(
           const configured = emailService.isConfigured();
           console.log('[Leaves:[leaveId] PUT] Email configured?', configured);
           if (configured) {
-            const subject = `Leave Approved: ${leave.leaveType}  ${leave.totalDays} day(s)`;
+            const subject = `Leave Approved: ${leave.leaveType} · ${leave.totalDays} day(s)`;
             const html = `<p>Hi ${userProfile.firstName},</p>
                           <p>Your leave request has been <strong>approved</strong>.</p>
                           <ul>
@@ -124,7 +124,7 @@ export async function PUT(
         if (configured) {
           // Fetch employee profile to personalize email
           const userProfile = await UserProfile.findOne({ clerkUserId: leave.userId });
-          const subject = `Leave Rejected: ${leave.leaveType}  ${leave.totalDays} day(s)`;
+          const subject = `Leave Rejected: ${leave.leaveType} · ${leave.totalDays} day(s)`;
           const html = `<p>Hi ${userProfile?.firstName || 'there'},</p>
                         <p>Your leave request has been <strong>rejected</strong>.</p>
                         <ul>

@@ -163,7 +163,7 @@ export default function SmartRiskCalendar() {
 
   return (
     <div className="space-y-4">
-      {/*  Header with Summary Stats  */}
+      {/* ─── Header with Summary Stats ─── */}
       <div className="glass-strong p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -203,7 +203,7 @@ export default function SmartRiskCalendar() {
         )}
       </div>
 
-      {/*  Calendar Grid  */}
+      {/* ─── Calendar Grid ─── */}
       <div className="glass-strong p-4 sm:p-6">
         {/* Day headers */}
         <div className="grid grid-cols-7 gap-1 mb-2">
@@ -259,7 +259,7 @@ export default function SmartRiskCalendar() {
         </div>
       </div>
 
-      {/*  AI Insights Panel  */}
+      {/* ─── AI Insights Panel ─── */}
       {insights.length > 0 && showInsights && (
         <div className="glass-strong p-4 sm:p-6">
           <div className="flex items-center justify-between mb-4">
@@ -295,7 +295,7 @@ export default function SmartRiskCalendar() {
         </div>
       )}
 
-      {/*  Date Detail Modal  */}
+      {/* ─── Date Detail Modal ─── */}
       {selectedDate && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setSelectedDate(null)}>
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
@@ -364,7 +364,7 @@ export default function SmartRiskCalendar() {
                   <ul className="space-y-1.5">
                     {selectedDate.recommendations.map((rec, i) => (
                       <li key={i} className="flex items-start gap-2 text-[11px] text-[var(--text-secondary)]">
-                        <span className="text-[var(--accent)] mt-0.5"></span>{rec}
+                        <span className="text-[var(--accent)] mt-0.5">•</span>{rec}
                       </li>
                     ))}
                   </ul>

@@ -130,7 +130,7 @@ const UpcomingLeave = ({ onActionCompleted }: UpcomingLeaveProps) => {
                       </div>
                     </div>
                     <div className="text-sm text-gray-600">
-                      {formatDate(leave.startDate)} - {formatDate(leave.endDate)}  {leave.totalDays} day{leave.totalDays !== 1 ? 's' : ''}
+                      {formatDate(leave.startDate)} - {formatDate(leave.endDate)} • {leave.totalDays} day{leave.totalDays !== 1 ? 's' : ''}
                     </div>
                     {leave.reason && (
                       <div className="text-xs text-gray-500 mt-1">Reason: {leave.reason}</div>

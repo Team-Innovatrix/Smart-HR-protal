@@ -88,7 +88,7 @@ const DashboardSummaryCards = ({ userId }: DashboardSummaryCardsProps) => {
       
       // Fetch today's attendance - use user timezone date
       const today = getTodayDateString()
-      console.log(' Fetching today\'s attendance with date:', today, 'timezone:', timezone)
+      console.log('🕐 Fetching today\'s attendance with date:', today, 'timezone:', timezone)
       const attendanceResponse = await fetch(`/api/attendance?userId=${userId}&date=${today}&_t=${timestamp}`, {
         headers: {
           'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -112,7 +112,7 @@ const DashboardSummaryCards = ({ userId }: DashboardSummaryCardsProps) => {
         console.error('Error parsing attendance response:', parseError)
         throw new Error('Invalid response from attendance API')
       }
-      console.log(' Today\'s attendance API response:', attendanceData)
+      console.log('🕐 Today\'s attendance API response:', attendanceData)
 
       // Fetch monthly attendance - use user timezone
       const now = getToday()

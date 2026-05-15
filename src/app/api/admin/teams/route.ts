@@ -92,7 +92,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(responseData);
   } catch (error) {
-    console.error(' Teams API: Error occurred:', error);
+    console.error('❌ Teams API: Error occurred:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

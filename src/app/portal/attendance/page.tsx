@@ -81,7 +81,7 @@ export default function AttendancePage() {
     const month = searchParams.get('month')
     
     if (view === 'team') {
-      console.log(' Auto-switching to team view from query params', { range, month })
+      console.log('🔄 Auto-switching to team view from query params', { range, month })
       setActiveView('team')
       
       // Set the date range mode for TeamAttendance
@@ -95,7 +95,7 @@ export default function AttendancePage() {
       }
     } else if (view === 'my' && month) {
       // Handle "my" view with month parameter (YYYY-MM format)
-      console.log(' Setting month for my attendance view from query params', { month })
+      console.log('🔄 Setting month for my attendance view from query params', { month })
       setActiveView('my')
       setSelectedMonth(month)
     }
@@ -118,7 +118,7 @@ export default function AttendancePage() {
       const today = getTodayDateString()
       const cacheBuster = `t=${Date.now()}`
       
-      console.log(' Fetching attendance data:', {
+      console.log('🔍 Fetching attendance data:', {
         timezone,
         today,
         userId: user?.id
@@ -143,7 +143,7 @@ export default function AttendancePage() {
       }
       
       const todayData = await todayResponse.json()
-      console.log(' Attendance data received:', {
+      console.log('📊 Attendance data received:', {
         success: todayData.success,
         hasData: !!todayData.data,
         data: todayData.data,

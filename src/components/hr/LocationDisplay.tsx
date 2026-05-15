@@ -34,7 +34,7 @@ export default function LocationDisplay({ location, label, className = '' }: Loc
 
   const formatAccuracy = (accuracy?: number) => {
     if (!accuracy) return '';
-    return ` (${Math.round(accuracy)}m)`;
+    return ` (±${Math.round(accuracy)}m)`;
   };
 
   const openInMaps = () => {

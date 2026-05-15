@@ -26,7 +26,7 @@ export default function RiskChatbot({ orgContext, employeeContext }: Props) {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: ` Hi! I'm your HR Risk Intelligence Assistant. I have full access to your organization's IBM-calibrated risk data. Ask me anything  about specific employees, departments, or attrition trends.`,
+      content: `👋 Hi! I'm your HR Risk Intelligence Assistant. I have full access to your organization's IBM-calibrated risk data. Ask me anything — about specific employees, departments, or attrition trends.`,
     },
   ]);
   const [input, setInput] = useState('');
@@ -70,7 +70,7 @@ export default function RiskChatbot({ orgContext, employeeContext }: Props) {
     } catch {
       setMessages(prev => [
         ...prev,
-        { role: 'assistant', content: ' Connection error. Please check your network and try again.' },
+        { role: 'assistant', content: '⚠️ Connection error. Please check your network and try again.' },
       ]);
     } finally {
       setLoading(false);
@@ -109,7 +109,7 @@ export default function RiskChatbot({ orgContext, employeeContext }: Props) {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-bold text-white leading-none">HR Risk AI</p>
-              <p className="text-[10px] text-indigo-200 mt-0.5">IBM Dataset  Gemini  Live data</p>
+              <p className="text-[10px] text-indigo-200 mt-0.5">IBM Dataset · Gemini · Live data</p>
             </div>
             <span className="flex items-center gap-1 text-[10px] text-emerald-300 font-medium">
               <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
@@ -193,7 +193,7 @@ export default function RiskChatbot({ orgContext, employeeContext }: Props) {
               </button>
             </div>
             <p className="text-[9px] text-slate-500 text-center mt-1.5">
-              IBM HR Dataset  Predictive insights only  Not a certainty
+              IBM HR Dataset · Predictive insights only · Not a certainty
             </p>
           </div>
         </div>

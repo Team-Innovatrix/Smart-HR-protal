@@ -132,7 +132,7 @@ export function TimezoneProvider({ children }: { children: ReactNode }) {
 export function useTimezone() {
   const context = useContext(TimezoneContext)
   if (context === undefined) {
-    // Return safe defaults instead of crashing  prevents TimezoneErrorBoundary from triggering
+    // Return safe defaults instead of crashing — prevents TimezoneErrorBoundary from triggering
     const fallbackTz = 'Asia/Kolkata'
     const noop = () => {}
     const noopAsync = async () => {}

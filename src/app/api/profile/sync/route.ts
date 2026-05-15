@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
       )
     }
   } catch (error) {
-    console.error(' Error in profile sync API:', error)
+    console.error('❌ Error in profile sync API:', error)
     return NextResponse.json(
       { success: false, message: 'Failed to sync user profile' },
       { status: 500 }

@@ -77,7 +77,7 @@ export class TimezoneService {
         return 'Invalid Date'
       }
       
-      // Validate the timezone  default to IST if missing
+      // Validate the timezone — default to IST if missing
       if (!timezone || typeof timezone !== 'string') {
         logger.error('Invalid timezone passed, defaulting to Asia/Kolkata', { timezone })
         timezone = 'Asia/Kolkata'

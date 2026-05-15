@@ -45,7 +45,7 @@ const isPublicRoute = createRouteMatcher([
   '/hr',
   '/api/health',
   '/api/webhooks(.*)',
-  '/portal/admin(.*)',   // Admin portal uses its own cookie auth  not Clerk
+  '/portal/admin(.*)',   // Admin portal uses its own cookie auth — not Clerk
   '/api/admin/auth/(.*)', // Admin auth APIs
   '/auth(.*)',
   '/portal$',
@@ -62,7 +62,7 @@ const REQUIRED_ORG_ID = process.env.REQUIRED_ORG_ID || 'org_3Ct1snEHEPxFYUqZpmQR
 
 export default hasClerkKey
   ? clerkMiddleware(async (auth, req: NextRequest) => {
-      // Public routes  always allow through, no auth check
+      // Public routes — always allow through, no auth check
       if (isPublicRoute(req)) {
         return NextResponse.next();
       }

@@ -1,4 +1,4 @@
-// Apply Leave Action: Handles leave application submissions
+﻿// Apply Leave Action: Handles leave application submissions
 
 import { logger } from "../../utils/logger";
 import connectDB from "../../../mongodb";
@@ -267,7 +267,7 @@ export async function executeApplyLeave(params: ApplyLeaveParams): Promise<Apply
         const employeeEmail = userProfile.email;
 
         if (managerEmail && employeeEmail) {
-          const subject = `Leave Request: ${userProfile.firstName} ${userProfile.lastName}  ${leave.leaveType}  ${leave.totalDays} day(s)`;
+          const subject = `Leave Request: ${userProfile.firstName} ${userProfile.lastName} · ${leave.leaveType} · ${leave.totalDays} day(s)`;
           
           // Send to manager
           await emailService.sendEmail({

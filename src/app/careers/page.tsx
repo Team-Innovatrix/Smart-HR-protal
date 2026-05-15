@@ -297,7 +297,7 @@ export default function Careers() {
                               </span>
                               {job.salary && typeof job.salary === 'object' && job.salary !== null ? (
                                 <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full">
-                                  {(job.salary as { min: number; max: number; currency: string }).min.toLocaleString()} - {(job.salary as { min: number; max: number; currency: string }).max.toLocaleString()} {(job.salary as { min: number; max: number; currency: string }).currency}
+                                  ₹{(job.salary as { min: number; max: number; currency: string }).min.toLocaleString()} - ₹{(job.salary as { min: number; max: number; currency: string }).max.toLocaleString()} {(job.salary as { min: number; max: number; currency: string }).currency}
                                 </span>
                               ) : null}
                             </div>

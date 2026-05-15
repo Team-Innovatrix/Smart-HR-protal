@@ -383,13 +383,13 @@ export async function PATCH(req: NextRequest) {
       const todayKey = `attendance:${updatedAttendance.userId}:today`;
       await EnhancedCache.invalidate(dateKey);
       await EnhancedCache.invalidate(todayKey);
-      console.log(' Cache invalidated for admin attendance update:', { 
+      console.log('✅ Cache invalidated for admin attendance update:', { 
         userId: updatedAttendance.userId, 
         date: updatedAttendance.date,
         status: updatedAttendance.status 
       });
     } catch (cacheError) {
-      console.warn(' Cache invalidation failed for admin attendance update:', cacheError);
+      console.warn('⚠️ Cache invalidation failed for admin attendance update:', cacheError);
       // Don't fail the request if cache invalidation fails
     }
 

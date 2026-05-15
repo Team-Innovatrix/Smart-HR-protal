@@ -96,35 +96,35 @@ const AddEducationExample: React.FC = () => {
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Features</h3>
         <ul className="space-y-2 text-sm text-gray-700">
           <li className="flex items-start">
-            <span className="text-green-600 mr-2"></span>
+            <span className="text-green-600 mr-2">✓</span>
             <span>Add multiple education records with form validation</span>
           </li>
           <li className="flex items-start">
-            <span className="text-green-600 mr-2"></span>
+            <span className="text-green-600 mr-2">✓</span>
             <span>Edit existing education records inline</span>
           </li>
           <li className="flex items-start">
-            <span className="text-green-600 mr-2"></span>
+            <span className="text-green-600 mr-2">✓</span>
             <span>Delete education records with confirmation</span>
           </li>
           <li className="flex items-start">
-            <span className="text-green-600 mr-2"></span>
+            <span className="text-green-600 mr-2">✓</span>
             <span>Automatic MongoDB integration via API endpoints</span>
           </li>
           <li className="flex items-start">
-            <span className="text-green-600 mr-2"></span>
+            <span className="text-green-600 mr-2">✓</span>
             <span>Responsive design with Tailwind CSS</span>
           </li>
           <li className="flex items-start">
-            <span className="text-green-600 mr-2"></span>
+            <span className="text-green-600 mr-2">✓</span>
             <span>Real-time form validation and error handling</span>
           </li>
           <li className="flex items-start">
-            <span className="text-green-600 mr-2"></span>
+            <span className="text-green-600 mr-2">✓</span>
             <span>Configurable maximum number of education records</span>
           </li>
           <li className="flex items-start">
-            <span className="text-green-600 mr-2"></span>
+            <span className="text-green-600 mr-2">✓</span>
             <span>Optional display of existing records</span>
           </li>
         </ul>

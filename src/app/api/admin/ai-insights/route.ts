@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
 
   const prompt = `
 You are an expert HR Analytics AI integrated into a Smart HR Portal dashboard.
-You are given real aggregated organizational metrics. Generate exactly 4 short, sharp, actionable insights (12 sentences each) for the HR Manager dashboard cards.
+You are given real aggregated organizational metrics. Generate exactly 4 short, sharp, actionable insights (1–2 sentences each) for the HR Manager dashboard cards.
 
 ORGANIZATIONAL DATA:
 - Total employees: ${org.total}
@@ -53,12 +53,12 @@ Return ONLY valid JSON with exactly this structure:
   "overallNarrative": "<2-3 sentence executive summary of overall org health for the HR Director>"
 }
 
-Be direct, data-driven, and use the actual numbers. Vary your language  don't use the same opening phrase for each insight.
+Be direct, data-driven, and use the actual numbers. Vary your language — don't use the same opening phrase for each insight.
 `;
 
   try {
     const model = gemini.getGenerativeModel({
-      model: 'gemini-3.1-flash-lite',
+      model: 'gemini-2.5-flash',
       generationConfig: { responseMimeType: 'application/json' }
     });
     

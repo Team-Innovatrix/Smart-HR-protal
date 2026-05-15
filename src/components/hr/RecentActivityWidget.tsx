@@ -130,7 +130,7 @@ const RecentActivityWidget = ({ userId }: RecentActivityWidgetProps) => {
               id: attendance._id,
               type: 'attendance',
               title: `Attendance - ${attendance.status.charAt(0).toUpperCase() + attendance.status.slice(1)}`,
-              description: `${safeFormatDate(getTodayDateString(), 'MMM d, yyyy')}  ${attendance.totalHours ? attendance.totalHours.toFixed(1) + ' hours' : 'No clock out'}`,
+              description: `${safeFormatDate(getTodayDateString(), 'MMM d, yyyy')} • ${attendance.totalHours ? attendance.totalHours.toFixed(1) + ' hours' : 'No clock out'}`,
               time: formatTimeAgo(date),
               timestamp: date.getTime(),
               status,
@@ -150,7 +150,7 @@ const RecentActivityWidget = ({ userId }: RecentActivityWidgetProps) => {
               id: leave._id,
               type: 'leave',
               title: `${leave.leaveType.charAt(0).toUpperCase() + leave.leaveType.slice(1)} Leave Request`,
-              description: `${leave.startDate.split('T')[0]} to ${leave.endDate.split('T')[0]}  ${leave.totalDays} days`,
+              description: `${leave.startDate.split('T')[0]} to ${leave.endDate.split('T')[0]} • ${leave.totalDays} days`,
               time: formatTimeAgo(appliedDate),
               timestamp: appliedDate.getTime(),
               status,
@@ -287,7 +287,7 @@ const RecentActivityWidget = ({ userId }: RecentActivityWidgetProps) => {
                       <div className="flex items-center space-x-2">
                         <div className={`w-2 h-2 bg-gradient-to-r ${getStatusColor(activity.status)} rounded-full`}></div>
                         <span className="text-xs text-[var(--text-muted)] capitalize">
-                          {activity.type}  {activity.status}
+                          {activity.type} • {activity.status}
                         </span>
                       </div>
                       {/* Show timestamp on mobile below the status */}

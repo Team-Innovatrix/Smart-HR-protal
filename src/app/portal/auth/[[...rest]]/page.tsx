@@ -100,11 +100,11 @@ function HRPortalAuthPage() {
           </h3>
           <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-white/50 text-xs font-medium">
             <span>Mohit Mohatkar</span>
-            <span className="text-emerald-500/30"></span>
+            <span className="text-emerald-500/30">•</span>
             <span>Rudra Bambal</span>
-            <span className="text-emerald-500/30"></span>
+            <span className="text-emerald-500/30">•</span>
             <span>Viplav Bhure</span>
-            <span className="text-emerald-500/30"></span>
+            <span className="text-emerald-500/30">•</span>
             <span>Kartikey Kalbande</span>
           </div>
         </div>

@@ -1,26 +1,26 @@
 /**
  * DateSearch.tsx
- * 
+ * ─────────────────────────────────────────────────────────────────────────────
  * Component : DateSearch  (used inside Annual Risk Calendar tab)
  * Purpose   : Lets HR managers type any date in natural language and instantly
- *             see the risk score for that day  no API call, fully client-side.
+ *             see the risk score for that day — no API call, fully client-side.
  *
  * Supported input formats (parsed by parseNaturalDate()):
- *    Festival names   "Diwali", "Holi", "Christmas", "Eid", etc.
- *    ISO format       "2025-10-20"
- *    Indian format    "20/10/2025" or "20-10-2025"
- *    Natural text     "15 August", "August 15", "26 January 2026"
- *    Relative         "today", "tomorrow", "yesterday"
+ *   • Festival names  → "Diwali", "Holi", "Christmas", "Eid", etc.
+ *   • ISO format      → "2025-10-20"
+ *   • Indian format   → "20/10/2025" or "20-10-2025"
+ *   • Natural text    → "15 August", "August 15", "26 January 2026"
+ *   • Relative        → "today", "tomorrow", "yesterday"
  *
  * Risk result is computed by calcDayRisk() (imported from RiskCalendar.tsx)
  * and displayed in a colour-coded ResultCard with a risk progress bar.
  *
  * Props:
- *   holidays  HolidayEntry[]   list of Indian public holidays to check against
+ *   holidays  HolidayEntry[]  — list of Indian public holidays to check against
  *
  * Used by:
  *   src/app/portal/admin/predictive/page.tsx  (Annual Risk Calendar tab)
- * 
+ * ─────────────────────────────────────────────────────────────────────────────
  */
 'use client';
 
@@ -28,7 +28,7 @@ import { useState, useRef } from 'react';
 import { MagnifyingGlassIcon, XMarkIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
 import { calcDayRisk, buildYearRiskMap, HolidayEntry, DayRisk } from './RiskCalendar';
 
-// Festival name  approximate date lookup (updated annually)
+// Festival name → approximate date lookup (updated annually)
 const FESTIVAL_MAP: Record<string, string> = {
   'diwali': '2025-10-20',
   'holi': '2025-03-14',
@@ -103,7 +103,7 @@ function parseYMD(s: string) {
   return new Date(y, m-1, d);
 }
 
-/*  Result Card  */
+/* ── Result Card ── */
 function ResultCard({ risk, onClose }: { risk: DayRisk; onClose: () => void }) {
   const colors = {
     high:    { bg: 'bg-red-950/40',     border: 'border-red-500/40',     score: 'text-red-400',     badge: 'bg-red-500/20 text-red-300' },
@@ -118,8 +118,8 @@ function ResultCard({ risk, onClose }: { risk: DayRisk; onClose: () => void }) {
   });
 
   const levelLabel = risk.isWeekend && !risk.isHoliday ? 'Weekend' :
-    risk.riskLevel === 'high' ? ' High Risk' :
-    risk.riskLevel === 'medium' ? ' Medium Risk' : ' Low Risk';
+    risk.riskLevel === 'high' ? '🚨 High Risk' :
+    risk.riskLevel === 'medium' ? '⚠️ Medium Risk' : '✅ Low Risk';
 
   return (
     <div className={`rounded-2xl border p-5 animate-fade-in ${c.bg} ${c.border}`}>
@@ -131,7 +131,7 @@ function ResultCard({ risk, onClose }: { risk: DayRisk; onClose: () => void }) {
           </div>
           {risk.isHoliday && (
             <p className="text-sm font-semibold text-[var(--accent)] mb-2">
-               {risk.holidayName} <span className="text-xs font-normal text-[var(--text-muted)] capitalize">({risk.holidayType})</span>
+              🏛️ {risk.holidayName} <span className="text-xs font-normal text-[var(--text-muted)] capitalize">({risk.holidayType})</span>
             </p>
           )}
           <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-bold ${c.badge}`}>{levelLabel}</span>
@@ -139,7 +139,7 @@ function ResultCard({ risk, onClose }: { risk: DayRisk; onClose: () => void }) {
         </div>
         <div className="text-right shrink-0">
           <div className={`text-5xl font-black tabular-nums ${c.score}`}>
-            {risk.isWeekend && !risk.isHoliday ? '' : risk.riskScore}
+            {risk.isWeekend && !risk.isHoliday ? '—' : risk.riskScore}
           </div>
           <div className="text-xs text-[var(--text-muted)]">/ 100</div>
         </div>
@@ -171,7 +171,7 @@ function ResultCard({ risk, onClose }: { risk: DayRisk; onClose: () => void }) {
   );
 }
 
-/*  Main Export  */
+/* ── Main Export ── */
 interface DateSearchProps {
   holidays: HolidayEntry[];
 }
@@ -215,7 +215,7 @@ export default function DateSearch({ holidays }: DateSearchProps) {
             value={query}
             onChange={e => { setQuery(e.target.value); setError(''); }}
             onKeyDown={e => e.key === 'Enter' && handleSearch()}
-            placeholder='Try "Diwali", "15 August", "2025-10-02", "tomorrow"'
+            placeholder='Try "Diwali", "15 August", "2025-10-02", "tomorrow"…'
             className="w-full pl-10 pr-4 py-3 rounded-xl bg-[var(--glass-bg)] border border-[var(--glass-border)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/50 transition"
           />
           {query && (

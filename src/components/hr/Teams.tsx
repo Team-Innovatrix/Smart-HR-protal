@@ -256,7 +256,7 @@ const Teams: React.FC<TeamsProps> = ({ userId }) => {
                           {member.firstName} {member.lastName}
                         </p>
                         <p className="text-xs text-gray-600 truncate">
-                          {member.position}  {member.department}
+                          {member.position} • {member.department}
                         </p>
                       </div>
                       <div className="flex items-center gap-1">

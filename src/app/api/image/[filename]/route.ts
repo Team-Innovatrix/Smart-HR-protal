@@ -119,7 +119,7 @@ export async function GET(
     const isLocalMode = process.env.USE_LOCAL_MEM_DB === 'true' || env.AWS_ACCESS_KEY_ID === 'AKIARCBQR3FZLSKFJLGK';
     
     if (!isLocalMode && (!env.AWS_ACCESS_KEY_ID || !env.AWS_SECRET_ACCESS_KEY || !env.AWS_REGION || !env.AWS_S3_BUCKET)) {
-      console.error(' [API] AWS S3 configuration missing');
+      console.error('❌ [API] AWS S3 configuration missing');
       return NextResponse.json(
         { error: 'Image service not configured' },
         { status: 503 }
@@ -169,27 +169,27 @@ export async function GET(
     }
 
     // Try to get image from cache or download from S3
-    console.log(` [API] Attempting to get image: ${filename} from IP: ${clientIP}`)
-    console.log(` [API] Environment check - NODE_ENV: ${env.NODE_ENV}, Bucket: ${env.AWS_S3_BUCKET}`)
+    console.log(`🔍 [API] Attempting to get image: ${filename} from IP: ${clientIP}`)
+    console.log(`🔍 [API] Environment check - NODE_ENV: ${env.NODE_ENV}, Bucket: ${env.AWS_S3_BUCKET}`)
     
     const imageData = await getCachedImage(filename)
 
     if (!imageData) {
-      console.warn(` [API] Image not found: ${filename} from IP: ${clientIP}`)
-      console.warn(` [API] This means either: 1) Image doesn't exist in S3, 2) S3 access denied, 3) Path mismatch`)
+      console.warn(`❌ [API] Image not found: ${filename} from IP: ${clientIP}`)
+      console.warn(`❌ [API] This means either: 1) Image doesn't exist in S3, 2) S3 access denied, 3) Path mismatch`)
       return NextResponse.json(
         { error: 'Image not found' },
         { status: 404 }
       )
     }
     
-    console.log(` [API] Image found: ${filename} (${imageData.buffer.length} bytes, ${imageData.contentType}) from IP: ${clientIP}`)
+    console.log(`✅ [API] Image found: ${filename} (${imageData.buffer.length} bytes, ${imageData.contentType}) from IP: ${clientIP}`)
     
     // Debug buffer content for troubleshooting
-    console.log(` [DEBUG] First 20 bytes of buffer:`, Array.from(imageData.buffer.slice(0, 20)).map(b => b.toString(16).padStart(2, '0')).join(' '))
-    console.log(` [DEBUG] PNG signature check:`, imageData.buffer.slice(0, 8).toString('hex'))
-    console.log(` [DEBUG] Buffer length: ${imageData.buffer.length} bytes`)
-    console.log(` [DEBUG] Content-Type: ${imageData.contentType}`)
+    console.log(`🔍 [DEBUG] First 20 bytes of buffer:`, Array.from(imageData.buffer.slice(0, 20)).map(b => b.toString(16).padStart(2, '0')).join(' '))
+    console.log(`🔍 [DEBUG] PNG signature check:`, imageData.buffer.slice(0, 8).toString('hex'))
+    console.log(`🔍 [DEBUG] Buffer length: ${imageData.buffer.length} bytes`)
+    console.log(`🔍 [DEBUG] Content-Type: ${imageData.contentType}`)
 
     // Log successful access for monitoring
     const processingTime = Date.now() - startTime

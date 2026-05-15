@@ -5,7 +5,7 @@ import { getCareersApplicationModel } from '@/models/careers/Application';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 
-// Initialize S3 client  uses ap-south-1 (Mumbai) where the bucket was created
+// Initialize S3 client — uses ap-south-1 (Mumbai) where the bucket was created
 const s3Client = new S3Client({
   region: process.env.AWS_S3_REGION || process.env.AWS_REGION || 'ap-south-1',
   credentials: {

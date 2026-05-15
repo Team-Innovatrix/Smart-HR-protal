@@ -96,7 +96,7 @@ function findNextNode(
   // Try each edge in order, checking guards
   for (const edge of possibleEdges) {
     if (!edge.guard || edge.guard(state)) {
-      logger.info(`Routing: ${currentNodeId}  ${edge.to}${edge.label ? ` (${edge.label})` : ''}`, { sessionId });
+      logger.info(`Routing: ${currentNodeId} → ${edge.to}${edge.label ? ` (${edge.label})` : ''}`, { sessionId });
       return edge.to;
     }
   }

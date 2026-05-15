@@ -24,9 +24,9 @@ export class ProfileSyncService {
         firstName: firstName || undefined,
         lastName: lastName || undefined
       })
-      console.log(` Updated Clerk user ${clerkUserId} with names: ${firstName} ${lastName}`)
+      console.log(`✅ Updated Clerk user ${clerkUserId} with names: ${firstName} ${lastName}`)
     } catch (error) {
-      console.error(` Failed to update Clerk user ${clerkUserId}:`, error)
+      console.error(`❌ Failed to update Clerk user ${clerkUserId}:`, error)
       throw error
     }
   }
@@ -39,7 +39,7 @@ export class ProfileSyncService {
     const syncId = Math.random().toString(36).substring(7);
     const startTime = Date.now();
     
-    console.log(` [${syncId}] Profile sync started`, {
+    console.log(`🔄 [${syncId}] Profile sync started`, {
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV,
       vercelEnv: process.env.VERCEL_ENV
@@ -47,18 +47,18 @@ export class ProfileSyncService {
 
     try {
       // Get current user from Clerk
-      console.log(` [${syncId}] Fetching user from Clerk...`);
+      console.log(`🔍 [${syncId}] Fetching user from Clerk...`);
       const user = await currentUser()
       
       if (!user) {
-        console.error(` [${syncId}] User not found in Clerk`);
+        console.error(`❌ [${syncId}] User not found in Clerk`);
         return {
           success: false,
           message: 'User not found in Clerk'
         }
       }
 
-      console.log(` [${syncId}] Clerk user retrieved`, {
+      console.log(`✅ [${syncId}] Clerk user retrieved`, {
         userId: user.id,
         email: user.emailAddresses[0]?.emailAddress,
         firstName: user.firstName,
@@ -68,16 +68,16 @@ export class ProfileSyncService {
       });
 
       // Connect to MongoDB
-      console.log(` [${syncId}] Connecting to MongoDB...`);
+      console.log(`🔌 [${syncId}] Connecting to MongoDB...`);
       await connectDB()
-      console.log(` [${syncId}] MongoDB connected successfully`);
+      console.log(`✅ [${syncId}] MongoDB connected successfully`);
 
       const email = user.emailAddresses[0]?.emailAddress || ''
       const firstName = user.firstName || ''
       const lastName = user.lastName || ''
       
       // Extract organization from user metadata
-      console.log(` [${syncId}] Extracting organization from metadata...`);
+      console.log(`🔍 [${syncId}] Extracting organization from metadata...`);
       let organization = ''
       if (user.publicMetadata && typeof user.publicMetadata === 'object') {
         const metadata = user.publicMetadata as Record<string, unknown>;
@@ -94,7 +94,7 @@ export class ProfileSyncService {
                      (metadata?.company as string) || ''
       }
 
-      console.log(` [${syncId}] Extracted user data`, {
+      console.log(`📊 [${syncId}] Extracted user data`, {
         email,
         firstName,
         lastName,
@@ -103,12 +103,12 @@ export class ProfileSyncService {
       });
 
       // Check if profile exists
-      console.log(` [${syncId}] Checking for existing profile...`);
+      console.log(`🔍 [${syncId}] Checking for existing profile...`);
       let userProfile = await UserProfile.findOne({ clerkUserId: user.id })
       let isNew = false
       
       if (userProfile) {
-        console.log(` [${syncId}] Existing profile found`, {
+        console.log(`✅ [${syncId}] Existing profile found`, {
           profileId: userProfile._id,
           employeeId: userProfile.employeeId,
           currentFirstName: userProfile.firstName,
@@ -123,7 +123,7 @@ export class ProfileSyncService {
         const clerkFirstName = firstName || ''
         const clerkLastName = lastName || ''
         
-        console.log(` [${syncId}] Name sync analysis`, {
+        console.log(`📝 [${syncId}] Name sync analysis`, {
           mongoFirstName,
           mongoLastName,
           clerkFirstName,
@@ -149,7 +149,7 @@ export class ProfileSyncService {
           if (clerkLastName && !mongoLastName) {
             updatedFields.lastName = clerkLastName
           }
-          console.log(` [${syncId}] Scenario 1: Updating MongoDB with Clerk names`);
+          console.log(`📝 [${syncId}] Scenario 1: Updating MongoDB with Clerk names`);
         }
         // Scenario 2: MongoDB has names, Clerk has blank names
         // MongoDB stays unchanged, Clerk gets updated with MongoDB names
@@ -159,7 +159,7 @@ export class ProfileSyncService {
             firstName: mongoFirstName,
             lastName: mongoLastName
           }
-          console.log(` [${syncId}] Scenario 2: Updating Clerk with MongoDB names`);
+          console.log(`📝 [${syncId}] Scenario 2: Updating Clerk with MongoDB names`);
         }
         // Scenario 3: Both have names
         // MongoDB stays unchanged (prioritizes existing data), Clerk gets updated with MongoDB names
@@ -169,12 +169,12 @@ export class ProfileSyncService {
             firstName: mongoFirstName,
             lastName: mongoLastName
           }
-          console.log(` [${syncId}] Scenario 3: Updating Clerk with MongoDB names (prioritizing existing data)`);
+          console.log(`📝 [${syncId}] Scenario 3: Updating Clerk with MongoDB names (prioritizing existing data)`);
         }
         // Scenario 4: Both are blank
         // No updates (both stay blank)
         else {
-          console.log(` [${syncId}] Scenario 4: Both blank, no updates needed`);
+          console.log(`📝 [${syncId}] Scenario 4: Both blank, no updates needed`);
         }
 
         // Extract role from metadata
@@ -203,7 +203,7 @@ export class ProfileSyncService {
           updatedFields.roleId = targetRoleId;
         }
 
-        console.log(` [${syncId}] Update analysis`, {
+        console.log(`📝 [${syncId}] Update analysis`, {
           hasFirstNameChange: !!updatedFields.firstName,
           hasLastNameChange: !!updatedFields.lastName,
           hasEmailChange: !!updatedFields.email,
@@ -216,7 +216,7 @@ export class ProfileSyncService {
         if (Object.keys(updatedFields).length > 0) {
           Object.assign(userProfile, updatedFields)
           await userProfile.save()
-          console.log(` [${syncId}] MongoDB profile updated successfully`, {
+          console.log(`🔄 [${syncId}] MongoDB profile updated successfully`, {
             updatedFields,
             duration: Date.now() - startTime
           });
@@ -226,18 +226,18 @@ export class ProfileSyncService {
         if (clerkNeedsUpdate) {
           try {
             await this.updateClerkUser(user.id, clerkUpdateData.firstName, clerkUpdateData.lastName)
-            console.log(` [${syncId}] Clerk user updated successfully`);
+            console.log(`🔄 [${syncId}] Clerk user updated successfully`);
           } catch (clerkError) {
-            console.error(` [${syncId}] Failed to update Clerk user:`, clerkError)
+            console.error(`❌ [${syncId}] Failed to update Clerk user:`, clerkError)
             // Don't fail the entire sync if Clerk update fails
           }
         }
 
         if (Object.keys(updatedFields).length === 0 && !clerkNeedsUpdate) {
-          console.log(` [${syncId}] Profile is already up to date`);
+          console.log(`✅ [${syncId}] Profile is already up to date`);
         }
       } else {
-        console.log(` [${syncId}] Creating new profile...`);
+        console.log(`🆕 [${syncId}] Creating new profile...`);
         
         // For new profiles, use Clerk data (Scenario 1 logic)
         const department = 'General'
@@ -278,7 +278,7 @@ export class ProfileSyncService {
         
         await userProfile.save()
         isNew = true
-        console.log(` [${syncId}] New profile created successfully`, {
+        console.log(`✅ [${syncId}] New profile created successfully`, {
           profileId: userProfile._id,
           employeeId,
           firstName: userProfile.firstName,
@@ -288,7 +288,7 @@ export class ProfileSyncService {
       }
       
       const duration = Date.now() - startTime;
-      console.log(` [${syncId}] Profile sync completed successfully`, {
+      console.log(`🎉 [${syncId}] Profile sync completed successfully`, {
         isNew,
         duration,
         status: 'SUCCESS'
@@ -303,7 +303,7 @@ export class ProfileSyncService {
       
     } catch (error) {
       const duration = Date.now() - startTime;
-      console.error(` [${syncId}] Profile sync error:`, {
+      console.error(`❌ [${syncId}] Profile sync error:`, {
         error: error instanceof Error ? error.message : 'Unknown error',
         stack: error instanceof Error ? error.stack : undefined,
         duration,
@@ -325,20 +325,20 @@ export class ProfileSyncService {
    */
   static async forceSyncUserProfile(clerkUserId: string): Promise<ProfileSyncResult> {
     const syncId = Math.random().toString(36).substring(7);
-    console.log(` [${syncId}] Force profile sync requested for user: ${clerkUserId}`);
+    console.log(`🔄 [${syncId}] Force profile sync requested for user: ${clerkUserId}`);
     
     try {
       await connectDB()
       
       // This would require admin privileges and Clerk admin API access
       // For now, we'll return an error
-      console.log(` [${syncId}] Force sync requires admin privileges`);
+      console.log(`⚠️ [${syncId}] Force sync requires admin privileges`);
       return {
         success: false,
         message: 'Force sync requires admin privileges and Clerk admin API access'
       }
     } catch (error) {
-      console.error(` [${syncId}] Force sync error:`, error);
+      console.error(`❌ [${syncId}] Force sync error:`, error);
       return {
         success: false,
         message: 'Failed to force sync user profile'
@@ -353,19 +353,19 @@ export class ProfileSyncService {
     const syncId = Math.random().toString(36).substring(7);
     const startTime = Date.now();
     
-    console.log(` [${syncId}] Get profile with sync started`);
+    console.log(`🔍 [${syncId}] Get profile with sync started`);
     
     try {
       const user = await currentUser()
       if (!user) {
-        console.error(` [${syncId}] User not found in Clerk`);
+        console.error(`❌ [${syncId}] User not found in Clerk`);
         return {
           success: false,
           message: 'User not found in Clerk'
         }
       }
 
-      console.log(` [${syncId}] Clerk user retrieved for profile sync`, {
+      console.log(`✅ [${syncId}] Clerk user retrieved for profile sync`, {
         userId: user.id,
         email: user.emailAddresses[0]?.emailAddress
       });
@@ -373,18 +373,18 @@ export class ProfileSyncService {
       await connectDB()
       
       // Try to get existing profile
-      console.log(` [${syncId}] Searching for existing profile...`);
+      console.log(`🔍 [${syncId}] Searching for existing profile...`);
       let userProfile = await UserProfile.findOne({ clerkUserId: user.id })
       
       if (!userProfile) {
-        console.log(` [${syncId}] No existing profile found, creating new one...`);
+        console.log(`⚠️ [${syncId}] No existing profile found, creating new one...`);
         // Profile doesn't exist, create it
         const syncResult = await this.syncUserProfile()
         if (syncResult.success) {
-          console.log(` [${syncId}] Profile created successfully via sync`);
+          console.log(`✅ [${syncId}] Profile created successfully via sync`);
           return syncResult
         } else {
-          console.error(` [${syncId}] Failed to create profile via sync`);
+          console.error(`❌ [${syncId}] Failed to create profile via sync`);
           return {
             success: false,
             message: 'Failed to create user profile'
@@ -392,7 +392,7 @@ export class ProfileSyncService {
         }
       }
       
-      console.log(` [${syncId}] Profile retrieved successfully`, {
+      console.log(`✅ [${syncId}] Profile retrieved successfully`, {
         profileId: userProfile._id,
         employeeId: userProfile.employeeId,
         duration: Date.now() - startTime
@@ -406,7 +406,7 @@ export class ProfileSyncService {
       
     } catch (error) {
       const duration = Date.now() - startTime;
-      console.error(` [${syncId}] Get profile with sync error:`, {
+      console.error(`❌ [${syncId}] Get profile with sync error:`, {
         error: error instanceof Error ? error.message : 'Unknown error',
         stack: error instanceof Error ? error.stack : undefined,
         duration,

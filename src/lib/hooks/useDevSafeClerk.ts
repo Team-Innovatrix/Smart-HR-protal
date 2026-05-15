@@ -4,7 +4,7 @@
  * Clerk hook re-exports.
  *
  * These are simple pass-throughs to real Clerk hooks.
- * The dev-bypass pattern has been removed  the app always uses real Clerk auth.
+ * The dev-bypass pattern has been removed — the app always uses real Clerk auth.
  */
 
 import { useUser, useAuth, useClerk, SignOutButton as ClerkSignOutButton } from '@clerk/nextjs'

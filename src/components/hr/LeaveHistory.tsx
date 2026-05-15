@@ -201,7 +201,7 @@ const LeaveHistory = ({ userId, onViewDetails }: LeaveHistoryProps) => {
     if (!text) return ''
     const words = text.trim().split(/\s+/)
     if (words.length <= maxWords) return text
-    return words.slice(0, maxWords).join(' ') + ''
+    return words.slice(0, maxWords).join(' ') + '…'
   }
 
   const handleFilterChange = (key: string, value: string) => {
@@ -408,7 +408,7 @@ const LeaveHistory = ({ userId, onViewDetails }: LeaveHistoryProps) => {
                       <span className="sm:hidden">Date</span>
                       {sortBy === 'appliedDate' && (
                         <span className="text-blue-600">
-                          {sortOrder === 'asc' ? '' : ''}
+                          {sortOrder === 'asc' ? '↑' : '↓'}
                         </span>
                       )}
                     </div>
@@ -422,7 +422,7 @@ const LeaveHistory = ({ userId, onViewDetails }: LeaveHistoryProps) => {
                     <span className="sm:hidden">Type</span>
                     {sortBy === 'leaveType' && (
                       <span className="text-blue-600">
-                        {sortOrder === 'asc' ? '' : ''}
+                        {sortOrder === 'asc' ? '↑' : '↓'}
                       </span>
                     )}
                   </div>
@@ -436,7 +436,7 @@ const LeaveHistory = ({ userId, onViewDetails }: LeaveHistoryProps) => {
                     <span className="sm:hidden">Range</span>
                     {sortBy === 'startDate' && (
                       <span className="text-blue-600">
-                        {sortOrder === 'asc' ? '' : ''}
+                        {sortOrder === 'asc' ? '↑' : '↓'}
                       </span>
                     )}
                   </div>

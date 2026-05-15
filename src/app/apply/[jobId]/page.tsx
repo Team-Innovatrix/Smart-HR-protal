@@ -335,7 +335,7 @@ export default function JobApplication() {
                   href="/portal/jobs"
                   className="text-blue-600 hover:text-blue-700 text-sm font-medium mb-4 inline-flex items-center"
                 >
-                   Back to Jobs
+                  ← Back to Jobs
                 </Link>
               </div>
               <h1 className="text-3xl font-bold text-gray-900 mb-4">{job.title}</h1>

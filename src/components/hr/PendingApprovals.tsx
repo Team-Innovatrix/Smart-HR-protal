@@ -126,7 +126,7 @@ const PendingApprovals = ({ onActionCompleted }: PendingApprovalsProps) => {
                   <div className="text-sm font-medium text-gray-900">
                     {(l.user?.firstName || l.user?.lastName) ? `${l.user?.firstName || ''} ${l.user?.lastName || ''}`.trim() : (l.user?.email || l.userId)}
                   </div>
-                  <div className="text-sm text-gray-600 capitalize">{l.leaveType}  {safeFormatDate(l.startDate || '', 'MMM d, yyyy')} - {safeFormatDate(l.endDate || '', 'MMM d, yyyy')}  {l.totalDays} day{l.totalDays !== 1 ? 's' : ''}</div>
+                  <div className="text-sm text-gray-600 capitalize">{l.leaveType} • {safeFormatDate(l.startDate || '', 'MMM d, yyyy')} - {safeFormatDate(l.endDate || '', 'MMM d, yyyy')} • {l.totalDays} day{l.totalDays !== 1 ? 's' : ''}</div>
                   <div className="text-xs text-gray-500 mt-1">Reason: {l.reason}</div>
                 </div>
               </div>

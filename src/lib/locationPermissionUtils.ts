@@ -94,10 +94,10 @@ export async function requestLocationPermission(
 export function showLocationPermissionMessage(error: string, userDeclined?: boolean) {
   if (userDeclined) {
     // Show a more detailed message for declined permissions
-    alert(` Location Required\n\n${error}\n\nTo enable location:\n1. Click the location icon in your browser's address bar\n2. Select "Allow" for location access\n3. Refresh the page and try clocking in again`);
+    alert(`❌ Location Required\n\n${error}\n\nTo enable location:\n1. Click the location icon in your browser's address bar\n2. Select "Allow" for location access\n3. Refresh the page and try clocking in again`);
   } else {
     // Show a general error message
-    alert(` Location Error\n\n${error}`);
+    alert(`❌ Location Error\n\n${error}`);
   }
 }
 

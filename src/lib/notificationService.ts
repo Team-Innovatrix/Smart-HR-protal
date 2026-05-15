@@ -215,15 +215,15 @@ export class NotificationService {
     
     switch (action) {
       case 'request':
-        return ` Leave Request - ${name}`;
+        return `📅 Leave Request - ${name}`;
       case 'approved':
-        return ` Leave Approved - ${name}`;
+        return `✅ Leave Approved - ${name}`;
       case 'rejected':
-        return ` Leave Rejected - ${name}`;
+        return `❌ Leave Rejected - ${name}`;
       case 'cancelled':
-        return ` Leave Cancelled - ${name}`;
+        return `🚫 Leave Cancelled - ${name}`;
       default:
-        return ` Leave Update - ${name}`;
+        return `📅 Leave Update - ${name}`;
     }
   }
 

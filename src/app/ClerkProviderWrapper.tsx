@@ -9,7 +9,7 @@ export default function ClerkProviderWrapper({
 
   if (!publishableKey) {
     // This should never happen in production if env vars are set correctly.
-    // Render children anyway so the app doesn't hard-crash  Clerk components
+    // Render children anyway so the app doesn't hard-crash — Clerk components
     // will simply show an "invalid key" warning instead of a full crash.
     console.warn('[ClerkProviderWrapper] NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is not set.')
   }

@@ -30,7 +30,7 @@ async function getUserRoleFromMongoDB(userId: string): Promise<{roleName: string
     });
 
     if (!userProfile) {
-      console.log(` ROLE [${userId}] No profile found  Default Employee`);
+      console.log(`📋 ROLE [${userId}] No profile found → Default Employee`);
       return { roleName: 'Employee', permissions: [] };
     }
 
@@ -43,12 +43,12 @@ async function getUserRoleFromMongoDB(userId: string): Promise<{roleName: string
       if (role) {
         roleName = role.name;
         permissions = role.permissions || [];
-        console.log(` ROLE [${userId}] Retrieved: ${roleName} (${permissions.length} permissions)`);
+        console.log(`📋 ROLE [${userId}] Retrieved: ${roleName} (${permissions.length} permissions)`);
       } else {
-        console.log(` ROLE [${userId}] Role ID ${userProfile.roleId} not found  Default Employee`);
+        console.log(`📋 ROLE [${userId}] Role ID ${userProfile.roleId} not found → Default Employee`);
       }
     } else {
-      console.log(` ROLE [${userId}] No roleId  Default Employee`);
+      console.log(`📋 ROLE [${userId}] No roleId → Default Employee`);
     }
 
     // If no role assigned, use default employee permissions
@@ -60,12 +60,12 @@ async function getUserRoleFromMongoDB(userId: string): Promise<{roleName: string
         'leaves:read',
         'leaves:write'
       ];
-      console.log(` ROLE [${userId}] Using default employee permissions (${permissions.length})`);
+      console.log(`📋 ROLE [${userId}] Using default employee permissions (${permissions.length})`);
     }
 
     return { roleName, permissions };
   } catch (error) {
-    console.error(` ROLE [${userId}] Error:`, error);
+    console.error(`📋 ROLE [${userId}] Error:`, error);
     return { roleName: 'Employee', permissions: [] };
   }
 }
@@ -79,7 +79,7 @@ export async function authenticateRequest(request: NextRequest): Promise<Authent
     // Add request logging for debugging
     const isProduction = process.env.NODE_ENV === 'production';
     if (isProduction) {
-      console.log(' Authenticating request:', {
+      console.log('🔐 Authenticating request:', {
         method: request.method,
         url: request.url,
         headers: Object.fromEntries(request.headers.entries()),
@@ -94,23 +94,23 @@ export async function authenticateRequest(request: NextRequest): Promise<Authent
     // Check for Authorization header first
     const authHeader = request.headers.get('authorization');
     if (authHeader && authHeader.startsWith('Bearer ')) {
-      console.log(' Bearer token found in Authorization header');
+      console.log('🔑 Bearer token found in Authorization header');
     }
 
     // Check for session cookies
     const sessionCookie = request.headers.get('cookie');
     if (sessionCookie && sessionCookie.includes('__session')) {
-      console.log(' Session cookie found');
+      console.log('🍪 Session cookie found');
     }
 
     const { userId } = await auth();
     
     if (!userId) {
-      console.error(' Authentication failed: No userId from Clerk auth()');
+      console.error('❌ Authentication failed: No userId from Clerk auth()');
       
       // Log additional context for debugging
       if (isProduction) {
-        console.error(' Auth failure context:', {
+        console.error('🔍 Auth failure context:', {
           hasAuthHeader: !!authHeader,
           hasSessionCookie: !!sessionCookie,
           userAgent: request.headers.get('user-agent'),
@@ -126,7 +126,7 @@ export async function authenticateRequest(request: NextRequest): Promise<Authent
     const user = await currentUser();
     
     if (!user) {
-      console.error(' Authentication failed: No user from Clerk currentUser()');
+      console.error('❌ Authentication failed: No user from Clerk currentUser()');
       throw new Error('Unauthorized: User session invalid');
     }
 
@@ -138,13 +138,13 @@ export async function authenticateRequest(request: NextRequest): Promise<Authent
     const isAdmin = roleName.toLowerCase().includes('hr') || roleName.toLowerCase().includes('admin');
     
     if (isProduction) {
-      console.log(` AUTH [${userEmail}] Role: ${roleName} | Permissions: ${permissions.length} | Admin: ${isAdmin ? 'YES' : 'NO'}`);
+      console.log(`🔐 AUTH [${userEmail}] Role: ${roleName} | Permissions: ${permissions.length} | Admin: ${isAdmin ? 'YES' : 'NO'}`);
       
       // Log key permissions for admin users
       if (isAdmin && permissions.length > 0) {
         const adminPerms = permissions.filter(p => p.includes('admin') || p.includes('users') || p.includes('settings'));
         if (adminPerms.length > 0) {
-          console.log(` ADMIN [${userEmail}] Key permissions: ${adminPerms.slice(0, 3).join(', ')}${adminPerms.length > 3 ? '...' : ''}`);
+          console.log(`👑 ADMIN [${userEmail}] Key permissions: ${adminPerms.slice(0, 3).join(', ')}${adminPerms.length > 3 ? '...' : ''}`);
         }
       }
     }
@@ -158,7 +158,7 @@ export async function authenticateRequest(request: NextRequest): Promise<Authent
       permissions
     };
   } catch (error) {
-    console.error(' Authentication error:', error);
+    console.error('❌ Authentication error:', error);
     
     // Provide more specific error messages for production debugging
     if (process.env.NODE_ENV === 'production') {
@@ -199,7 +199,7 @@ export async function getUserRole(): Promise<UserRole> {
       return 'employee';
     }
   } catch (error) {
-    console.error(' Error getting user role:', error);
+    console.error('❌ Error getting user role:', error);
     return 'employee';
   }
 }
@@ -216,10 +216,10 @@ export function hasAnyRole(userRole: UserRole, allowed: UserRole[]): boolean {
 export async function getUserPermissions(userId: string): Promise<string[]> {
   try {
     const { permissions } = await getUserRoleFromMongoDB(userId);
-    console.log(` PERMS [${userId}] Retrieved ${permissions.length} permissions`);
+    console.log(`🔑 PERMS [${userId}] Retrieved ${permissions.length} permissions`);
     return permissions;
   } catch (error) {
-    console.error(' Error getting user permissions:', error);
+    console.error('❌ Error getting user permissions:', error);
     return [];
   }
 }
@@ -234,10 +234,10 @@ export async function hasPermission(userId: string, permission: string): Promise
   try {
     const permissions = await getUserPermissions(userId);
     const hasAccess = permissions.includes(permission) || permissions.includes('*');
-    console.log(` PERM [${userId}] ${permission}: ${hasAccess ? 'GRANTED' : 'DENIED'}`);
+    console.log(`🔑 PERM [${userId}] ${permission}: ${hasAccess ? 'GRANTED' : 'DENIED'}`);
     return hasAccess;
   } catch (error) {
-    console.error(' Error checking permission:', error);
+    console.error('❌ Error checking permission:', error);
     return false;
   }
 }
@@ -257,7 +257,7 @@ export async function verifyUserAccess(
     const { userId } = await auth();
     
     if (!userId) {
-      console.error(' Access verification failed: No userId from auth()');
+      console.error('❌ Access verification failed: No userId from auth()');
       return false;
     }
     
@@ -265,13 +265,13 @@ export async function verifyUserAccess(
 
     // Same user can always access self
     if (userId === targetUserId) {
-      console.log(` ACCESS [${userId}] Self-access granted`);
+      console.log(`🔓 ACCESS [${userId}] Self-access granted`);
       return true;
     }
 
     // HR/Admin roles can access all data
     if (role === 'hr') {
-      console.log(` ACCESS [${userId}] HR/Admin access granted for ${targetUserId}`);
+      console.log(`🔓 ACCESS [${userId}] HR/Admin access granted for ${targetUserId}`);
       return true;
     }
 
@@ -280,18 +280,18 @@ export async function verifyUserAccess(
       await connectDB();
       const targetProfile = await UserProfile.findOne({ clerkUserId: targetUserId }).select('managerId');
       if (targetProfile && targetProfile.managerId === userId) {
-        console.log(` ACCESS [${userId}] Manager access granted for direct report ${targetUserId}`);
+        console.log(`🔓 ACCESS [${userId}] Manager access granted for direct report ${targetUserId}`);
         return true;
       } else {
-        console.log(` ACCESS [${userId}] Manager access denied - not direct report of ${targetUserId}`);
+        console.log(`🔒 ACCESS [${userId}] Manager access denied - not direct report of ${targetUserId}`);
       }
     }
 
     // Employees can only access their own data (already checked above)
-    console.log(` ACCESS [${userId}] Access denied for ${targetUserId} (Employee role)`);
+    console.log(`🔒 ACCESS [${userId}] Access denied for ${targetUserId} (Employee role)`);
     return false;
   } catch (error) {
-    console.error(' Access verification error:', error);
+    console.error('❌ Access verification error:', error);
     return false;
   }
 }
@@ -337,7 +337,7 @@ export function withJsonErrorHandling<T extends any[]>(
     try {
       return await handler(...args);
     } catch (error) {
-      console.error(' API Error caught by wrapper:', error);
+      console.error('❌ API Error caught by wrapper:', error);
       
       // Always return JSON, never HTML
       if (error instanceof Error) {

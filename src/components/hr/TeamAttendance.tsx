@@ -86,7 +86,7 @@ const TeamAttendance = ({ initialViewMode = 'today', initialMonth }: TeamAttenda
       if (monthIndex !== -1) {
         const today = getToday();
         const newDate = new Date(today.getFullYear(), monthIndex, 1);
-        console.log(' TeamAttendance: Updating month from query param', { 
+        console.log('🔄 TeamAttendance: Updating month from query param', { 
           initialMonth, 
           monthIndex,
           newDateStr: newDate.toISOString()
@@ -98,7 +98,7 @@ const TeamAttendance = ({ initialViewMode = 'today', initialMonth }: TeamAttenda
 
   // Watch for changes to initialViewMode and update viewMode
   useEffect(() => {
-    console.log(' TeamAttendance: View mode changed', { initialViewMode });
+    console.log('🔄 TeamAttendance: View mode changed', { initialViewMode });
     setViewMode(initialViewMode);
   }, [initialViewMode])
 
@@ -384,7 +384,7 @@ const TeamAttendance = ({ initialViewMode = 'today', initialMonth }: TeamAttenda
                 <div className="px-4 py-3 glass border-b border-gray-200 flex items-center justify-between">
                   <div>
                     <div className="text-sm font-medium text-gray-900">{member ? `${member.firstName || ''} ${member.lastName || ''}`.trim() : 'Unknown Member'}</div>
-                    <div className="text-xs text-gray-500">{member?.position || ''} {member?.department ? ` ${member.department}` : ''}</div>
+                    <div className="text-xs text-gray-500">{member?.position || ''} {member?.department ? `• ${member.department}` : ''}</div>
                   </div>
                 </div>
                 <ResponsiveTable>
