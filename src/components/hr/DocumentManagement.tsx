@@ -559,7 +559,7 @@ const DocumentManagement: React.FC = () => {
                       Tags
                     </h3>
                     <div className="flex flex-wrap gap-2">
-                      {selectedDocument.tags.map((tag, index) => (
+                      {selectedDocument.tags.map((tag: string, index) => (
                         <span
                           key={index}
                           className="px-4 py-2 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 text-sm rounded-full font-medium"
