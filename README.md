@@ -85,7 +85,7 @@ What truly sets the Smart HR Portal apart from traditional systems is our integr
 Copyright (c) 2025-2026 **Team Innovatrix**. All Rights Reserved.
 
 This software and all associated source code, documentation, and intellectual property are the exclusive property of Team Innovatrix:
-1. **Mohit Mohatkar** — Owner & Developer
+1. **Mohit Mohatkar** — Developer
 2. **Rudra Bambal** — Developer
 3. **Vipav Bure** — Developer
 4. **Kartikey Kalbande** — Developer
