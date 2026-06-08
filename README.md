@@ -1,7 +1,7 @@
 # Smart HR Portal
 
 A modern, high-performance HR Management System built with Next.js, featuring a stunning dark-mode glassmorphism UI, timezone-aware analytics, and a fully isolated secure Admin Portal.
-
+Deploved link :- https://smart-hr-protal.vercel.app
 ## 🚀 Key Features
 
 ### 🌟 Core Speciality: AI-Powered Predictive HR Analytics
